@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Product; 
 
 class HomeController extends Controller
 {
@@ -23,6 +24,10 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+          // Fetch products ordered by views in descending order
+          $products = Product::orderBy('views', 'desc')->paginate(9); // Adjust pagination as needed
+
+          // Pass products to the view
+          return view('home', compact('products'));
     }
 }

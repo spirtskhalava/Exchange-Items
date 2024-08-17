@@ -25,8 +25,13 @@ class ExchangeController extends Controller
     public function store(Request $request, Product $product)
     {
         $request->validate([
-            'offered_product_id' => 'required|exists:products,id',
+            'offered_product_id' => 'nullable|exists:products,id',
+            'money_offer' => 'nullable|numeric|min:0',
         ]);
+
+        if (is_null($request->offered_product_id) && is_null($request->money_offer)) {
+            return redirect()->back()->withErrors(['offer' => 'You must offer either a product or money.']);
+        }
 
         $exchange = new Exchange([
             'requester_id' => Auth::id(),
@@ -34,11 +39,11 @@ class ExchangeController extends Controller
             'requested_product_id' => $product->id,
             'offered_product_id' => $request->offered_product_id,
             'status' => 'pending',
+            'money_offer' => $request->money_offer,
         ]);
-
         $exchange->save();
 
-        return redirect()->route('products.index')->with('success', 'Exchange offer created successfully.');
+        return redirect()->route('home');
     }
 
     public function index()
@@ -57,5 +62,20 @@ class ExchangeController extends Controller
         $exchange->save();
 
         return redirect()->route('exchanges.index')->with('success', 'Exchange status updated successfully.');
+    }
+
+
+    public function cancel(Exchange $exchange)
+    {
+        // Ensure the user is authorized to cancel this offer
+        if (Auth::id() !== $exchange->requester_id) {
+            return redirect()->route('offers.index')->with('error', 'You are not authorized to cancel this offer.');
+        }
+
+        // Delete the exchange offer
+        $exchange->delete();
+
+        // Redirect back with success message
+        return redirect()->route('offers.index')->with('success', 'Offer cancelled successfully.');
     }
 }

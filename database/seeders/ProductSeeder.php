@@ -3,12 +3,23 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Product;
 
 class ProductSeeder extends Seeder
 {
     public function run()
     {
+        $imagePaths = [
+            'images/test_image1.jpg',
+            'images/test_image2.jpg',
+            'images/test_image3.jpg',
+        ];
+
+        foreach ($imagePaths as $imagePath) {
+            Storage::disk('public')->put($imagePath, 'Test Image Content');
+        }
+        
         Product::create([
             'user_id' => 1,
             'name' => 'Laptop',

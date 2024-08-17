@@ -20,20 +20,28 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-        ]);
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'images.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            ]);
+            $imagePaths = [];
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $image) {
+                    $imagePaths[] = $image->store('images', 'public');
+                }
+            }
+            
+            $product = new Product([
+                'name' => $request->name,
+                'description' => $request->description,
+                'user_id' => Auth::id(),
+                'image_paths' => json_encode($imagePaths),
+            ]);
 
-        $product = new Product([
-            'name' => $request->name,
-            'description' => $request->description,
-            'user_id' => Auth::id(),
-        ]);
+            $product->save();
 
-        $product->save();
-
-        return redirect()->route('products.index')->with('success', 'Product created successfully.');
+            return redirect()->route('products.index')->with('success', 'Product created successfully.');
     }
 
      public function edit(Request $request)
@@ -48,6 +56,7 @@ class ProductController extends Controller
 
     public function show(Product $product)
     {
+        $product->increment('views');
         return view('products.show', compact('product'));
     }
 }

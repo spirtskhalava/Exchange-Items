@@ -2,22 +2,47 @@
 
 @section('content')
 <div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Dashboard') }}</div>
+    <h1 class="mt-5 mb-4 text-center text-primary">Featured Products</h1>
 
-                <div class="card-body">
-                    @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                    @endif
-
-                    {{ __('You are logged in!') }}
-                </div>
-            </div>
+    @if($products->isEmpty())
+        <div class="alert alert-info text-center" role="alert">
+            No products available at the moment.
         </div>
-    </div>
+    @else
+        <div class="row">
+            @foreach($products as $product)
+                <div class="col-md-4 mb-4">
+                    <div class="card border-light shadow-sm">
+                        @if($product->image_paths)
+                            @php
+                                $imagePaths = json_decode($product->image_paths, true);
+                                $firstImagePath = $imagePaths[0]['path'] ?? 'default-image.jpg';
+                            @endphp
+                            <img src="{{ asset('storage/' . $firstImagePath) }}" class="card-img-top" alt="{{ $product->name }}" style="height: 200px; object-fit: cover;">
+                        @else
+                            <img src="{{ asset('storage/default-image.jpg') }}" class="card-img-top" alt="Default Image" style="height: 200px; object-fit: cover;">
+                        @endif
+                        <div class="card-body">
+                            <h5 class="card-title">{{ $product->name }}</h5>
+                            <p class="card-text">{{ Str::limit($product->description, 100) }}</p>
+                            <p class="card-text">
+                                <small class="text-muted">Views: {{ $product->views }}</small>
+                            </p>
+                            <a href="{{ route('products.show', $product) }}" class="btn btn-primary">View Details</a>
+                        </div>
+                        <div class="card-footer text-muted text-center">
+                            @if($product->views > 100)
+                                <span class="badge bg-warning text-dark">Popular</span>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+
+        <div class="d-flex justify-content-center mt-4">
+            {{ $products->links() }}
+        </div>
+    @endif
 </div>
 @endsection

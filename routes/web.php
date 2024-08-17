@@ -30,3 +30,4 @@ Route::delete('listing/{product}',  [ListingController::class, 'destroy'])->name
 Route::get('listing/{id}/edit',[ListingController::class, 'edit']);
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('/offers', [OfferController::class, 'index'])->name('offers.index');
+Route::delete('exchanges/{exchange}/cancel', [ExchangeController::class, 'cancel'])->name('exchanges.cancel');

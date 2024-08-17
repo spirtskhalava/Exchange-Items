@@ -14,6 +14,7 @@ class Exchange extends Model
         'requested_product_id',
         'offered_product_id',
         'status',
+        'money_offer'
     ];
 
     public function requester()
