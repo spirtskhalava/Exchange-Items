@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container">
-    <h1 class="mt-5 mb-4 text-center text-primary">Featured Products</h1>
+    <h1 class="mt-5 mb-4 text-center text-primary">Popular Products</h1>
 
     @if($products->isEmpty())
         <div class="alert alert-info text-center" role="alert">

@@ -15,7 +15,12 @@ class ProductController extends Controller
 
     public function create()
     {
-        return view('products.create');
+        if (Auth::check()) {
+            return view('products.create');
+        } else {
+            return redirect()->route('login')->with('error', 'Please log in to offer an exchange.');
+        }
+        
     }
 
     public function store(Request $request)

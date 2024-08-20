@@ -3,21 +3,59 @@
 @section('content')
 <style>
     .card {
-        border-radius: 0.75rem; /* Rounded corners */
+        border-radius: 1rem; /* More rounded corners */
+        transition: transform 0.3s ease; /* Smooth transition for hover effect */
+    }
+
+    .card:hover {
+        transform: scale(1.05); /* Slight zoom on hover */
     }
 
     .card-body {
-        background-color: #f8f9fa; /* Light background for card body */
+        background-color: #ffffff; /* White background for card body */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow */
+        border-radius: 1rem; /* More rounded corners */
     }
 
-    .btn-success, .btn-danger {
-        border-radius: 0.25rem; /* Rounded corners for buttons */
+    .btn-success, .btn-danger, .btn-outline-danger {
+        border-radius: 0.5rem; /* More rounded corners for buttons */
+        transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition for hover effect */
+    }
+
+    .btn-success:hover, .btn-danger:hover, .btn-outline-danger:hover {
+        background-color: #007bff; /* Primary color on hover for all buttons */
+        color: #fff; /* White text on hover */
     }
 
     .badge {
-        font-size: 0.9rem; /* Slightly smaller badge font */
+        font-size: 0.85rem; /* Slightly smaller badge font */
+        padding: 0.5em 0.75em; /* More padding for badges */
     }
-</style>    
+
+    .text-primary {
+        color: #007bff !important; /* Primary color */
+    }
+
+    .text-success {
+        color: #28a745 !important; /* Success color */
+    }
+
+    .text-center {
+        text-align: center !important; /* Center alignment */
+    }
+
+    .mt-5, .mb-4, .mt-3 {
+        margin-top: 3rem !important; /* More spacing for top margin */
+        margin-bottom: 1.5rem !important; /* More spacing for bottom margin */
+    }
+
+    .alert-info {
+        background-color: #d1ecf1; /* Light blue background for info alert */
+        border-color: #bee5eb; /* Light blue border for info alert */
+        color: #0c5460; /* Dark blue text for info alert */
+        border-radius: 1rem; /* More rounded corners */
+    }
+</style>
 
 <div class="container">
     <h1 class="mt-5 mb-4 text-center text-primary">My Offers</h1>

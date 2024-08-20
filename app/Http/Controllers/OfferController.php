@@ -9,10 +9,15 @@ class OfferController extends Controller
 {
     public function index()
     {
-        $receivedOffers = Exchange::where('responder_id', Auth::id())->get();
-        $sentOffers = Exchange::where('requester_id', Auth::id())->get();
-        
-        return view('offers.index', compact('receivedOffers', 'sentOffers'));
+        if (Auth::check()) {
+            $receivedOffers = Exchange::where('responder_id', Auth::id())->get();
+            $sentOffers = Exchange::where('requester_id', Auth::id())->get();
+            
+            return view('offers.index', compact('receivedOffers', 'sentOffers'));
+        } else {
+            return redirect()->route('login')->with('error', 'Please log in to offer an exchange.');
+        }
+       
     }
 
     public function accept(Exchange $offer)

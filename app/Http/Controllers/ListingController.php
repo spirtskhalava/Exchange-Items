@@ -16,8 +16,6 @@ class ListingController extends Controller
             $products = Auth::user()->products;
             return view('listings.index', compact('products'));
         } else {
-            // User is not authenticated, handle the scenario accordingly
-            // For example, redirect to login page
             return redirect()->route('login')->with('error', 'Please log in to offer an exchange.');
         }
     }
