@@ -5,7 +5,7 @@
     <!-- Advertisement Banner -->
     <div class="mb-4">
         <div class="card border-0 shadow-lg overflow-hidden rounded-lg">
-            <img src="{{ asset('storage/images/banner-placeholder.jpg') }}" alt="Advertisement Banner" class="img-fluid w-100" style="height: 300px; object-fit: cover;">
+            <img src="https://via.placeholder.com/1920x300.png?text=Your+Ad+Here" alt="Advertisement Banner" class="img-fluid w-100" style="height: 300px; object-fit: cover;">
         </div>
     </div>
 
@@ -20,7 +20,7 @@
                         <div class="mb-3">
                             <div class="input-group">
                                 <input type="text" id="search" name="search" class="form-control" placeholder="Search products...">
-                                <button class="btn btn-outline-secondary" type="submit"><i class="bi bi-search"></i></button>
+                                <button class="btn btn-outline-secondary" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
                             </div>
                         </div>
                         <!-- Category Filter -->
@@ -60,22 +60,23 @@
             <div class="row">
                 @foreach($products as $product)
                     <div class="col-lg-4 col-md-6 mb-4">
-                        <div class="card shadow-sm border-0 rounded-lg overflow-hidden">
+                        <div class="card shadow-sm border-0 rounded-lg overflow-hidden hover-shadow">
                             @if($product->image_paths)
                                 @php
                                     $imagePaths = json_decode($product->image_paths, true);
                                     $firstImagePath = $imagePaths[0] ?? null;
                                 @endphp
                                 @if($firstImagePath)
-                                    <img src="{{ asset('storage/' . $firstImagePath) }}" alt="Product Image" class="card-img-top" style="height: 200px; object-fit: cover;">
+                                    <img src="{{ $firstImagePath }}" alt="Product Image" class="card-img-top" style="height: 200px; object-fit: cover;">
                                 @else
-                                    <img src="{{ asset('storage/images/placeholder.png') }}" alt="Placeholder Image" class="card-img-top" style="height: 200px; object-fit: cover;">
+                                    <img src="https://source.unsplash.com/200x200/?product" alt="Placeholder Image" class="card-img-top" style="height: 200px; object-fit: cover;">
                                 @endif
                             @else
-                                <img src="{{ asset('storage/images/placeholder.png') }}" alt="Placeholder Image" class="card-img-top" style="height: 200px; object-fit: cover;">
+                                <img src="https://source.unsplash.com/200x200/?product" alt="Placeholder Image" class="card-img-top" style="height: 200px; object-fit: cover;">
                             @endif
                             <div class="card-body d-flex flex-column">
                                 <h5 class="card-title text-dark mb-2">{{ $product->name }}</h5>
+                                <p class="card-text text-muted mb-2">{{ $product->category }}</p>
                                 <p class="card-text text-muted mb-3">{{ Str::limit($product->description, 100, '...') }}</p>
                                 <div class="d-flex justify-content-between align-items-center mt-auto">
                                     <a href="{{ route('products.show', $product->id) }}" class="btn btn-primary btn-sm">View Details</a>

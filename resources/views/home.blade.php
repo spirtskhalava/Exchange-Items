@@ -15,10 +15,11 @@
                     <div class="card border-light shadow-sm">
                         @if($product->image_paths)
                             @php
+                                //asset('storage/' . $firstImagePath)
                                 $imagePaths = json_decode($product->image_paths, true);
-                                $firstImagePath = $imagePaths[0]['path'] ?? 'default-image.jpg';
+                                $firstImagePath = $imagePaths[0] ?? 'default-image.jpg';
                             @endphp
-                            <img src="{{ asset('storage/' . $firstImagePath) }}" class="card-img-top" alt="{{ $product->name }}" style="height: 200px; object-fit: cover;">
+                            <img src="{{ $imagePaths[0]  }}" class="card-img-top" alt="{{ $product->name }}" style="height: 200px; object-fit: cover;">
                         @else
                             <img src="{{ asset('storage/default-image.jpg') }}" class="card-img-top" alt="Default Image" style="height: 200px; object-fit: cover;">
                         @endif

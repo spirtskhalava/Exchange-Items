@@ -7,9 +7,31 @@ use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::all();
+        // $products = Product::all();
+        // return view('products.index', compact('products'));
+         $query = Product::query();
+
+        // Apply search filter
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->input('search') . '%')
+                  ->orWhere('description', 'like', '%' . $request->input('search') . '%');
+        }
+
+        // Apply category filter
+        if ($request->filled('category')) {
+            $query->where('category', $request->input('category'));
+        }
+
+        // Apply condition filter
+        if ($request->filled('condition')) {
+            $query->where('condition', $request->input('condition'));
+        }
+
+        // Fetch the filtered products with pagination
+        $products = $query->paginate(9);
+
         return view('products.index', compact('products'));
     }
 

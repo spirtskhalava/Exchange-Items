@@ -19,25 +19,51 @@
 
     <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
-        <div class="row mb-4">
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label for="name" class="form-label">Product Name</label>
-                    <input type="text" name="name" id="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" required>
-                    @error('name')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label for="description" class="form-label">Description</label>
-                    <textarea name="description" id="description" class="form-control @error('description') is-invalid @enderror">{{ old('description') }}</textarea>
-                    @error('description')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-            </div>
+
+        <div class="form-group mb-4">
+            <label for="name" class="form-label">Product Name</label>
+            <input type="text" name="name" id="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" required>
+            @error('name')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <div class="form-group mb-4">
+            <label for="description" class="form-label">Description</label>
+            <textarea name="description" id="description" class="form-control @error('description') is-invalid @enderror">{{ old('description') }}</textarea>
+            @error('description')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <div class="form-group mb-4">
+            <label for="category" class="form-label">Category</label>
+            <select name="category" id="category" class="form-control @error('category') is-invalid @enderror" required>
+                <option value="" disabled selected>Select Category</option>
+                <!-- Example categories; adjust as needed -->
+                <option value="Electronics" {{ old('category') == 'Electronics' ? 'selected' : '' }}>Electronics</option>
+                <option value="Furniture" {{ old('category') == 'Furniture' ? 'selected' : '' }}>Furniture</option>
+                <option value="Clothing" {{ old('category') == 'Clothing' ? 'selected' : '' }}>Clothing</option>
+                <!-- Add more categories as needed -->
+            </select>
+            @error('category')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <div class="form-group mb-4">
+            <label for="condition" class="form-label">Condition</label>
+            <select name="condition" id="condition" class="form-control @error('condition') is-invalid @enderror" required>
+                <option value="" disabled selected>Select Condition</option>
+                <!-- Example conditions; adjust as needed -->
+                <option value="New" {{ old('condition') == 'New' ? 'selected' : '' }}>New</option>
+                <option value="Used" {{ old('condition') == 'Used' ? 'selected' : '' }}>Used</option>
+                <option value="Refurbished" {{ old('condition') == 'Refurbished' ? 'selected' : '' }}>Refurbished</option>
+                <!-- Add more conditions as needed -->
+            </select>
+            @error('condition')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
         </div>
 
         <div class="form-group mb-4">
