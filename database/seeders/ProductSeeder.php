@@ -60,6 +60,7 @@ class ProductSeeder extends Seeder
                 'description' => $product['description'],
                 'category' => 'Electronics',
                 'condition'=>'New',
+                'hide'=>0,
                 'image_paths' => json_encode($imagePaths),  // Save as JSON
             ]);
         }

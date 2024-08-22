@@ -80,9 +80,11 @@
                                 <p class="card-text text-muted mb-3">{{ Str::limit($product->description, 100, '...') }}</p>
                                 <div class="d-flex justify-content-between align-items-center mt-auto">
                                     <a href="{{ route('products.show', $product->id) }}" class="btn btn-primary btn-sm">View Details</a>
-                                    @if($product->user_id !== Auth::id())
-                                        <a href="{{ route('exchanges.create', $product->id) }}" class="btn btn-warning btn-sm">Offer Exchange</a>
-                                    @endif
+                                    @auth
+                                        @if($product->user_id !== Auth::id())
+                                            <a href="{{ route('exchanges.create', $product->id) }}" class="btn btn-warning btn-sm">Offer Exchange</a>
+                                        @endif
+                                    @endauth
                                 </div>
                             </div>
                             <div class="card-footer bg-light text-muted text-center">

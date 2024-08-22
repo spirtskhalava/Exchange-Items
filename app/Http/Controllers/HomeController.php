@@ -24,10 +24,11 @@ class HomeController extends Controller
      */
     public function index()
     {
-          // Fetch products ordered by views in descending order
-          $products = Product::orderBy('views', 'desc')->paginate(9); // Adjust pagination as needed
-
-          // Pass products to the view
+          
+         // $products = Product::orderBy('views', 'desc')->paginate(9);
+          $products = Product::where('hide', 0)
+          ->orderBy('views', 'desc')
+          ->paginate(9);
           return view('home', compact('products'));
     }
 }

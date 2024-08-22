@@ -35,7 +35,10 @@
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item"><strong>Name:</strong> {{ $product->name }}</li>
                         <li class="list-group-item"><strong>Description:</strong> {{ $product->description }}</li>
-                        <li class="list-group-item"><strong>Posted By:</strong> {{ $product->user->username }}</li>
+                        <li class="list-group-item"><strong>Caregory:</strong> {{ $product->category }}</li>
+                        <li class="list-group-item"><strong>Condition:</strong> {{ $product->condition }}</li>
+                        <li class="list-group-item"><strong>Posted By:</strong> {{ $product->user->name }}</li>
+                        <li class="list-group-item"><strong>Phone:</strong> {{ $product->user->phone }}</li>
                         <li class="list-group-item"><strong>Views:</strong> {{ $product->views }}</li>
                         <li class="list-group-item"><strong>Posted On:</strong> {{ $product->created_at->format('M d, Y') }}</li>
                     </ul>

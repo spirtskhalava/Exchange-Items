@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Exchange;
 use Illuminate\Support\Facades\DB;
+use App\Models\Product;
 
 class OfferController extends Controller
 {
@@ -32,6 +33,9 @@ class OfferController extends Controller
                 ->where('id', '!=', $offer->id) // Exclude the currently accepted offer
                 ->where('status', 'pending')
                 ->update(['status' => 'canceled']);
+
+             Product::where('id', $offer->requested_product_id)
+             ->update(['hide' => 1]);   
         });
     
         return redirect()->route('offers.index')->with('success', 'Offer accepted and all other pending offers for this product canceled.');

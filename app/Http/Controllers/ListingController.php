@@ -42,8 +42,8 @@ class ListingController extends Controller
          if (!Auth::check()) {
             return redirect()->route('login');
         }
-        $products = Product::where('id',$id)->get();
-        return view('listings.edit', ['products' => $products]);
+        $product = Product::findOrFail($id);
+        return view('listings.edit', compact('product'));
     }
 
     public function update(Request $request, Product $product)
@@ -53,12 +53,32 @@ class ListingController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string|max:1000',
+            'category' => 'required|string|max:255',
+            'condition' => 'required|string|max:255',
+            'images.*' => 'image|mimes:jpg,jpeg,png|max:2048', // Validate images
         ]);
+        $product->update([
+            'name' => $request->input('name'),
+            'description' => $request->input('description'),
+            'category' => $request->input('category'),
+            'condition' => $request->input('condition'),
+        ]);
+        if ($request->hasFile('images')) {
+            $existingImages = json_decode($product->image_paths, true) ?? [];
 
-        $product->update($request->all());
+            $newImagePaths = [];
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('images', 'public');
+                $newImagePaths[] = $path;
+            }
+            $allImagePaths = array_merge($existingImages, $newImagePaths);
+            $product->image_paths = json_encode($allImagePaths);
+            $product->save();
+        }
 
+        // Redirect with success message
         return redirect()->route('listings.index')->with('success', 'Product updated successfully.');
-    }
+   }
 
     public function destroy(Product $product)
     {

@@ -9,27 +9,22 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        // $products = Product::all();
-        // return view('products.index', compact('products'));
-         $query = Product::query();
+        $query = Product::query();
 
-        // Apply search filter
         if ($request->filled('search')) {
             $query->where('name', 'like', '%' . $request->input('search') . '%')
                   ->orWhere('description', 'like', '%' . $request->input('search') . '%');
         }
 
-        // Apply category filter
         if ($request->filled('category')) {
             $query->where('category', $request->input('category'));
         }
 
-        // Apply condition filter
         if ($request->filled('condition')) {
             $query->where('condition', $request->input('condition'));
         }
 
-        // Fetch the filtered products with pagination
+        $query->where('hide', '=', 0);
         $products = $query->paginate(9);
 
         return view('products.index', compact('products'));
@@ -73,7 +68,6 @@ class ProductController extends Controller
 
      public function edit(Request $request)
     {
-        dd($request->id);
         if (!Auth::check()) {
             return redirect()->route('login');
         }
@@ -86,4 +80,25 @@ class ProductController extends Controller
         $product->increment('views');
         return view('products.show', compact('product'));
     }
+
+    public function removeImage(Request $request, $id)
+  {
+    $product = Product::findOrFail($id);
+    $request->validate([
+        'image_path' => 'required|string'
+    ]);
+
+    $imagePath = $request->input('image_path');
+    if (Storage::exists($imagePath)) {
+        Storage::delete($imagePath);
+    }
+
+    // Remove image path from the product record
+    $images = json_decode($product->image_paths, true);
+    $images = array_filter($images, fn($path) => $path !== $imagePath);
+    $product->image_paths = json_encode($images);
+    $product->save();
+
+    return response()->json(['success' => true]);
+   }
 }

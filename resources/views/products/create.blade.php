@@ -2,17 +2,30 @@
 
 @section('content')
 <style>
-.form-group {
-    margin-bottom: 1.5rem;
-}
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
 
-.form-control {
-    border-radius: 0.375rem; /* Rounded corners for input fields */
-}
+    .form-control {
+        border-radius: 0.375rem; /* Rounded corners for input fields */
+    }
 
-.form-text {
-    font-size: 0.875rem; /* Smaller font size for helper text */
-}
+    .form-text {
+        font-size: 0.875rem; /* Smaller font size for helper text */
+    }
+
+    .image-preview {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .image-preview img {
+        max-width: 100px;
+        max-height: 100px;
+        object-fit: cover;
+        border-radius: 0.375rem;
+    }
 </style>    
 <div class="container">
     <h1 class="mt-5 mb-4 text-center text-primary">Create New Product</h1>
@@ -75,7 +88,35 @@
             <small class="form-text text-muted">You can upload multiple images. Supported formats: jpg, jpeg, png.</small>
         </div>
 
+        <div class="form-group mb-4">
+            <label class="form-label">Image Preview</label>
+            <div id="image-preview" class="image-preview"></div>
+        </div>
+
         <button type="submit" class="btn btn-primary">Create Product</button>
     </form>
 </div>
+
+<script>
+    document.getElementById('images').addEventListener('change', function(event) {
+        const previewContainer = document.getElementById('image-preview');
+        previewContainer.innerHTML = ''; // Clear previous previews
+
+        const files = event.target.files;
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    previewContainer.appendChild(img);
+                };
+                
+                reader.readAsDataURL(file);
+            }
+        }
+    });
+</script>
 @endsection
