@@ -2,17 +2,35 @@
 
 @section('content')
 <div class="container py-5">
-    <!-- Advertisement Banner -->
+    <!-- Advertisement Banner Slider -->
     <div class="mb-4">
-        <div class="card border-0 shadow-lg overflow-hidden rounded-lg">
-            <img src="https://via.placeholder.com/1920x300.png?text=Your+Ad+Here" alt="Advertisement Banner" class="img-fluid w-100" style="height: 300px; object-fit: cover;">
+        <div id="advertisementSlider" class="carousel slide shadow-lg rounded-lg overflow-hidden" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="https://via.placeholder.com/1920x300.png?text=Ad+1" class="d-block w-100" alt="Ad 1" style="height: 300px; object-fit: cover;">
+                </div>
+                <div class="carousel-item">
+                    <img src="https://via.placeholder.com/1920x300.png?text=Ad+2" class="d-block w-100" alt="Ad 2" style="height: 300px; object-fit: cover;">
+                </div>
+                <div class="carousel-item">
+                    <img src="https://via.placeholder.com/1920x300.png?text=Ad+3" class="d-block w-100" alt="Ad 3" style="height: 300px; object-fit: cover;">
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#advertisementSlider" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#advertisementSlider" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
         </div>
     </div>
 
     <div class="row">
         <!-- Filter Block -->
         <div class="col-lg-3 mb-4">
-            <div class="card border-0 shadow-sm rounded-lg">
+            <div class="card border-0 shadow-sm rounded-lg mb-4">
                 <div class="card-body">
                     <h4 class="card-title mb-4 text-primary">Filter Products</h4>
                     <form action="{{ route('products.index') }}" method="GET">
@@ -47,6 +65,21 @@
                         <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
                     </form>
                 </div>
+            </div>
+
+            <!-- Weather Banner -->
+            <div class="card border-0 shadow-sm rounded-lg mb-4">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-primary">Current Weather</h5>
+                    <img src="https://via.placeholder.com/200x200.png?text=Weather+Icon" alt="Weather Icon" class="img-fluid mb-2">
+                    <p class="card-text">25°C, Sunny</p>
+                    <small class="text-muted">Location: New York, USA</small>
+                </div>
+            </div>
+
+            <!-- Additional Banner Block -->
+            <div class="card border-0 shadow-sm rounded-lg mb-4">
+                <img src="https://via.placeholder.com/200x200.png?text=Your+Ad+Here" alt="Advertisement" class="img-fluid rounded-lg">
             </div>
         </div>
 
