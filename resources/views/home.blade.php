@@ -11,21 +11,21 @@
         </ol>
         <div class="carousel-inner">
             <div class="carousel-item active">
-                <img class="d-block w-100" src="hero1.jpg" alt="First slide">
+                <img class="d-block w-100" src="data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22800%22%20height%3D%22400%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%20400%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_19192bcc3b7%20text%20%7B%20fill%3A%23555%3Bfont-weight%3Anormal%3Bfont-family%3AHelvetica%2C%20monospace%3Bfont-size%3A40pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_19192bcc3b7%22%3E%3Crect%20width%3D%22800%22%20height%3D%22400%22%20fill%3D%22%23777%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%22285.9000015258789%22%20y%3D%22217.76000022888184%22%3EFirst%20slide%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E" alt="First slide">
                 <div class="carousel-caption d-none d-md-block">
                     <h5>Great Deals on Electronics</h5>
                     <p>Save up to 50% on select items</p>
                 </div>
             </div>
             <div class="carousel-item">
-                <img class="d-block w-100" src="hero2.jpg" alt="Second slide">
+                <img class="d-block w-100" src="data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22800%22%20height%3D%22400%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%20400%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_19192bcc3b7%20text%20%7B%20fill%3A%23555%3Bfont-weight%3Anormal%3Bfont-family%3AHelvetica%2C%20monospace%3Bfont-size%3A40pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_19192bcc3b7%22%3E%3Crect%20width%3D%22800%22%20height%3D%22400%22%20fill%3D%22%23777%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%22285.9000015258789%22%20y%3D%22217.76000022888184%22%3EFirst%20slide%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E" alt="Second slide">
                 <div class="carousel-caption d-none d-md-block">
                     <h5>Top Fashion Picks</h5>
                     <p>Update your wardrobe with the latest trends</p>
                 </div>
             </div>
             <div class="carousel-item">
-                <img class="d-block w-100" src="hero3.jpg" alt="Third slide">
+                <img class="d-block w-100" src="data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22800%22%20height%3D%22400%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%20400%22%20preserveAspectRatio%3D%22none%22%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%23holder_19192bcc3b7%20text%20%7B%20fill%3A%23555%3Bfont-weight%3Anormal%3Bfont-family%3AHelvetica%2C%20monospace%3Bfont-size%3A40pt%20%7D%20%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_19192bcc3b7%22%3E%3Crect%20width%3D%22800%22%20height%3D%22400%22%20fill%3D%22%23777%22%3E%3C%2Frect%3E%3Cg%3E%3Ctext%20x%3D%22285.9000015258789%22%20y%3D%22217.76000022888184%22%3EFirst%20slide%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E" alt="Third slide">
                 <div class="carousel-caption d-none d-md-block">
                     <h5>Home Essentials</h5>
                     <p>Everything you need for a cozy home</p>
@@ -43,11 +43,11 @@
     </div>
 
     <!-- Product Categories -->
-    <div class="row text-center mb-4">
+ <div class="row text-center mb-4">
         <div class="col-lg-4 col-md-6 mb-4">
-            <a href="#" class="text-decoration-none">
+            <a href="/products?search=&category=electronics&condition=" class="text-decoration-none">
                 <div class="card border-light">
-                    <img class="card-img-top" src="category1.jpg" alt="Category 1">
+                    <img class="card-img-top" src="category1.jpg" alt="Electronics">
                     <div class="card-body">
                         <h5 class="card-title">Electronics</h5>
                     </div>
@@ -55,9 +55,9 @@
             </a>
         </div>
         <div class="col-lg-4 col-md-6 mb-4">
-            <a href="#" class="text-decoration-none">
+            <a href="/products?search=&category=fashion&condition=" class="text-decoration-none">
                 <div class="card border-light">
-                    <img class="card-img-top" src="category2.jpg" alt="Category 2">
+                    <img class="card-img-top" src="category2.jpg" alt="Fashion">
                     <div class="card-body">
                         <h5 class="card-title">Fashion</h5>
                     </div>
@@ -65,9 +65,9 @@
             </a>
         </div>
         <div class="col-lg-4 col-md-6 mb-4">
-            <a href="#" class="text-decoration-none">
+            <a href="/products?search=&category=home-garden&condition=" class="text-decoration-none">
                 <div class="card border-light">
-                    <img class="card-img-top" src="category3.jpg" alt="Category 3">
+                    <img class="card-img-top" src="category3.jpg" alt="Home & Garden">
                     <div class="card-body">
                         <h5 class="card-title">Home & Garden</h5>
                     </div>
@@ -77,7 +77,6 @@
     </div>
 
     <!-- Featured Products -->
-    <h2 class="mb-4">Featured Products</h2>
     @if($products->isEmpty())
         <div class="alert alert-info text-center" role="alert">
             No products available at the moment.
