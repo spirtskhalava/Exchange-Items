@@ -70,15 +70,15 @@
                         <h5 class="card-title text-dark">Offer from {{ $offer->requester->username }}</h5>
                         <p class="card-text">Requested Product: <a href="{{ route('products.show', $offer->requestedProduct->id) }}" class="text-decoration-none">{{ $offer->requestedProduct->name }}</a></p>
                         @if(isset($offer->offeredProduct) && isset($offer->offeredProduct->id))
-                        <p class="card-text">
-                            Offered Product: 
-                            <a href="{{ route('products.show', $offer->offeredProduct->id) }}" class="text-decoration-none">
-                                {{ $offer->offeredProduct->name }}
-                            </a>
-                        </p>
-                    @else
-                        <p class="card-text">Offered Product: Not Available</p>
-                    @endif
+                            <p class="card-text">
+                                Offered Product: 
+                                <a href="{{ route('products.show', $offer->offeredProduct->id) }}" class="text-decoration-none">
+                                    {{ $offer->offeredProduct->name }}
+                                </a>
+                            </p>
+                        @else
+                            <p class="card-text">Offered Product: Not Available</p>
+                        @endif
                         <p class="card-text">Money Offer: {{ $offer->money_offer ? '$' . number_format($offer->money_offer, 2) : 'N/A' }}</p>
                         <p class="card-text">Status: <span class="badge {{ $offer->status == 'pending' ? 'bg-warning text-dark' : ($offer->status == 'accepted' ? 'bg-success' : 'bg-danger') }}">{{ ucfirst($offer->status) }}</span></p>
 
@@ -115,7 +115,16 @@
                     <div class="card-body">
                         <h5 class="card-title text-dark">Offer to {{ $offer->responder->username }}</h5>
                         <p class="card-text">Requested Product: <a href="{{ route('products.show', $offer->requestedProduct->id) }}" class="text-decoration-none">{{ $offer->requestedProduct->name }}</a></p>
-                        <p class="card-text">Offered Product: <a href="{{ route('products.show', $offer->offeredProduct->id) }}" class="text-decoration-none">{{ $offer->offeredProduct->name }}</a></p>
+                        @if(isset($offer->offeredProduct) && isset($offer->offeredProduct->id))
+                            <p class="card-text">
+                                Offered Product: 
+                                <a href="{{ route('products.show', $offer->offeredProduct->id) }}" class="text-decoration-none">
+                                    {{ $offer->offeredProduct->name }}
+                                </a>
+                            </p>
+                        @else
+                            <p class="card-text">Offered Product: Not Available</p>
+                        @endif
                         <p class="card-text">Money Offer: {{ $offer->money_offer ? '$' . number_format($offer->money_offer, 2) : 'N/A' }}</p>
                         <p class="card-text">Status: <span class="badge {{ $offer->status == 'pending' ? 'bg-warning text-dark' : ($offer->status == 'accepted' ? 'bg-success' : 'bg-danger') }}">{{ ucfirst($offer->status) }}</span></p>
 

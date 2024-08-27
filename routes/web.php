@@ -6,6 +6,7 @@ use App\Http\Controllers\ExchangeController;
 use App\Http\Controllers\OfferController;
 use App\Http\Controllers\ListingController;
 use App\Http\Controllers\WishlistController;
+use App\Http\Controllers\MessageController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -37,3 +38,9 @@ Route::post('products/{id}/remove-image', [ProductController::class, 'removeImag
 Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
 Route::post('/wishlist/{product}', [WishlistController::class, 'store'])->name('wishlist.store');
 Route::delete('/wishlist/{id}', [WishlistController::class, 'destroy'])->name('wishlist.destroy');
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
+    Route::post('/messages/store', [MessageController::class, 'store'])->name('messages.store');
+    Route::get('/messages/fetch', [MessageController::class, 'fetchMessages'])->name('messages.fetch');
+});
