@@ -32,17 +32,20 @@
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-        <a class="nav-link" href="{{ route('home') }}">Home</a>
-    </li>
-                        <li class="nav-item">
-        <a class="nav-link" href="{{ route('products.index') }}">Products</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="{{ route('offers.index') }}">My Offers</a>
-    </li>
-  <li class="nav-item">
-        <a class="nav-link" href="{{ route('listings.index') }}">My Listings</a>
-    </li>
+                        <a class="nav-link" href="{{ route('home') }}">Home</a>
+                    </li>
+                                        <li class="nav-item">
+                        <a class="nav-link" href="{{ route('products.index') }}">Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('offers.index') }}">My Offers</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('listings.index') }}">My Listings</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('wishlist.index') }}">Wishlist</a>
+                    </li>
                     </ul>
 
                     <!-- Right Side Of Navbar -->

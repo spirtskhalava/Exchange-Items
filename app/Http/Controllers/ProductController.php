@@ -59,6 +59,9 @@ class ProductController extends Controller
                 'description' => $request->description,
                 'user_id' => Auth::id(),
                 'image_paths' => json_encode($imagePaths),
+                'category' => $request->category,
+                'condition' => $request->condition,
+                'location' => $request->location,
             ]);
 
             $product->save();

@@ -57,4 +57,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Exchange::class, 'responder_id');
     }
+
+    public function wishlist()
+{
+    return $this->hasMany(Wishlist::class);
+}
 }

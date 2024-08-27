@@ -34,4 +34,9 @@ class Product extends Model
     {
         return $this->hasMany(Exchange::class, 'offered_product_id');
     }
+
+    public function wishlistedByUsers()
+{
+    return $this->hasMany(Wishlist::class);
+}
 }

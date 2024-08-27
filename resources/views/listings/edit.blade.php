@@ -26,6 +26,15 @@
                 @enderror
             </div>
 
+             <!-- Product Location -->
+            <div class="form-group mb-4">
+                <label for="location" class="form-label">Location</label>
+                <input type="text" class="form-control @error('location') is-invalid @enderror" id="location" name="location" value="{{ old('location', $product->location) }}" required>
+                @error('location')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+
             <!-- Category -->
             <div class="form-group mb-4">
                 <label for="category" class="form-label">Category</label>

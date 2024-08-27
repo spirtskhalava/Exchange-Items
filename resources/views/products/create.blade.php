@@ -48,6 +48,14 @@
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
         </div>
+        
+        <div class="form-group mb-4">
+            <label for="location" class="form-label">Location</label>
+            <input type="text" name="location" id="location" class="form-control @error('location') is-invalid @enderror" value="{{ old('location') }}" required>
+            @error('location')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
 
         <div class="form-group mb-4">
             <label for="category" class="form-label">Category</label>

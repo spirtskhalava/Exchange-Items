@@ -5,6 +5,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ExchangeController;
 use App\Http\Controllers\OfferController;
 use App\Http\Controllers\ListingController;
+use App\Http\Controllers\WishlistController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -33,3 +34,6 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::get('/offers', [OfferController::class, 'index'])->name('offers.index');
 Route::delete('exchanges/{exchange}/cancel', [ExchangeController::class, 'cancel'])->name('exchanges.cancel');
 Route::post('products/{id}/remove-image', [ProductController::class, 'removeImage'])->name('products.removeImage');
+Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
+Route::post('/wishlist/{product}', [WishlistController::class, 'store'])->name('wishlist.store');
+Route::delete('/wishlist/{id}', [WishlistController::class, 'destroy'])->name('wishlist.destroy');

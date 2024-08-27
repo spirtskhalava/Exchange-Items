@@ -27,7 +27,6 @@
             <div class="card border-light shadow-sm">
                 <div class="card-body">
                     <h2 class="card-title text-primary">{{ $product->name }}</h2>
-                    <h4 class="text-danger my-3">${{ $product->price }}</h4> <!-- Assuming you have a price field -->
                     <p class="text-muted">{{ $product->condition }}</p>
                     <p class="card-text">{{ $product->description }}</p>
 
@@ -42,7 +41,12 @@
                         <a href="{{ route('exchanges.create', $product->id) }}" class="btn btn-warning btn-lg w-100 my-2">Make an Offer</a>
                     @endif
 
-                    <button class="btn btn-primary btn-lg w-100 my-2">Add to Watchlist</button>
+                    @if(Auth::check())
+                        <form action="{{ route('wishlist.store', $product->id) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="btn btn-primary btn-lg w-100 my-2">Add to Wishlist</button>
+                        </form>
+                    @endif
                     <button class="btn btn-outline-secondary btn-lg w-100 my-2">Contact Seller</button>
                 </div>
             </div>
@@ -53,7 +57,7 @@
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item"><strong>Seller: </strong>{{ $product->user->name }}</li>
                         <li class="list-group-item"><strong>Phone: </strong>{{ $product->user->phone }}</li>
-                        <li class="list-group-item"><strong>Location: </strong>{{ $product->user->location ?? 'Not provided' }}</li> <!-- Assuming you have a location field -->
+                        <li class="list-group-item"><strong>Location: </strong>{{ $product->location ?? 'Not provided' }}</li> <!-- Assuming you have a location field -->
                     </ul>
                 </div>
             </div>

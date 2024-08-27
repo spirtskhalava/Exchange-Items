@@ -20,6 +20,7 @@ return new class extends Migration
             $table->text('description');
             $table->text('category');
             $table->text('condition');
+            $table->text('location');
             $table->integer('hide');
             $table->longText('image_paths')->nullable();
             $table->integer('views')->default(0);
