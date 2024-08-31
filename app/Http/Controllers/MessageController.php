@@ -40,7 +40,7 @@ class MessageController extends Controller
     {
         $chatId = $request->query('chat_id');
         list($receiverId, $senderId) = explode('_', $chatId);
-        
+    
         $messages = Message::where(function($query) use ($receiverId, $senderId) {
             $query->where(function($query) use ($receiverId, $senderId) {
                 $query->where('sender_id', $senderId)
@@ -49,8 +49,11 @@ class MessageController extends Controller
                 $query->where('sender_id', $receiverId)
                     ->where('receiver_id', $senderId);
             });
-        })->orderBy('created_at', 'asc')->get();
-
-    return response()->json($messages);
+        })
+        ->orderBy('created_at', 'asc')
+        ->with('sender')
+        ->get();
+    
+        return response()->json($messages);
     }
 }

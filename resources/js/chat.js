@@ -1,23 +1,16 @@
 $(document).ready(function () {
     console.log("Chat JS is loaded and ready!");
-    var metaTag = document.getElementsByTagName('meta');
+    let metaTag = '';
+    let metaTagToken ='';
     var csrfToken = '';
-
-    for (var i = 0; i < metaTag.length; i++) {
-        if (metaTag[i].getAttribute('name') === 'csrf-token') {
-            csrfToken = metaTag[i].getAttribute('content');
-            break;
-        }
-    }
-
-    var metaTag = document.querySelector('meta[name="current-user"]');
-    var currentUser = '';
+    let currentUser = '';
+    metaTagToken = document.querySelector('meta[name="csrf-token"]');
+    metaTag = document.querySelector('meta[name="current-user"]');
+    console.log("metaTagToken",metaTagToken);
 
     if (metaTag) {
         currentUser = metaTag.getAttribute('content');
     }
-
-    console.log(currentUser);
 
     function loadMessages(chatId) {
         fetch(`/messages/fetch?chat_id=${chatId}`)
@@ -26,7 +19,8 @@ $(document).ready(function () {
                 let chatBox = document.querySelector(`#chat-box-${chatId}`);
                 chatBox.innerHTML = '';
                 data.forEach(message => {
-                    let messageHtml = `<div><strong>${message.sender_id === currentUser ? 'Me' : message.sender.name}:</strong> ${message.message}</div>`;
+                    console.log("message",message);
+                    let messageHtml = `<div><strong>${message.sender_id == currentUser ? 'Me' : message.sender.name}:</strong> ${message.message}</div>`;
                     chatBox.innerHTML += messageHtml;
                 });
                 chatBox.scrollTop = chatBox.scrollHeight;
@@ -52,6 +46,7 @@ $(document).ready(function () {
         setInterval(() => loadMessages(chatId), 3000);
     }
 
+    if(document.querySelector('#receiver_id')){
     document.querySelector('#receiver_id').addEventListener('change', function () {
         const receiverId = this.value;
         const receiverName = this.options[this.selectedIndex].text;
@@ -60,31 +55,45 @@ $(document).ready(function () {
             createChatWindow(receiverId, receiverName);
         }
     });
+    }
 
     document.addEventListener('click', function (event) {
         if (event.target && event.target.matches('button[id^="send-"]')) {
-            const chatId = event.target.id.split('-')[1];
-            const message = document.querySelector(`#message-${chatId}`).value;
-            const receiverId = chatId.split('_')[0];
-
-            if (message && receiverId) {
-                fetch('/messages/store', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken
-                    },
-                    body: JSON.stringify({
-                        receiver_id: receiverId,
-                        message: message
-                    })
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        document.querySelector(`#message-${chatId}`).value = '';
-                        loadMessages(chatId);
-                    });
+            sendMessage(event.target.id.split('-')[1]);
+        }
+    });
+    
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') {
+            const activeElement = document.activeElement;
+            if (activeElement && activeElement.matches('input[id^="message-"]')) {
+                sendMessage(activeElement.id.split('-')[1]);
             }
         }
     });
+    
+    function sendMessage(chatId) {
+        const messageInput = document.querySelector(`#message-${chatId}`);
+        const message = messageInput.value;
+        const receiverId = chatId.split('_')[0];
+    
+        if (message && receiverId) {
+            fetch('/messages/store', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': metaTagToken.getAttribute('content')
+                },
+                body: JSON.stringify({
+                    receiver_id: receiverId,
+                    message: message
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                messageInput.value = '';
+                loadMessages(chatId);
+            });
+        }
+    }
 });
