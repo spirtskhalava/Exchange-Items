@@ -47,6 +47,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('wishlist.index') }}">Wishlist</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('messages.index') }}">Messages</a>
+                    </li>
                     </ul>
 
                     <!-- Right Side Of Navbar -->

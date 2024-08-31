@@ -3,15 +3,16 @@
 @section('content')
 <div class="container">
     <div class="row">
-        <div class="col-md-4">
+    <div class="col-md-4">
             <div class="form-group">
-                <label for="receiver_id">Select User</label>
-                <select id="receiver_id" class="form-control">
-                    <option value="">--Select User--</option>
+                <label for="user-list">Select User</label>
+                <ul id="user-list" class="list-group">
                     @foreach($users as $user)
-                        <option value="{{ $user->id }}">{{ $user->name }}</option>
+                        <li class="list-group-item user-list-item" data-user-id="{{ $user->id }}">
+                            {{ $user->name }}
+                        </li>
                     @endforeach
-                </select>
+                </ul>
             </div>
         </div>
         <div class="col-md-8">

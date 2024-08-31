@@ -2,7 +2,6 @@ $(document).ready(function () {
     console.log("Chat JS is loaded and ready!");
     let metaTag = '';
     let metaTagToken ='';
-    var csrfToken = '';
     let currentUser = '';
     metaTagToken = document.querySelector('meta[name="csrf-token"]');
     metaTag = document.querySelector('meta[name="current-user"]');
@@ -29,33 +28,46 @@ $(document).ready(function () {
 
     function createChatWindow(userId, userName) {
         const chatId = `${userId}_${currentUser}`;
-        const chatWindowHtml = `
-            <div class="chat-window" id="chat-window-${chatId}" style="margin-bottom: 10px; border: 1px solid #ccc; padding: 10px; height: 400px; overflow-y: scroll;">
-                <h5>Chat with ${userName}</h5>
-                <div id="chat-box-${chatId}" style="height: 300px; overflow-y: auto;"></div>
-                <div class="input-group mt-3">
-                    <input type="text" id="message-${chatId}" class="form-control" placeholder="Type your message...">
-                    <div class="input-group-append">
-                        <button class="btn btn-primary" id="send-${chatId}">Send</button>
+    
+        // Hide all existing chat windows
+        document.querySelectorAll('.chat-window').forEach(window => {
+            window.style.display = 'none';
+        });
+    
+        // Check if the chat window already exists
+        let existingChatWindow = document.querySelector(`#chat-window-${chatId}`);
+        if (!existingChatWindow) {
+            const chatWindowHtml = `
+                <div class="chat-window" id="chat-window-${chatId}" style="margin-bottom: 10px; border: 1px solid #ccc; padding: 10px; height: 400px; overflow-y: scroll;">
+                    <h5>Chat with ${userName}</h5>
+                    <div id="chat-box-${chatId}" style="height: 300px; overflow-y: auto;"></div>
+                    <div class="input-group mt-3">
+                        <input type="text" id="message-${chatId}" class="form-control" placeholder="Type your message...">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" id="send-${chatId}">Send</button>
+                        </div>
                     </div>
                 </div>
-            </div>
-        `;
-        document.querySelector('#chat-windows-container').innerHTML += chatWindowHtml;
-        loadMessages(chatId);
-        setInterval(() => loadMessages(chatId), 3000);
-    }
-
-    if(document.querySelector('#receiver_id')){
-    document.querySelector('#receiver_id').addEventListener('change', function () {
-        const receiverId = this.value;
-        const receiverName = this.options[this.selectedIndex].text;
-
-        if (receiverId) {
-            createChatWindow(receiverId, receiverName);
+            `;
+            document.querySelector('#chat-windows-container').innerHTML += chatWindowHtml;
+            loadMessages(chatId);
+            setInterval(() => loadMessages(chatId), 3000);
+        } else {
+            // Show the existing chat window if it already exists
+            existingChatWindow.style.display = 'block';
         }
-    });
     }
+
+    document.querySelectorAll('.user-list-item').forEach(item => {
+        item.addEventListener('click', function () {
+            const receiverId = this.getAttribute('data-user-id');
+            const receiverName = this.textContent;
+    
+            if (receiverId) {
+                createChatWindow(receiverId, receiverName);
+            }
+        });
+    });
 
     document.addEventListener('click', function (event) {
         if (event.target && event.target.matches('button[id^="send-"]')) {

@@ -63,3 +63,9 @@ body {
     padding: 10px;
     text-align: center;
 }
+
+.list-group-item:hover{
+    cursor: pointer;
+    background: lightgray;
+}
+
