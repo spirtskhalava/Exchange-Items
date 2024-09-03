@@ -55,8 +55,7 @@
                 <div class="card-body">
                     <h5 class="card-title">Seller Information</h5>
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item"><strong>Seller: </strong>{{ $product->user->name }}</li>
-                        <li class="list-group-item"><strong>Phone: </strong>{{ $product->user->phone }}</li>
+                        <li class="list-group-item"><strong>Seller: </strong><a href="{{ route('messages.openChatWithSeller', $product->user->id) }}">{{ $product->user->name }}</a></li>
                         <li class="list-group-item"><strong>Location: </strong>{{ $product->location ?? 'Not provided' }}</li> <!-- Assuming you have a location field -->
                     </ul>
                 </div>

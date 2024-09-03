@@ -43,4 +43,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
     Route::post('/messages/store', [MessageController::class, 'store'])->name('messages.store');
     Route::get('/messages/fetch', [MessageController::class, 'fetchMessages'])->name('messages.fetch');
+    Route::get('/messages/open/{sellerId}', [MessageController::class, 'openChatWithSeller'])->name('messages.openChatWithSeller');
+
 });

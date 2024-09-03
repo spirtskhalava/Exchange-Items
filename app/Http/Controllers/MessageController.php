@@ -36,6 +36,14 @@ class MessageController extends Controller
         return response()->json(['status' => 'Message Sent']);
     }
 
+    public function openChatWithSeller($sellerId)
+        {
+        $currentUserId = auth()->id();
+        $chatId = "{$sellerId}_{$currentUserId}";
+
+        return redirect()->route('messages.index', ['chat_id' => $chatId]);
+        }
+
     public function fetchMessages(Request $request)
     {
         $chatId = $request->query('chat_id');
