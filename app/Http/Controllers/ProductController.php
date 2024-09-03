@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -85,23 +86,30 @@ class ProductController extends Controller
     }
 
     public function removeImage(Request $request, $id)
-  {
-    $product = Product::findOrFail($id);
-    $request->validate([
-        'image_path' => 'required|string'
-    ]);
+    {
+        $product = Product::findOrFail($id);
+        $request->validate([
+            'image_path' => 'required|string'
+        ]);
 
-    $imagePath = $request->input('image_path');
-    if (Storage::exists($imagePath)) {
-        Storage::delete($imagePath);
+        $imagePath = $request->input('image_path');
+        if (Storage::exists($imagePath)) {
+            Storage::delete($imagePath);
+        }
+
+        // Remove image path from the product record
+        $images = json_decode($product->image_paths, true);
+        $images = array_filter($images, fn($path) => $path !== $imagePath);
+        $product->image_paths = json_encode($images);
+        $product->save();
+
+        return response()->json(['success' => true]);
     }
+    public function showSellerItems($id)
+    {
+        $seller = User::findOrFail($id);
+        $items = Product::where('user_id', $id)->get();
 
-    // Remove image path from the product record
-    $images = json_decode($product->image_paths, true);
-    $images = array_filter($images, fn($path) => $path !== $imagePath);
-    $product->image_paths = json_encode($images);
-    $product->save();
-
-    return response()->json(['success' => true]);
-   }
+        return view('seller.items', compact('seller', 'items'));
+    }
 }

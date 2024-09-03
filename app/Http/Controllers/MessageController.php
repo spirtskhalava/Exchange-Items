@@ -37,13 +37,17 @@ class MessageController extends Controller
     }
 
     public function openChatWithSeller($sellerId)
-        {
+    {
         $currentUserId = auth()->id();
         $chatId = "{$sellerId}_{$currentUserId}";
+        $seller = User::findOrFail($sellerId); // Assuming you have a User model
 
-        return redirect()->route('messages.index', ['chat_id' => $chatId]);
-        }
-
+        return redirect()->route('messages.index', [
+            'chat_id' => $chatId,
+            'seller_name' => $seller->name
+        ]);
+    }
+    
     public function fetchMessages(Request $request)
     {
         $chatId = $request->query('chat_id');

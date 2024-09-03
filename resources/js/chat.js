@@ -5,7 +5,6 @@ $(document).ready(function () {
     let currentUser = '';
     metaTagToken = document.querySelector('meta[name="csrf-token"]');
     metaTag = document.querySelector('meta[name="current-user"]');
-    console.log("metaTagToken",metaTagToken);
 
     if (metaTag) {
         currentUser = metaTag.getAttribute('content');
@@ -31,21 +30,20 @@ $(document).ready(function () {
             item.classList.remove('active-user');
         });
         document.querySelector(`[data-user-id="${userId}"]`).classList.add('active-user');
-    
-        // Open the chat window
+
         const chatId = `${userId}_${currentUser}`;
         const chatWindowHtml = `
-            <div class="chat-window" id="chat-window-${chatId}" style="margin-bottom: 10px; border: 1px solid #ccc; padding: 10px; height: 400px; overflow-y: scroll;">
-                <h5>Chat with ${userName}</h5>
-                <div id="chat-box-${chatId}" style="height: 300px; overflow-y: auto;"></div>
-                <div class="input-group mt-3">
-                    <input type="text" id="message-${chatId}" class="form-control" placeholder="Type your message...">
-                    <div class="input-group-append">
-                        <button class="btn btn-primary" id="send-${chatId}">Send</button>
-                    </div>
+        <div class="chat-window" id="chat-window-${chatId}" style="margin-bottom: 10px; border: 1px solid #ccc; padding: 10px; height: 400px; overflow-y: scroll;">
+            <h5>Chat with ${userName}</h5>
+            <div id="chat-box-${chatId}" style="height: 300px; overflow-y: auto;"></div>
+            <div class="input-group mt-3">
+                <input type="text" id="message-${chatId}" class="form-control" placeholder="Type your message...">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" id="send-${chatId}">Send</button>
                 </div>
             </div>
-        `;
+        </div>
+    `;
         document.querySelector('#chat-windows-container').innerHTML = chatWindowHtml;
         loadMessages(chatId);
         setInterval(() => loadMessages(chatId), 3000);
@@ -104,13 +102,10 @@ $(document).ready(function () {
 
     const urlParams = new URLSearchParams(window.location.search);
     const chatId = urlParams.get('chat_id');
+    const sellerName = urlParams.get('seller_name') || 'Unknown'; // Get seller's name from URL
 
     if (chatId) {
         const [userId, currentUserId] = chatId.split('_');
-        const userName = document.querySelector(`option[value="${userId}"]`)?.text || 'Unknown';
-        
-        if (userId && userName) {
-            createChatWindow(userId, userName);
-        }
+        createChatWindow(userId, sellerName);
     }
 });

@@ -8,16 +8,16 @@
                 @if($product->image_paths)
                     @php
                         $imagePaths = json_decode($product->image_paths, true);
-                        $firstImagePath = $imagePaths[0]['path'] ?? 'default-image.jpg';
+                        $firstImagePath = $imagePaths[0] ?? asset('storage/default-image.jpg');
                     @endphp
-                    <img src="{{ asset('storage/' . $firstImagePath) }}" class="card-img-top img-fluid" alt="{{ $product->name }}" style="max-height: 500px; object-fit: contain; border-radius: 5px;">
+                    <img src="{{ $firstImagePath }}" class="card-img-top img-fluid clickable-image" alt="{{ $product->name }}" style="max-height: 500px; object-fit: contain; border-radius: 5px;" data-toggle="modal" data-target="#imageModal">
                 @else
                     <img src="{{ asset('storage/default-image.jpg') }}" class="card-img-top img-fluid" alt="Default Image" style="max-height: 500px; object-fit: contain; border-radius: 5px;">
                 @endif
 
                 <div class="mt-3 d-flex justify-content-center">
                     @foreach($imagePaths as $image)
-                        <img src="{{ asset('storage/default-image.jpg') }}" alt="{{ $product->name }}" class="img-thumbnail mx-2" style="width: 100px; height: 100px; object-fit: cover;">
+                        <img src="{{ $image }}" alt="{{ $product->name }}" class="img-thumbnail mx-2 clickable-image" style="width: 100px; height: 100px; object-fit: cover;" data-toggle="modal" data-target="#imageModal">
                     @endforeach
                 </div>
             </div>
@@ -47,7 +47,7 @@
                             <button type="submit" class="btn btn-primary btn-lg w-100 my-2">Add to Wishlist</button>
                         </form>
                     @endif
-                    <button class="btn btn-outline-secondary btn-lg w-100 my-2">Contact Seller</button>
+                   <a href="{{ route('messages.openChatWithSeller', $product->user->id) }}" class="btn btn-outline-secondary btn-lg w-100 my-2">Contact Seller</a>
                 </div>
             </div>
 
@@ -55,7 +55,7 @@
                 <div class="card-body">
                     <h5 class="card-title">Seller Information</h5>
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item"><strong>Seller: </strong><a href="{{ route('messages.openChatWithSeller', $product->user->id) }}">{{ $product->user->name }}</a></li>
+                        <li class="list-group-item"><strong>Seller: </strong><a href="{{ route('seller.items', $product->user->id) }}">{{ $product->user->name }}</a></li>
                         <li class="list-group-item"><strong>Location: </strong>{{ $product->location ?? 'Not provided' }}</li> <!-- Assuming you have a location field -->
                     </ul>
                 </div>
@@ -63,4 +63,27 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="imageModalLabel"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <img id="modal-image" src="" class="img-fluid w-100" alt="Product Image">
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.clickable-image{
+    cursor:pointer;
+}
+</style>    
+
 @endsection

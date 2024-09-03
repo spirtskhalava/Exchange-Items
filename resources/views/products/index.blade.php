@@ -93,7 +93,7 @@
             <div class="row">
                 @foreach($products as $product)
                     <div class="col-lg-4 col-md-6 mb-4">
-                        <div class="card shadow-sm border-0 rounded-lg overflow-hidden hover-shadow">
+                        <div class="card card-block shadow-sm border-0 rounded-lg overflow-hidden hover-shadow">
                             @if($product->image_paths)
                                 @php
                                     $imagePaths = json_decode($product->image_paths, true);
@@ -138,6 +138,15 @@
     }
     .rounded-lg {
         border-radius: 1rem;
+    }
+     .card-body {
+        flex-grow: 1;
+    }
+    .card-footer {
+        margin-top: auto;
+    }
+     .card-block {
+        height: 100%;
     }
 </style>
 @endsection

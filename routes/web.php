@@ -38,6 +38,7 @@ Route::post('products/{id}/remove-image', [ProductController::class, 'removeImag
 Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
 Route::post('/wishlist/{product}', [WishlistController::class, 'store'])->name('wishlist.store');
 Route::delete('/wishlist/{id}', [WishlistController::class, 'destroy'])->name('wishlist.destroy');
+Route::get('/seller/{id}/items', [ProductController::class, 'showSellerItems'])->name('seller.items');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
