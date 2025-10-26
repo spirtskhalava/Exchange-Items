@@ -55,30 +55,41 @@ class ListingController extends Controller
             'description' => 'required|string|max:1000',
             'category' => 'required|string|max:255',
             'condition' => 'required|string|max:255',
-            'images.*' => 'image|mimes:jpg,jpeg,png|max:2048', // Validate images
+            'new_images.*' => 'image|mimes:jpg,jpeg,png|max:5120', // match form input name
         ]);
+
+        // Update basic fields
         $product->update([
             'name' => $request->input('name'),
             'description' => $request->input('description'),
             'category' => $request->input('category'),
             'condition' => $request->input('condition'),
         ]);
-        if ($request->hasFile('images')) {
-            $existingImages = json_decode($product->image_paths, true) ?? [];
 
-            $newImagePaths = [];
-            foreach ($request->file('images') as $image) {
+        // Handle images
+        $existingImages = $request->input('existing_images', []); // keep only those not removed
+        $currentImages = json_decode($product->image_paths, true) ?? [];
+
+        // Filter only those kept in the form
+        $keptImages = array_intersect($currentImages, $existingImages);
+
+        // Add new uploaded images
+        if ($request->hasFile('new_images')) {
+            foreach ($request->file('new_images') as $image) {
                 $path = $image->store('images', 'public');
-                $newImagePaths[] = $path;
+                $keptImages[] = '/storage/' . $path;
             }
-            $allImagePaths = array_merge($existingImages, $newImagePaths);
-            $product->image_paths = json_encode($allImagePaths);
-            $product->save();
         }
 
-        // Redirect with success message
+        // Enforce max 5 images
+        $keptImages = array_slice($keptImages, 0, 5);
+
+        $product->image_paths = json_encode($keptImages);
+        $product->save();
+
         return redirect()->route('listings.index')->with('success', 'Product updated successfully.');
-   }
+    }
+
 
     public function destroy(Product $product)
     {
