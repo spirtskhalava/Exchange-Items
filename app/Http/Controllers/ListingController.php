@@ -93,6 +93,7 @@ class ListingController extends Controller
 
         public function update(Request $request, $id)
     {
+
         $product = Product::findOrFail($id);
 
         // 1. Authorization: Ensure the current user owns this product
@@ -123,7 +124,7 @@ class ListingController extends Controller
         }
 
         // Merge existing images with new ones
-        $finalImages = array_merge($currentImages, $newImages);
+        $finalImages = $request->hasFile('images') ? $newImages : [];
 
         // 4. Update the Product
         $product->update([
