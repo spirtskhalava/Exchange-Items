@@ -15,23 +15,44 @@ class WishlistController extends Controller
         return view('wishlist.index', compact('wishlistItems'));
     }
 
-    public function store($productId)
+    // UPDATED STORE METHOD
+    public function store(Request $request, $productId)
     {
-        $product = Product::findOrFail($productId);
+        $user = Auth::user();
+        
+        // 1. Check if it already exists
+        $existingWishlist = Wishlist::where('user_id', $user->id)
+                                    ->where('product_id', $productId)
+                                    ->first();
 
-        $wishlist = new Wishlist();
-        $wishlist->user_id = Auth::id();
-        $wishlist->product_id = $product->id;
-        $wishlist->save();
+        if ($existingWishlist) {
+            // REMOVE IT (Toggle Off)
+            $existingWishlist->delete();
+            $status = 'removed';
+            $message = 'Product removed from wishlist!';
+        } else {
+            // ADD IT (Toggle On)
+            $wishlist = new Wishlist();
+            $wishlist->user_id = $user->id;
+            $wishlist->product_id = $productId;
+            $wishlist->save();
+            $status = 'added';
+            $message = 'Product added to wishlist!';
+        }
 
-        return redirect()->back()->with('success', 'Product added to wishlist!');
+        // 2. Return JSON if the request is from JavaScript (Heart Icon)
+        if ($request->wantsJson()) {
+            return response()->json(['status' => $status]);
+        }
+
+        // 3. Fallback for normal page requests
+        return redirect()->back()->with('success', $message);
     }
 
     public function destroy($id)
     {
         $wishlistItem = Wishlist::findOrFail($id);
         $wishlistItem->delete();
-
         return redirect()->back()->with('success', 'Product removed from wishlist!');
     }
 }

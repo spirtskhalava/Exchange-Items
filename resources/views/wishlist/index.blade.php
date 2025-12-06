@@ -6,7 +6,6 @@
 
     @if($wishlistItems->isEmpty())
         <div class="text-center mt-5">
-            <img src="{{ asset('images/empty-wishlist.svg') }}" alt="Empty Wishlist" style="max-width: 300px;" class="img-fluid mb-3">
             <p class="lead">You haven’t added anything to your wishlist yet.</p>
             <a href="{{ route('products.index') }}" class="btn btn-primary mt-2">Browse Products</a>
         </div>

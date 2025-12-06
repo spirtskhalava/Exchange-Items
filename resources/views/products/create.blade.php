@@ -34,7 +34,7 @@
         @csrf
 
         <div class="form-group mb-4">
-            <label for="name" class="form-label">Product Name</label>
+            <label for="name" class="form-label">Name</label>
             <input type="text" name="name" id="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" required>
             @error('name')
                 <div class="invalid-feedback">{{ $message }}</div>
@@ -62,9 +62,24 @@
             <select name="category" id="category" class="form-control @error('category') is-invalid @enderror" required>
                 <option value="" disabled selected>Select Category</option>
                 <!-- Example categories; adjust as needed -->
-                <option value="Electronics" {{ old('category') == 'Electronics' ? 'selected' : '' }}>Electronics</option>
-                <option value="Furniture" {{ old('category') == 'Furniture' ? 'selected' : '' }}>Furniture</option>
-                <option value="Clothing" {{ old('category') == 'Clothing' ? 'selected' : '' }}>Clothing</option>
+        <option value="electronics" {{ old('category') == 'electronics' ? 'selected' : '' }}>Electronics</option>
+        <option value="furniture" {{ old('category') == 'furniture' ? 'selected' : '' }}>Furniture</option>
+        <option value="clothing" {{ old('category') == 'clothing' ? 'selected' : '' }}>Clothing & Fashion</option>
+        <option value="books" {{ old('category') == 'books' ? 'selected' : '' }}>Books & Literature</option>
+        <option value="sports" {{ old('category') == 'sports' ? 'selected' : '' }}>Sports & Outdoors</option>
+        <option value="gaming" {{ old('category') == 'gaming' ? 'selected' : '' }}>Gaming & Consoles</option>
+        <option value="mobiles" {{ old('category') == 'mobiles' ? 'selected' : '' }}>Mobile Phones</option>
+        <option value="home-garden" {{ old('category') == 'home-garden' ? 'selected' : '' }}>Home & Garden</option>
+        <option value="toys" {{ old('category') == 'toys' ? 'selected' : '' }}>Toys & Hobbies</option>
+        <option value="vehicles" {{ old('category') == 'vehicles' ? 'selected' : '' }}>Vehicles & Parts</option>
+        <option value="music" {{ old('category') == 'music' ? 'selected' : '' }}>Music & Instruments</option>
+        <option value="art" {{ old('category') == 'art' ? 'selected' : '' }}>Art & Collectibles</option>
+        <option value="beauty" {{ old('category') == 'beauty' ? 'selected' : '' }}>Health & Beauty</option>
+        <option value="pets" {{ old('category') == 'pets' ? 'selected' : '' }}>Pets & Supplies</option>
+        <option value="office" {{ old('category') == 'office' ? 'selected' : '' }}>Office & School</option>
+        <option value="baby" {{ old('category') == 'baby' ? 'selected' : '' }}>Baby & Kids</option>
+        <option value="tools" {{ old('category') == 'tools' ? 'selected' : '' }}>Tools & DIY</option>
+        <option value="fashion" {{ old('category') == 'fashion' ? 'selected' : '' }}>Fashion</option>
                 <!-- Add more categories as needed -->
             </select>
             @error('category')
@@ -88,7 +103,7 @@
         </div>
 
         <div class="form-group mb-4">
-            <label for="images" class="form-label">Product Images</label>
+            <label for="images" class="form-label">Images</label>
             <input type="file" name="images[]" id="images" class="form-control @error('images.*') is-invalid @enderror" accept="image/*" multiple>
             @error('images.*')
                 <div class="invalid-feedback">{{ $message }}</div>
@@ -101,7 +116,7 @@
             <div id="image-preview" class="image-preview"></div>
         </div>
 
-        <button type="submit" class="btn btn-primary">Create Product</button>
+        <button type="submit" class="btn btn-primary">Create</button>
     </form>
 </div>
 

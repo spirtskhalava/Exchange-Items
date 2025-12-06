@@ -100,7 +100,7 @@
     <!-- Featured Products - Modern Card Design -->
     <section class="container my-5">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="fw-bold mb-0">Featured Products</h2>
+            <h2 class="fw-bold mb-0">Popular Products</h2>
             <a href="/products" class="btn btn-outline-primary">View All</a>
         </div>
 
@@ -126,7 +126,8 @@
                                 @if($product->image_paths)
                                     @php
                                         $imagePaths = json_decode($product->image_paths, true);
-                                        $firstImagePath = $imagePaths[0] ?? 'default-image.jpg';
+                                        //$firstImagePath = $imagePaths[0] ?? 'default-image.jpg';
+                                        $firstImagePath = 'https://placehold.co/400x300?text=No+Image';
                                     @endphp
                                     <img src="{{ $firstImagePath }}" class="card-img-top product-image" alt="{{ $product->name }}" loading="lazy">
                                 @else
@@ -138,23 +139,20 @@
                                     @if($product->views > 100)
                                         <span class="badge bg-warning text-dark">Popular</span>
                                     @endif
-                                    @if($product->condition === 'new')
+                                    @if($product->condition=='New')
                                         <span class="badge bg-success">New</span>
-                                    @elseif($product->condition === 'like_new')
-                                        <span class="badge bg-info text-dark">Like New</span>
+                                    @elseif($product->condition === 'Used')
+                                        <span class="badge bg-info text-dark">Used</span>
+                                    @else
+                                       <span class="badge bg-info text-dark">Refurbished</span>
                                     @endif
                                 </div>
-                                
-                                <!-- Quick view button -->
-                                <button class="btn-quick-view" data-bs-toggle="modal" data-bs-target="#quickViewModal" data-product-id="{{ $product->id }}">
-                                    <i class="bi bi-eye-fill"></i> Quick View
-                                </button>
+                            
                             </div>
                             
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-start mb-2">
                                     <h3 class="h5 card-title mb-0">{{ Str::limit($product->name, 40) }}</h3>
-                                    <span class="text-primary fw-bold">${{ number_format($product->price, 2) }}</span>
                                 </div>
                                 
                                 <div class="mb-3">

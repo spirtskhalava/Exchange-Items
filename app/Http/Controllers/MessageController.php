@@ -68,4 +68,22 @@ class MessageController extends Controller
     
         return response()->json($messages);
     }
+    public function markAsRead(Request $request)
+{
+    $senderId = $request->input('sender_id');
+    $currentUserId = Auth::id();
+
+    // 1. Mark messages from this specific sender to me as read
+    Message::where('sender_id', $senderId)
+           ->where('receiver_id', $currentUserId)
+           ->where('is_read', false)
+           ->update(['is_read' => true]);
+
+    // 2. Calculate new total unread count (from ALL senders)
+    $newCount = Message::where('receiver_id', $currentUserId)
+                       ->where('is_read', false)
+                       ->count();
+
+    return response()->json(['unread_count' => $newCount]);
+}
 }

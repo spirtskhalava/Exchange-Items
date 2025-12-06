@@ -16,13 +16,14 @@
     <!-- Edit Form -->
     <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
         <div class="card-body p-4 p-md-5">
+            <!-- Ensure your route is correct here -->
             <form action="{{ route('products.update', $product->id) }}" method="POST" enctype="multipart/form-data" id="editProductForm">
                 @csrf
                 @method('PUT')
 
                 <!-- Product Name -->
                 <div class="mb-4">
-                    <label for="name" class="form-label fw-bold">Product Name</label>
+                    <label for="name" class="form-label fw-bold">Name</label>
                     <div class="input-group">
                         <span class="input-group-text bg-light">
                             <i class="bi bi-card-heading text-muted"></i>
@@ -78,12 +79,23 @@
                             </span>
                             <select name="category" id="category" class="form-select @error('category') is-invalid @enderror" required>
                                 <option value="" disabled>Select Category</option>
-                                <option value="Electronics" {{ old('category', $product->category) == 'Electronics' ? 'selected' : '' }}>Electronics</option>
-                                <option value="Furniture" {{ old('category', $product->category) == 'Furniture' ? 'selected' : '' }}>Furniture</option>
-                                <option value="Clothing" {{ old('category', $product->category) == 'Clothing' ? 'selected' : '' }}>Clothing</option>
-                                <option value="Home & Garden" {{ old('category', $product->category) == 'Home & Garden' ? 'selected' : '' }}>Home & Garden</option>
-                                <option value="Sports" {{ old('category', $product->category) == 'Sports' ? 'selected' : '' }}>Sports</option>
-                                <option value="Other" {{ old('category', $product->category) == 'Other' ? 'selected' : '' }}>Other</option>
+                                <option value="electronics" {{ old('category', $product->category) == 'electronics' ? 'selected' : '' }}>Electronics</option>
+                                <option value="furniture" {{ old('category', $product->category) == 'furniture' ? 'selected' : '' }}>Furniture</option>
+                                <option value="clothing" {{ old('category', $product->category) == 'clothing' ? 'selected' : '' }}>Clothing</option>
+                                <option value="home-garden" {{ old('category', $product->category) == 'home-garden' ? 'selected' : '' }}>Home & Garden</option>
+                                <option value="sports" {{ old('category', $product->category) == 'sports' ? 'selected' : '' }}>Sports</option>
+                                <option value="gaming" {{ old('category', $product->category) == 'gaming' ? 'selected' : '' }}>Gaming</option>
+                                <option value="mobiles" {{ old('category', $product->category) == 'mobiles' ? 'selected' : '' }}>Mobiles</option>
+                                <option value="toys" {{ old('category', $product->category) == 'toys' ? 'selected' : '' }}>Toys</option>
+                                <option value="vehicles" {{ old('category', $product->category) == 'vehicles' ? 'selected' : '' }}>Vehicles</option>
+                                <option value="music" {{ old('category', $product->category) == 'music' ? 'selected' : '' }}>Music</option>
+                                <option value="art" {{ old('category', $product->category) == 'art' ? 'selected' : '' }}>Art</option>
+                                <option value="beauty" {{ old('category', $product->category) == 'beauty' ? 'selected' : '' }}>Beauty</option>
+                                <option value="pets" {{ old('category', $product->category) == 'pets' ? 'selected' : '' }}>Pets</option>
+                                <option value="office" {{ old('category', $product->category) == 'office' ? 'selected' : '' }}>Office</option>
+                                <option value="baby" {{ old('category', $product->category) == 'baby' ? 'selected' : '' }}>Baby</option>
+                                <option value="tools" {{ old('category', $product->category) == 'tools' ? 'selected' : '' }}>Tools</option>
+                                <option value="other" {{ old('category', $product->category) == 'other' ? 'selected' : '' }}>Other</option>
                             </select>
                             @error('category')
                                 <div class="invalid-feedback">{{ $message }}</div>
@@ -111,34 +123,39 @@
 
                 <!-- Product Images -->
                 <div class="mb-4">
-                    <label class="form-label fw-bold">Product Images</label>
+                    <label class="form-label fw-bold">Images</label>
                     <p class="text-muted small mb-3">Upload high-quality images to showcase your product (max 5 images)</p>
                     
                     <!-- Image Preview Grid -->
                     <div class="row g-3 mb-3" id="image-preview-container">
                         @if($product->image_paths)
                             @php
-                                $imagePaths = json_decode($product->image_paths, true);
+                                $imagePaths = is_string($product->image_paths) ? json_decode($product->image_paths, true) : $product->image_paths;
                             @endphp
-                            @foreach($imagePaths as $index => $imagePath)
-                                <div class="col-6 col-md-4 col-lg-3">
-                                    <div class="image-preview-card position-relative rounded-3 overflow-hidden">
-                                        <img src="{{ $imagePath }}" alt="Product Image" class="img-fluid w-100" style="height: 180px; object-fit: cover;">
-                                        <div class="image-actions position-absolute top-0 end-0 p-2">
-                                            <button type="button" class="btn btn-danger btn-sm rounded-circle shadow" onclick="removeImage(this)" data-bs-toggle="tooltip" title="Remove image">
-                                                <i class="bi bi-x"></i>
-                                            </button>
+                            @if($imagePaths)
+                                @foreach($imagePaths as $index => $imagePath)
+                                    <div class="col-6 col-md-4 col-lg-3">
+                                        <div class="image-preview-card position-relative rounded-3 overflow-hidden">
+                                            <!-- Assuming storage link is set up correctly -->
+                                            <img src="{{ asset('storage/' . $imagePath) }}" alt="Product Image" class="img-fluid w-100" style="height: 180px; object-fit: cover;">
+                                            <div class="image-actions position-absolute top-0 end-0 p-2">
+                                                <!-- NOTE: Real removal requires AJAX or a hidden input to track deletions -->
+                                                <button type="button" class="btn btn-danger btn-sm rounded-circle shadow" onclick="removeImage(this)" data-bs-toggle="tooltip" title="Remove image (Visual only)">
+                                                    <i class="bi bi-x"></i>
+                                                </button>
+                                            </div>
+                                            <!-- Hidden input to keep track of existing images if your controller supports it -->
+                                            <input type="hidden" name="existing_images[]" value="{{ $imagePath }}">
                                         </div>
-                                        <input type="hidden" name="existing_images[]" value="{{ $imagePath }}">
                                     </div>
-                                </div>
-                            @endforeach
+                                @endforeach
+                            @endif
                         @endif
                     </div>
 
                     <!-- File Upload with Preview -->
                     <div class="file-upload-wrapper">
-                        <input type="file" name="new_images[]" id="images" class="form-control d-none" accept="image/*" multiple>
+                        <input type="file" name="images[]" id="images" class="form-control d-none" accept="image/*" multiple>
                         <label for="images" class="file-upload-label w-100">
                             <div class="border-2 border-dashed rounded-3 p-4 text-center cursor-pointer">
                                 <i class="bi bi-cloud-arrow-up fs-1 text-muted mb-2"></i>
@@ -146,7 +163,7 @@
                                 <p class="small text-muted mb-0">Supports JPG, PNG (Max 5MB each)</p>
                             </div>
                         </label>
-                        @error('new_images.*')
+                        @error('images.*')
                             <div class="invalid-feedback d-block">{{ $message }}</div>
                         @enderror
                     </div>
@@ -169,145 +186,84 @@
 @push('styles')
 <style>
     /* Modern form styling */
-    .card {
-        border: none;
-        box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-    }
-    
-    .form-control, .form-select {
-        padding: 0.75rem 1rem;
-        border: 1px solid #e0e0e0;
-    }
-    
-    .form-control:focus, .form-select:focus {
-        border-color: #4361ee;
-        box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.15);
-    }
-    
-    .input-group-text {
-        background-color: #f8f9fa;
-        border-right: none;
-    }
-    
-    .input-group .form-control, .input-group .form-select {
-        border-left: none;
-    }
-    
-    .image-preview-card {
-        border: 1px solid #e0e0e0;
-        transition: all 0.3s ease;
-    }
-    
-    .image-preview-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 6px 12px rgba(0,0,0,0.08);
-    }
-    
-    .image-actions {
-        opacity: 0;
-        transition: opacity 0.2s ease;
-    }
-    
-    .image-preview-card:hover .image-actions {
-        opacity: 1;
-    }
-    
-    .file-upload-label {
-        cursor: pointer;
-    }
-    
-    .file-upload-label:hover {
-        background-color: #f8f9fa;
-    }
-    
-    .border-dashed {
-        border-style: dashed !important;
-    }
-    
-    .cursor-pointer {
-        cursor: pointer;
-    }
-    
+    .card { border: none; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
+    .form-control, .form-select { padding: 0.75rem 1rem; border: 1px solid #e0e0e0; }
+    .form-control:focus, .form-select:focus { border-color: #4361ee; box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.15); }
+    .input-group-text { background-color: #f8f9fa; border-right: none; }
+    .input-group .form-control, .input-group .form-select { border-left: none; }
+    .image-preview-card { border: 1px solid #e0e0e0; transition: all 0.3s ease; }
+    .image-preview-card:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.08); }
+    .image-actions { opacity: 0; transition: opacity 0.2s ease; }
+    .image-preview-card:hover .image-actions { opacity: 1; }
+    .file-upload-label { cursor: pointer; }
+    .file-upload-label:hover { background-color: #f8f9fa; }
+    .border-dashed { border-style: dashed !important; }
+    .cursor-pointer { cursor: pointer; }
     @media (max-width: 768px) {
-        .display-5 {
-            font-size: 2rem;
-        }
-        
-        .lead {
-            font-size: 1.1rem;
-        }
+        .display-5 { font-size: 2rem; }
+        .lead { font-size: 1.1rem; }
     }
 </style>
 @endpush
 
 @push('scripts')
 <script>
-    // Make removeImage global so inline onclick works
     function removeImage(button) {
         const previewCard = button.closest('.image-preview-card');
         const colDiv = previewCard.closest('[class*="col-"]'); 
         if (colDiv) colDiv.remove();
+        // Note: For real deletion of existing images, you likely need an AJAX call 
+        // to your removeImage route here.
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-        // Initialize tooltips
-        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl);
-        });
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
 
-        // Image upload preview
         const fileInput = document.getElementById('images');
         const previewContainer = document.getElementById('image-preview-container');
 
-        fileInput.addEventListener('change', function(e) {
-            const files = e.target.files;
-            const existingImages = previewContainer.querySelectorAll('.image-preview-card').length;
+        if(fileInput) {
+            fileInput.addEventListener('change', function(e) {
+                const files = e.target.files;
+                const existingImages = previewContainer.querySelectorAll('.image-preview-card').length;
 
-            if (files.length + existingImages > 5) {
-                alert('You can upload a maximum of 5 images');
-                this.value = '';
-                return;
-            }
+                if (files.length + existingImages > 5) {
+                    alert('You can upload a maximum of 5 images');
+                    this.value = '';
+                    return;
+                }
 
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                if (!file.type.match('image.*')) continue;
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    if (!file.type.match('image.*')) continue;
 
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const colDiv = document.createElement('div');
-                    colDiv.className = 'col-6 col-md-4 col-lg-3';
-
-                    const previewDiv = document.createElement('div');
-                    previewDiv.className = 'image-preview-card position-relative rounded-3 overflow-hidden';
-
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    img.className = 'img-fluid w-100';
-                    img.style.height = '180px';
-                    img.style.objectFit = 'cover';
-
-                    const actionsDiv = document.createElement('div');
-                    actionsDiv.className = 'image-actions position-absolute top-0 end-0 p-2';
-
-                    const removeBtn = document.createElement('button');
-                    removeBtn.type = 'button';
-                    removeBtn.className = 'btn btn-danger btn-sm rounded-circle shadow';
-                    removeBtn.innerHTML = '<i class="bi bi-x"></i>';
-                    removeBtn.onclick = function() {
-                        colDiv.remove();
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const colDiv = document.createElement('div');
+                        colDiv.className = 'col-6 col-md-4 col-lg-3';
+                        
+                        // Simplified preview structure
+                        colDiv.innerHTML = `
+                            <div class="image-preview-card position-relative rounded-3 overflow-hidden">
+                                <img src="${e.target.result}" class="img-fluid w-100" style="height: 180px; object-fit: cover;">
+                                <div class="image-actions position-absolute top-0 end-0 p-2">
+                                    <button type="button" class="btn btn-danger btn-sm rounded-circle shadow" onclick="removeImage(this)">
+                                        <i class="bi bi-x"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                        previewContainer.appendChild(colDiv);
                     };
-
-                    actionsDiv.appendChild(removeBtn);
-                    previewDiv.appendChild(img);
-                    previewDiv.appendChild(actionsDiv);
-                    colDiv.appendChild(previewDiv);
-                    previewContainer.appendChild(colDiv);
-                };
-                reader.readAsDataURL(file);
-            }
-        });
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
     });
 </script>
 @endpush
+
+@endsection  <!-- THIS WAS MISSING -->

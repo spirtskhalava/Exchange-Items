@@ -67,12 +67,12 @@
                         <li class="nav-item" role="presentation">
                             <button class="nav-link active" id="details-tab" data-bs-toggle="tab" data-bs-target="#details" type="button" role="tab">Details</button>
                         </li>
-                        <li class="nav-item" role="presentation">
+                        <!-- <li class="nav-item" role="presentation">
                             <button class="nav-link" id="specs-tab" data-bs-toggle="tab" data-bs-target="#specs" type="button" role="tab">Specifications</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
+                        </li> -->
+                        <!-- <li class="nav-item" role="presentation">
                             <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" type="button" role="tab">Reviews</button>
-                        </li>
+                        </li> -->
                     </ul>
                     <div class="tab-content pt-3" id="productTabsContent">
                         <div class="tab-pane fade show active" id="details" role="tabpanel">
@@ -193,32 +193,13 @@
                 <div class="card border-0 shadow-sm rounded-4 mb-4">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-start mb-3">
-                            <div>
                                 <h1 class="h3 fw-bold mb-2">{{ $product->name }}</h1>
-                                <div class="d-flex align-items-center mb-2">
-                                    <div class="text-warning me-2">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star-half-alt"></i>
-                                    </div>
-                                    <small class="text-muted">(24 reviews)</small>
-                                </div>
-                            </div>
                             <span class="badge bg-{{ $product->condition == 'new' ? 'success' : ($product->condition == 'used' ? 'warning text-dark' : 'info') }} bg-opacity-10 text-{{ $product->condition == 'new' ? 'success' : ($product->condition == 'used' ? 'warning' : 'info') }}">
                                 {{ ucfirst($product->condition) }}
                             </span>
                         </div>
 
                         <div class="mb-4">
-                            <div class="d-flex align-items-center">
-                                <span class="h4 fw-bold me-2">${{ number_format($product->price, 2) }}</span>
-                                @if($product->original_price)
-                                    <span class="text-muted text-decoration-line-through">${{ number_format($product->original_price, 2) }}</span>
-                                    <span class="badge bg-danger bg-opacity-10 text-danger ms-2">Save {{ number_format(100 - ($product->price / $product->original_price * 100), 0) }}%</span>
-                                @endif
-                            </div>
                             <div class="text-success small mt-1">
                                 <i class="fas fa-check-circle"></i> Available for exchange
                             </div>
@@ -249,14 +230,14 @@
                                 </a>
                             @endif
 
-                            @auth
+                            <!-- @auth
                                 <form action="{{ route('wishlist.store', $product->id) }}" method="POST">
                                     @csrf
                                     <button type="submit" class="btn btn-outline-primary btn-lg py-3">
                                         <i class="far fa-heart me-2"></i> Add to Wishlist
                                     </button>
                                 </form>
-                            @endauth
+                            @endauth -->
 
                             <a href="{{ route('messages.openChatWithSeller', $product->user->id) }}" class="btn btn-outline-secondary btn-lg py-3">
                                 <i class="fas fa-comment-dots me-2"></i> Contact Seller

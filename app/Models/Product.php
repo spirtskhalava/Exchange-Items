@@ -17,7 +17,8 @@ class Product extends Model
         'condition',
         'image_paths', 
         'views',
-        'hide'
+        'hide',
+        'location'
     ];
 
     public function user()

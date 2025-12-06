@@ -10,6 +10,26 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
+                $categories = collect([
+            (object)['name' => 'Electronics', 'slug' => 'electronics', 'icon' => 'fa-laptop'],
+            (object)['name' => 'Fashion', 'slug' => 'fashion', 'icon' => 'fa-fashion'],
+            (object)['name' => 'Furniture', 'slug' => 'furniture', 'icon' => 'fa-couch'],
+            (object)['name' => 'Clothing', 'slug' => 'clothing', 'icon' => 'fa-tshirt'],
+            (object)['name' => 'Books', 'slug' => 'books', 'icon' => 'fa-book'],
+            (object)['name' => 'Sports', 'slug' => 'sports', 'icon' => 'fa-basketball-ball'],
+            (object)['name' => 'Gaming', 'slug' => 'gaming', 'icon' => 'fa-gamepad'],
+            (object)['name' => 'Mobiles', 'slug' => 'mobiles', 'icon' => 'fa-mobile-alt'],
+            (object)['name' => 'Home & Garden', 'slug' => 'home-garden', 'icon' => 'fa-leaf'],
+            (object)['name' => 'Toys', 'slug' => 'toys', 'icon' => 'fa-puzzle-piece'],
+            (object)['name' => 'Vehicles', 'slug' => 'vehicles', 'icon' => 'fa-car'],
+            (object)['name' => 'Music', 'slug' => 'music', 'icon' => 'fa-guitar'],
+            (object)['name' => 'Art', 'slug' => 'art', 'icon' => 'fa-palette'],
+            (object)['name' => 'Beauty', 'slug' => 'beauty', 'icon' => 'fa-spa'],
+            (object)['name' => 'Pets', 'slug' => 'pets', 'icon' => 'fa-paw'],
+            (object)['name' => 'Office', 'slug' => 'office', 'icon' => 'fa-pen'],
+            (object)['name' => 'Baby', 'slug' => 'baby', 'icon' => 'fa-baby-carriage'],
+            (object)['name' => 'Tools', 'slug' => 'tools', 'icon' => 'fa-tools'],
+        ]);
         $query = Product::query();
 
         if ($request->filled('search')) {
@@ -28,7 +48,7 @@ class ProductController extends Controller
         $query->where('hide', '=', 0);
         $products = $query->paginate(9);
 
-        return view('products.index', compact('products'));
+        return view('products.index', compact('products', 'categories'));
     }
 
     public function create()
@@ -41,34 +61,39 @@ class ProductController extends Controller
         
     }
 
-    public function store(Request $request)
-    {
-            $request->validate([
-                'name' => 'required|string|max:255',
-                'description' => 'nullable|string',
-                'images.*' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-            ]);
-            $imagePaths = [];
-            if ($request->hasFile('images')) {
-                foreach ($request->file('images') as $image) {
-                    $imagePaths[] = $image->store('images', 'public');
-                }
+public function store(Request $request)
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'description' => 'nullable|string',
+        // Increased max size to 5MB (5120KB) to match the PHP settings
+        'images.*' => 'nullable|image|mimes:jpg,jpeg,png|max:5120', 
+    ]);
+
+    $imagePaths = [];
+
+    if ($request->hasFile('images')) {
+        foreach ($request->file('images') as $image) {
+            // Ensure the file is valid before attempting storage
+            if ($image->isValid()) {
+                $imagePaths[] = $image->store('images', 'public');
             }
-            
-            $product = new Product([
-                'name' => $request->name,
-                'description' => $request->description,
-                'user_id' => Auth::id(),
-                'image_paths' => json_encode($imagePaths),
-                'category' => $request->category,
-                'condition' => $request->condition,
-                'location' => $request->location,
-            ]);
-
-            $product->save();
-
-            return redirect()->route('products.index')->with('success', 'Product created successfully.');
+        }
     }
+    
+    Product::create([
+        'name' => $request->name,
+        'description' => $request->description,
+        'price' => $request->price,
+        'user_id' => Auth::id(),
+        'image_paths' => json_encode($imagePaths), // Stores ["images/filename.jpg", ...]
+        'category' => $request->category,
+        'condition' => $request->condition,
+        'location' => $request->location,
+    ]);
+
+    return redirect()->route('products.index')->with('success', 'Product created successfully.');
+}
 
      public function edit(Request $request)
     {
@@ -111,5 +136,56 @@ class ProductController extends Controller
         $items = Product::where('user_id', $id)->get();
 
         return view('seller.items', compact('seller', 'items'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        dd($request);
+        $product = Product::findOrFail($id);
+
+        // 1. Authorization: Ensure the current user owns this product
+        if (Auth::id() !== $product->user_id) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        // 2. Validation (Same as store, but images are optional)
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'nullable|numeric',
+            'category' => 'required|string',
+            'condition' => 'required|string',
+            'location' => 'required|string',
+            'images.*' => 'nullable|image|mimes:jpg,jpeg,png|max:10240', 
+        ]);
+
+        // 3. Handle Image Uploads
+        // Decode existing images or start with empty array
+        $currentImages = !empty($product->image_paths) ? json_decode($product->image_paths, true) : [];
+        $newImages = [];
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                if ($image->isValid()) {
+                    $newImages[] = $image->store('images', 'public');
+                }
+            }
+        }
+
+        // Merge existing images with new ones
+        $finalImages = array_merge($currentImages, $newImages);
+
+        // 4. Update the Product
+        $product->update([
+            'name' => $request->name,
+            'description' => $request->description,
+            'price' => $request->price, // Ensure this column is in your $fillable array in Model
+            'category' => $request->category,
+            'condition' => $request->condition,
+            'location' => $request->location,
+            'image_paths' => json_encode($finalImages),
+        ]);
+
+        return redirect()->route('products.show', $product->id)->with('success', 'Product updated successfully.');
     }
 }
