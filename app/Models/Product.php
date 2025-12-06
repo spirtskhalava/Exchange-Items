@@ -40,4 +40,21 @@ class Product extends Model
 {
     return $this->hasMany(Wishlist::class);
 }
+
+public function reviews()
+{
+    return $this->hasMany(Review::class)->orderBy('created_at', 'desc');
+}
+
+// Helper to get average rating (e.g., 4.5)
+public function getAverageRatingAttribute()
+{
+    return $this->reviews()->avg('rating') ?? 0;
+}
+
+// Helper to count reviews
+public function getReviewCountAttribute()
+{
+    return $this->reviews()->count();
+}
 }

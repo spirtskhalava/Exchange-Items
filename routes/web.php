@@ -46,4 +46,5 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/messages/fetch', [MessageController::class, 'fetchMessages'])->name('messages.fetch');
     Route::get('/messages/open/{sellerId}', [MessageController::class, 'openChatWithSeller'])->name('messages.openChatWithSeller');
     Route::post('/messages/mark-read', [MessageController::class, 'markAsRead'])->name('messages.markRead');
+    Route::post('/products/{id}/review', [App\Http\Controllers\ProductController::class, 'storeReview'])->name('products.review.store');
 });

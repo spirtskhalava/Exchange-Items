@@ -188,4 +188,38 @@ public function store(Request $request)
 
         return redirect()->route('products.show', $product->id)->with('success', 'Product updated successfully.');
     }
+    public function storeReview(Request $request, $id)
+{
+    $request->validate([
+        'rating' => 'required|integer|min:1|max:5',
+        'comment' => 'nullable|string|max:1000',
+    ]);
+
+    $product = Product::findOrFail($id);
+
+    // 1. Check if user is trying to review their own product
+    if (Auth::id() == $product->user_id) {
+        return back()->with('error', 'You cannot review your own product.');
+    }
+
+    // 2. Check if user already reviewed this product
+    $existingReview = \App\Models\Review::where('user_id', Auth::id())
+                                        ->where('product_id', $id)
+                                        ->first();
+
+    if ($existingReview) {
+        return back()->with('error', 'You have already reviewed this product.');
+    }
+
+    // 3. Create Review
+    \App\Models\Review::create([
+        'user_id' => Auth::id(),
+        'product_id' => $id,
+        'rating' => $request->rating,
+        'comment' => $request->comment,
+    ]);
+
+    // Redirect back with a hash so the page scrolls down to reviews
+    return redirect()->to(url()->previous() . '#reviews')->with('success', 'Review submitted successfully!');
+}
 }
