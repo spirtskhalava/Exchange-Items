@@ -62,4 +62,18 @@ class User extends Authenticatable
 {
     return $this->hasMany(Wishlist::class);
 }
+
+public function reviewsReceived() {
+    return $this->hasMany(UserReview::class, 'user_id');
+}
+
+// Reviews this user has written for others
+public function reviewsWritten() {
+    return $this->hasMany(UserReview::class, 'reviewer_id');
+}
+
+// Helper to get average rating
+public function getAverageRatingAttribute() {
+    return round($this->reviewsReceived()->avg('rating'), 1);
+}
 }

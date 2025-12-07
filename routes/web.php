@@ -7,6 +7,7 @@ use App\Http\Controllers\OfferController;
 use App\Http\Controllers\ListingController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\UserReviewController; 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -47,4 +48,5 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/messages/open/{sellerId}', [MessageController::class, 'openChatWithSeller'])->name('messages.openChatWithSeller');
     Route::post('/messages/mark-read', [MessageController::class, 'markAsRead'])->name('messages.markRead');
     Route::post('/products/{id}/review', [App\Http\Controllers\ProductController::class, 'storeReview'])->name('products.review.store');
+    Route::post('/users/{id}/review', [UserReviewController::class, 'store'])->name('user.reviews.store');
 });

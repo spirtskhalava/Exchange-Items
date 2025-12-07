@@ -107,7 +107,8 @@ public function store(Request $request)
     public function show(Product $product)
     {
         $product->increment('views');
-        return view('products.show', compact('product'));
+        $products = Product::with(['user.reviewsReceived', 'reviews.user'])->findOrFail($product->id);
+        return view('products.show', compact('product','products'));
     }
 
     public function removeImage(Request $request, $id)

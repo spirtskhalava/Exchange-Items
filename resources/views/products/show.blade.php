@@ -93,7 +93,7 @@
                 </div>
             </div>
 
-            <!-- TABS: Description & Reviews -->
+            <!-- TABS: Description & Product Reviews -->
             <div class="card border-0 shadow-sm rounded-4">
                 <div class="card-body">
                     <ul class="nav nav-tabs" id="productTabs" role="tablist">
@@ -117,7 +117,7 @@
                             </div>
                         </div>
 
-                        <!-- REVIEWS TAB -->
+                        <!-- PRODUCT REVIEWS TAB -->
                         <div class="tab-pane fade" id="reviews" role="tabpanel">
                             <!-- Summary Section -->
                             <div class="d-flex align-items-center mb-4 p-3 bg-light rounded-3">
@@ -273,6 +273,24 @@
                                 <h6 class="mb-1 fw-bold">
                                     <a href="{{ route('seller.items', $product->user->id) }}" class="text-decoration-none text-dark">{{ $product->user->name }}</a>
                                 </h6>
+                                
+                                <!-- SELLER RATING DISPLAY START -->
+                                <div class="mb-1">
+                                    @php
+                                        // Calculate average safely. If no reviews, default to 0.
+                                        $sellerAvg = $product->user->reviewsReceived->avg('rating') ?? 0;
+                                        $sellerCount = $product->user->reviewsReceived->count();
+                                    @endphp
+
+                                    <span class="fw-bold text-warning">
+                                        {{ number_format($sellerAvg, 1) }} <i class="fas fa-star"></i>
+                                    </span>
+                                    <span class="text-muted small ms-1">
+                                        ({{ $sellerCount }} {{ Str::plural('review', $sellerCount) }})
+                                    </span>
+                                </div>
+                                <!-- SELLER RATING DISPLAY END -->
+
                                 <div class="text-muted small">
                                     <div class="d-flex align-items-center">
                                         <i class="fas fa-store me-1"></i>
