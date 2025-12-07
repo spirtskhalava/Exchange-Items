@@ -24,7 +24,7 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 # 7. Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
-
+RUN php artisan migrate --force || true
 # 8. Set permissions for storage & cache
 RUN chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
