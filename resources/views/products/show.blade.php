@@ -226,11 +226,6 @@
                         </div>
 
                         <div class="mb-4">
-                            <div class="d-flex align-items-center">
-                                <span class="h4 fw-bold me-2 text-primary">
-                                    {{ $product->price > 0 ? '$' . number_format($product->price, 2) : 'Price Negotiable' }}
-                                </span>
-                            </div>
                             <div class="text-success small mt-1">
                                 <i class="fas fa-check-circle"></i> Available for exchange
                             </div>
