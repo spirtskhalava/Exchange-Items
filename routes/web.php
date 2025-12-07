@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Artisan;
 |
 */
 Auth::routes();
-Route::get('/', [ProductController::class, 'index'])->name('products.index');
+Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::resource('products', ProductController::class)->only(['index', 'create', 'store', 'show']);
 Route::get('products/{product}/offer', [ExchangeController::class, 'create'])->name('exchanges.create');
 Route::post('products/{product}/offer', [ExchangeController::class, 'store'])->name('exchanges.store');

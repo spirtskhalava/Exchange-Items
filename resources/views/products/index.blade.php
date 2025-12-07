@@ -208,9 +208,21 @@
                     </div>
                 @endforelse
             </div>
-            
             @if($products->hasPages())
-                <div class="d-flex justify-content-center mt-5">{{ $products->links() }}</div>
+                <div class="d-flex flex-column align-items-center mt-5 gap-2">
+                    <div class="text-muted small">
+                        Showing 
+                        <strong>{{ $products->firstItem() }}</strong>–<strong>{{ $products->lastItem() }}</strong> 
+                        of 
+                        <strong>{{ $products->total() }}</strong> products
+                    </div>
+
+                    <div>
+                        {{ $products->withQueryString()->links() }}
+                        {{-- or if you use Bootstrap 5 pagination views: --}}
+                        {{-- {{ $products->withQueryString()->links('pagination::bootstrap-5') }} --}}
+                    </div>
+                </div>
             @endif
         </div>
     </div>

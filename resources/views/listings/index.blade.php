@@ -19,7 +19,9 @@
         <div class="d-flex justify-content-between align-items-center">
             <div class="d-flex align-items-center gap-2">
                 <span class="fw-bold text-secondary text-uppercase small ls-1">Total Inventory</span>
-                <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-2 fw-bold">{{ $products->count() }} Items</span>
+                <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-2 fw-bold">
+                    {{ $totalProducts }} Items
+                </span>
             </div>
             <a href="{{ route('products.create') }}" class="btn btn-primary btn-lg rounded-pill px-4 shadow-sm hover-lift">
                 <i class="bi bi-plus-lg me-2"></i>Add New Product
@@ -112,6 +114,12 @@
                 </div>
             @endforeach
         </div>
+            {{-- Pagination --}}
+            @if($products->hasPages())
+                <div class="d-flex justify-content-center mt-4">
+                    {{ $products->onEachSide(1)->links('pagination::bootstrap-5') }}
+                </div>
+            @endif
     @endif
 </div>
 @endsection

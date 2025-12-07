@@ -183,13 +183,6 @@
                     </div>
                 @endforeach
             </div>
-
-            <!-- Pagination - Centered with improved styling -->
-            <div class="d-flex justify-content-center mt-5">
-                <nav aria-label="Page navigation">
-                    {{ $products->onEachSide(1)->links('pagination::bootstrap-5') }}
-                </nav>
-            </div>
         @endif
     </section>
 </div>

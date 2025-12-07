@@ -26,9 +26,11 @@ class HomeController extends Controller
     {
           
          // $products = Product::orderBy('views', 'desc')->paginate(9);
-          $products = Product::where('hide', 0)
-          ->orderBy('views', 'desc')
-          ->paginate(9);
+        $products = Product::where('hide', 0)
+            ->inRandomOrder()
+            ->take(6)
+            ->get();
+
           return view('home', compact('products'));
     }
 }

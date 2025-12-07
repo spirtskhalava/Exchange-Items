@@ -11,13 +11,26 @@ class ListingController extends Controller
     public function index()
     {
         
+    if (!Auth::check()) {
+        return redirect()
+            ->route('login')
+            ->with('error', 'Please log in to offer an exchange.');
+    }
 
-         if (Auth::check()) {
-            $products = Auth::user()->products;
-            return view('listings.index', compact('products'));
-        } else {
-            return redirect()->route('login')->with('error', 'Please log in to offer an exchange.');
-        }
+    // Total count for header
+    $totalProducts = Auth::user()
+        ->products()
+        ->where('hide', 0) // optional, if you use hide
+        ->count();
+
+    // Paginated products for current page
+    $products = Auth::user()
+        ->products()
+        ->where('hide', 0) // optional
+        ->latest()         // or orderBy('created_at', 'desc')
+        ->paginate(9);     // 9 per page
+
+    return view('listings.index', compact('products', 'totalProducts'));
     }
 
     public function create()
