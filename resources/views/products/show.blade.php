@@ -248,8 +248,7 @@
 
                         <!-- Action Buttons -->
                         <div class="d-grid gap-2">
-                            @if(!Auth::check() && !$product->user_id === Auth::id())
-                                <!-- If Visitor: Show Offer/Contact Buttons -->
+                            @if(!Auth::check() || Auth::id() !== $product->user_id)
                                 <a href="{{ route('exchanges.create', $product->id) }}" class="btn btn-warning btn-lg py-3 fw-bold">
                                     <i class="fas fa-exchange-alt me-2"></i> Make an Offer
                                 </a>
