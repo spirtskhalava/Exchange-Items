@@ -10,7 +10,6 @@
         <h1 class="display-5 fw-bold text-primary mb-3">
             <i class="bi bi-pencil-square me-2"></i>Edit Your Listing
         </h1>
-        <p class="lead text-muted">Update your product details to attract more buyers</p>
     </div>
 
     <!-- Edit Form -->
@@ -140,12 +139,12 @@
                                             <img src="{{ asset('storage/' . $imagePath) }}" alt="Product Image" class="img-fluid w-100" style="height: 180px; object-fit: cover;">
                                             <div class="image-actions position-absolute top-0 end-0 p-2">
                                                 <!-- NOTE: Real removal requires AJAX or a hidden input to track deletions -->
-                                                <button type="button" class="btn btn-danger btn-sm rounded-circle shadow" onclick="removeImage(this)" data-bs-toggle="tooltip" title="Remove image (Visual only)">
-                                                    <i class="bi bi-x"></i>
-                                                </button>
+                                                                 <button type="button" class="btn btn-danger" onclick="removeImage(this)">
+                                                                    <i class="bi bi-x"></i>
+                                                                </button>
                                             </div>
                                             <!-- Hidden input to keep track of existing images if your controller supports it -->
-                                            <input type="hidden" name="existing_images[]" value="{{ $imagePath }}">
+                                             <input type="hidden" name="existing_images[]" value="{{ $imagePath }}">
                                         </div>
                                     </div>
                                 @endforeach

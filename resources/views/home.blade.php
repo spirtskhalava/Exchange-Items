@@ -123,16 +123,27 @@
                     <div class="col-xl-3 col-lg-4 col-md-6">
                         <div class="card product-card h-100 border-0 shadow-sm overflow-hidden">
                             <div class="position-relative">
-                                @if($product->image_paths)
-                                    @php
-                                        $imagePaths = json_decode($product->image_paths, true);
-                                        //$firstImagePath = $imagePaths[0] ?? 'default-image.jpg';
-                                        $firstImagePath = 'https://placehold.co/400x300?text=No+Image';
-                                    @endphp
-                                    <img src="{{ $firstImagePath }}" class="card-img-top product-image" alt="{{ $product->name }}" loading="lazy">
-                                @else
-                                    <img src="{{ asset('storage/default-image.jpg') }}" class="card-img-top product-image" alt="Default Image" loading="lazy">
-                                @endif
+                            @php
+                                    // 1. Set the default placeholder first
+                                    $imageUrl = 'https://placehold.co/400x300?text=No+Image';
+
+                                    // 2. Decode the JSON safely
+                                    $paths = !empty($product->image_paths) ? json_decode($product->image_paths, true) : null;
+
+                                    // 3. Check if we actually have a valid path in the array
+                                    if (is_array($paths) && count($paths) > 0 && !empty($paths[0])) {
+                                        $path = $paths[0];
+
+                                        // 4. Check if it is a remote URL (starts with http)
+                                        if (str_starts_with($path, 'http')) {
+                                            $imageUrl = 'https://placehold.co/400x300?text=No+Image';
+                                        } else {
+                                            // It is a local file, add the storage prefix
+                                            $imageUrl = asset('storage/' . $path);
+                                        }
+                                    }
+                                @endphp
+                                    <img src="{{ $imageUrl }}" class="card-img-top product-image" alt="{{ $product->name }}" loading="lazy">
                                 
                                 <!-- Product badges -->
                                 <div class="product-badges">

@@ -8,7 +8,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="current-user" content="{{ Auth::id() }}">
 
-    <title>Bartr</title>
+    <title>Bartaro</title>
 
     <!-- Modern Typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -122,7 +122,7 @@
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
                     <i class="bi bi-box-seam-fill"></i>
-                    Bartr
+                    Bartaro
                 </a>
                 
                 <button class="navbar-toggler border-0 p-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">

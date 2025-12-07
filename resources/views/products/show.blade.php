@@ -22,7 +22,6 @@
                     @php
                         // 1. Decode JSON safely
                         $imagePaths = !empty($product->image_paths) ? json_decode($product->image_paths, true) : [];
-                        
                         // 2. Determine Main Image URL
                         $mainImageUrl = 'https://placehold.co/600x600?text=No+Image';
                         

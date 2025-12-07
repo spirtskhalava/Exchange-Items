@@ -93,50 +93,59 @@ class ListingController extends Controller
 
         public function update(Request $request, $id)
     {
+            $product = Product::findOrFail($id);
 
-        $product = Product::findOrFail($id);
+    // 1. Authorization
+    if (Auth::id() !== $product->user_id) {
+        abort(403, 'Unauthorized action.');
+    }
 
-        // 1. Authorization: Ensure the current user owns this product
-        if (Auth::id() !== $product->user_id) {
-            abort(403, 'Unauthorized action.');
-        }
+    // 2. Validation
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'description' => 'nullable|string',
+        'price' => 'nullable|numeric',
+        'category' => 'required|string',
+        'condition' => 'required|string',
+        'location' => 'required|string',
+        'images.*' => 'nullable|image|mimes:jpg,jpeg,png|max:10240',
+        'existing_images' => 'nullable|array', 
+    ]);
 
-        // 2. Validation (Same as store, but images are optional)
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'category' => 'required|string',
-            'condition' => 'required|string',
-            'location' => 'required|string',
-        ]);
+    // 3. Handle Images
 
-        // 3. Handle Image Uploads
-        // Decode existing images or start with empty array
-        $currentImages = !empty($product->image_paths) ? json_decode($product->image_paths, true) : [];
-        $newImages = [];
+    // A. GET RETAINED IMAGES (Fixes the overwrite issue)
+    // We get the list from the FORM input, not the database.
+    // This ensures that if you clicked "Remove" in the UI, it is actually removed here.
+   $retainedImages = $request->input('existing_images', []);
 
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $image) {
-                if ($image->isValid()) {
-                    $newImages[] = $image->store('images', 'public');
-                }
+    // B. HANDLE NEW UPLOADS
+    $newImages = [];
+    if ($request->hasFile('images')) {
+        foreach ($request->file('images') as $image) {
+            if ($image->isValid()) {
+                $newImages[] = $image->store('images', 'public');
             }
         }
+    }
 
-        // Merge existing images with new ones
-        $finalImages = $request->hasFile('images') ? $newImages : [];
+    // C. MERGE
+    $finalImages = array_merge($retainedImages, $newImages);
 
-        // 4. Update the Product
-        $product->update([
-            'name' => $request->name,
-            'description' => $request->description,
-            'category' => $request->category,
-            'condition' => $request->condition,
-            'location' => $request->location,
-            'image_paths' => json_encode($finalImages),
-        ]);
+    // 4. Update Database
+    $product->update([
+        'name' => $request->name,
+        'description' => $request->description,
+        'price' => $request->price,
+        'category' => $request->category,
+        'condition' => $request->condition,
+        'location' => $request->location,
+        // Use array_values to ensure it saves as a JSON array ["a","b"] not an object {"0":"a"}
+        'image_paths' => json_encode(array_values($finalImages)),
+    ]);
 
-        return redirect()->route('products.show', $product->id)->with('success', 'Product updated successfully.');
+    return redirect()->route('products.show', $product->id)
+                     ->with('success', 'Product updated successfully.');
     }
 
     public function destroy(Product $product)
