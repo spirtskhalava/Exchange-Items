@@ -232,6 +232,10 @@
 
                         <div class="mb-4 text-muted small">
                             <div class="d-flex align-items-center mb-2">
+                                <i class="fas fa-circle-info me-2 text-center" style="width: 20px;"></i>
+                                <span>Category: {{ $product->category }}</span>
+                            </div>
+                            <div class="d-flex align-items-center mb-2">
                                 <i class="fas fa-map-marker-alt me-2 text-center" style="width: 20px;"></i>
                                 <span>{{ $product->location ?? 'Location not specified' }}</span>
                             </div>
