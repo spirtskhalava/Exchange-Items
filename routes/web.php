@@ -10,7 +10,7 @@ use App\Http\Controllers\MessageController;
 use App\Http\Controllers\UserReviewController; 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Artisan;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -40,6 +40,10 @@ Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.in
 Route::post('/wishlist/{product}', [WishlistController::class, 'store'])->name('wishlist.store');
 Route::delete('/wishlist/{id}', [WishlistController::class, 'destroy'])->name('wishlist.destroy');
 Route::get('/seller/{id}/items', [ProductController::class, 'showSellerItems'])->name('seller.items');
+Route::get('/migrate-now', function () {
+    Artisan::call('migrate', ['--force' => true]);
+    return 'Migrations executed!';
+});
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
