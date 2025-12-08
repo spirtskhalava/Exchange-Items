@@ -152,11 +152,11 @@
                                                         <label class="form-label small text-muted">Your Rating</label>
                                                         <!-- Star Rating Input -->
                                                         <div class="rating-input">
-                                                            <input type="radio" id="star5" name="rating" value="5" required><label for="star5" title="Excellent"><i class="fas fa-star"></i></label>
-                                                            <input type="radio" id="star4" name="rating" value="4"><label for="star4" title="Good"><i class="fas fa-star"></i></label>
-                                                            <input type="radio" id="star3" name="rating" value="3"><label for="star3" title="Average"><i class="fas fa-star"></i></label>
-                                                            <input type="radio" id="star2" name="rating" value="2"><label for="star2" title="Poor"><i class="fas fa-star"></i></label>
                                                             <input type="radio" id="star1" name="rating" value="1"><label for="star1" title="Very Poor"><i class="fas fa-star"></i></label>
+                                                            <input type="radio" id="star2" name="rating" value="2"><label for="star2" title="Poor"><i class="fas fa-star"></i></label>
+                                                            <input type="radio" id="star3" name="rating" value="3"><label for="star3" title="Average"><i class="fas fa-star"></i></label>
+                                                            <input type="radio" id="star4" name="rating" value="4"><label for="star4" title="Good"><i class="fas fa-star"></i></label>
+                                                            <input type="radio" id="star5" name="rating" value="5" required><label for="star5" title="Excellent"><i class="fas fa-star"></i></label>
                                                         </div>
                                                     </div>
                                                     <div class="mb-3">

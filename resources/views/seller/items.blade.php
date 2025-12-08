@@ -59,11 +59,11 @@
                     <div class="mb-3">
                         <label class="form-label small text-muted">Rating</label>
                         <select name="rating" class="form-select" required>
-                            <option value="5">★★★★★ (Excellent)</option>
-                            <option value="4">★★★★ (Good)</option>
-                            <option value="3">★★★ (Average)</option>
-                            <option value="2">★★ (Poor)</option>
                             <option value="1">★ (Terrible)</option>
+                            <option value="2">★★ (Poor)</option>
+                            <option value="3">★★★ (Average)</option>
+                            <option value="4">★★★★ (Good)</option>
+                            <option value="5">★★★★★ (Excellent)</option>
                         </select>
                     </div>
                     <div class="mb-3">
