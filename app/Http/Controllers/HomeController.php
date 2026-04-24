@@ -24,13 +24,17 @@ class HomeController extends Controller
      */
     public function index()
     {
-          
-         // $products = Product::orderBy('views', 'desc')->paginate(9);
         $products = Product::where('hide', 0)
+        ->orderBy('views', 'desc')
+        ->take(6)
+        ->get();
+
+        $deals = Product::where('hide', 0)
             ->inRandomOrder()
-            ->take(6)
+            ->take(4)
             ->get();
 
-          return view('home', compact('products'));
+        return view('home', compact('products', 'deals'));
     }
+
 }

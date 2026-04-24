@@ -11,6 +11,8 @@ use App\Http\Controllers\UserReviewController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
+use App\Http\Controllers\ProductVerificationController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -44,6 +46,19 @@ Route::get('/migrate-now', function () {
     Artisan::call('migrate', ['--force' => true]);
     return 'Migrations executed!';
 });
+
+Route::post('/products/{product}/verify', [ProductVerificationController::class, 'verify'])
+    ->name('products.verify')
+    ->middleware('auth');
+
+Route::post('/notifications/{id}/read', function ($id) {
+    auth()->user()
+        ->notifications()
+        ->where('id', $id)
+        ->update(['read_at' => now()]);
+        
+    return response()->json(['success' => true]);
+})->middleware('auth');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');

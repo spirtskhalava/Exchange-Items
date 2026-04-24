@@ -2,78 +2,34 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
+        'company_id',
+        'dealer_id',
+        'sub_dealer_id',
+        'branch_id',
         'name',
         'email',
-        'password',
         'phone',
+        'password',
+        'status',
+        'last_login_at',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'last_login_at' => 'datetime',
+        'password' => 'hashed',
     ];
-    
-    public function products()
-    {
-        return $this->hasMany(Product::class);
-    }
-
-    public function requestedExchanges()
-    {
-        return $this->hasMany(Exchange::class, 'requester_id');
-    }
-
-    public function respondedExchanges()
-    {
-        return $this->hasMany(Exchange::class, 'responder_id');
-    }
-
-    public function wishlist()
-{
-    return $this->hasMany(Wishlist::class);
-}
-
-public function reviewsReceived() {
-    return $this->hasMany(UserReview::class, 'user_id');
-}
-
-// Reviews this user has written for others
-public function reviewsWritten() {
-    return $this->hasMany(UserReview::class, 'reviewer_id');
-}
-
-// Helper to get average rating
-public function getAverageRatingAttribute() {
-    return round($this->reviewsReceived()->avg('rating'), 1);
-}
 }
