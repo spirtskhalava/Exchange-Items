@@ -113,11 +113,8 @@
     </style>
 </head>
 <body>
-    <!-- 
-       CRITICAL FOR STICKY FOOTER: 
-       #app must be a flex container with min-vh-100 
-    -->
     <div id="app" class="d-flex flex-column min-vh-100">
+        @include('layouts._verification_popup')
         <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">

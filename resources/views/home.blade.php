@@ -185,6 +185,94 @@
             </div>
         @endif
     </section>
+
+       <section class="container my-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold mb-0">Interesting Deals</h2>
+            <a href="/products" class="btn btn-outline-primary">View All</a>
+        </div>
+
+        @if($deals->isEmpty())
+            <div class="text-center py-5">
+                <div class="mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="#6c757d" class="bi bi-box-seam" viewBox="0 0 16 16">
+                        <path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5l2.404.961L10.404 2l-2.218-.887zm3.564 1.426L5.596 5 8 5.961 14.154 3.5l-2.404-.961zm3.25 1.7-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923l6.5 2.6zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464L7.443.184z"/>
+                    </svg>
+                </div>
+                <h3 class="h4">No products available</h3>
+                <p class="text-muted">Check back later for new listings</p>
+                @auth
+                    <a href="{{ route('products.create') }}" class="btn btn-primary mt-3">List a Product</a>
+                @endauth
+            </div>
+        @else
+            <div class="row g-4">
+                @foreach($deals as $deal)
+                    <div class="col-xl-3 col-lg-4 col-md-6">
+                        <div class="card product-card h-100 border-0 shadow-sm overflow-hidden">
+                            <div class="position-relative">
+                            @php
+                                    // 1. Set the default placeholder first
+                                    $imageUrl = 'https://placehold.co/400x300?text=No+Image';
+
+                                    // 2. Decode the JSON safely
+                                    $paths = !empty($deal->image_paths) ? json_decode($deal->image_paths, true) : null;
+
+                                    // 3. Check if we actually have a valid path in the array
+                                    if (is_array($paths) && count($paths) > 0 && !empty($paths[0])) {
+                                        $path = $paths[0];
+
+                                        // 4. Check if it is a remote URL (starts with http)
+                                        if (str_starts_with($path, 'http')) {
+                                            $imageUrl = 'https://placehold.co/400x300?text=No+Image';
+                                        } else {
+                                            // It is a local file, add the storage prefix
+                                            $imageUrl = asset('storage/' . $path);
+                                        }
+                                    }
+                                @endphp
+                                    <img src="{{ $imageUrl }}" class="card-img-top product-image" alt="{{ $product->name }}" loading="lazy">
+                                
+                                <!-- Product badges -->
+                                <div class="product-badges">
+                                    @if($deal->views > 100)
+                                        <span class="badge bg-warning text-dark">Popular</span>
+                                    @endif
+                                    @if($deal->condition=='New')
+                                        <span class="badge bg-success">New</span>
+                                    @elseif($deal->condition === 'Used')
+                                        <span class="badge bg-info text-dark">Used</span>
+                                    @else
+                                       <span class="badge bg-info text-dark">Refurbished</span>
+                                    @endif
+                                </div>
+                            
+                            </div>
+                            
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h3 class="h5 card-title mb-0">{{ Str::limit($deal->name, 40) }}</h3>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <span class="badge bg-light text-dark">{{ ucfirst(str_replace('-', ' ', $deal->category)) }}</span>
+                                </div>
+                                
+                                <p class="card-text text-muted small">{{ Str::limit($deal->description, 80) }}</p>
+                                
+                                <div class="d-flex justify-content-between align-items-center mt-auto">
+                                    <small class="text-muted">
+                                        <i class="bi bi-eye"></i> {{ $deal->views }} views
+                                    </small>
+                                    <a href="{{ route('products.show', $deal) }}" class="btn btn-sm btn-outline-primary stretched-link">Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        @endif
+    </section>
 </div>
 
 <!-- Quick View Modal (should be included in your layout file) -->
