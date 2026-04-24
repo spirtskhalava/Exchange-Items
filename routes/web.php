@@ -7,7 +7,10 @@ use App\Http\Controllers\OfferController;
 use App\Http\Controllers\ListingController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\MessageController;
-use App\Http\Controllers\UserReviewController; 
+use App\Http\Controllers\UserReviewController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\InsuranceController;
+use App\Http\Controllers\DisputeController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
@@ -51,14 +54,42 @@ Route::post('/products/{product}/verify', [ProductVerificationController::class,
     ->name('products.verify')
     ->middleware('auth');
 
-Route::post('/notifications/{id}/read', function ($id) {
-    auth()->user()
-        ->notifications()
-        ->where('id', $id)
-        ->update(['read_at' => now()]);
-        
-    return response()->json(['success' => true]);
-})->middleware('auth');
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+});
+
+Route::middleware(['auth'])->group(function () {
+    // Notifications
+    Route::post('/notifications/{id}/read', function ($id) {
+        Auth::user()->notifications()->where('id', $id)->update(['read_at' => now()]);
+        return response()->json(['success' => true]);
+    })->name('notifications.read');
+
+    Route::post('/notifications/read-all', function () {
+        Auth::user()->unreadNotifications->markAsRead();
+        return back();
+    })->name('notifications.readAll');
+});
+
+Route::middleware(['auth'])->group(function () {
+    // Insurance
+    Route::post('exchanges/{exchange}/insurance/opt-in',   [InsuranceController::class, 'optIn'])->name('insurance.optIn');
+    Route::post('exchanges/{exchange}/insurance/valuation',[InsuranceController::class, 'submitValuation'])->name('insurance.submitValuation');
+    Route::post('exchanges/{exchange}/insurance/respond',  [InsuranceController::class, 'respondValuation'])->name('insurance.respondValuation');
+    Route::get('exchanges/{exchange}/insurance/pay',       [InsuranceController::class, 'createPayment'])->name('insurance.pay');
+    Route::get('exchanges/{exchange}/insurance/success',   [InsuranceController::class, 'paymentSuccess'])->name('insurance.paymentSuccess');
+    Route::post('exchanges/{exchange}/insurance/received', [InsuranceController::class, 'markReceived'])->name('insurance.markReceived');
+
+    // Disputes
+    Route::get('exchanges/{exchange}/dispute',  [DisputeController::class, 'create'])->name('disputes.create');
+    Route::post('exchanges/{exchange}/dispute', [DisputeController::class, 'store'])->name('disputes.store');
+
+    // Admin
+    Route::get('admin/disputes',                          [DisputeController::class, 'adminIndex'])->name('admin.disputes.index');
+    Route::post('admin/disputes/{dispute}/resolve',       [DisputeController::class, 'adminResolve'])->name('admin.disputes.resolve');
+});
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');

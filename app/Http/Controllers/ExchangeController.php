@@ -3,6 +3,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Exchange;
 use App\Models\Product;
+use App\Notifications\ExchangeStatusChanged;
+use App\Notifications\NewExchangeOffer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -43,6 +45,10 @@ class ExchangeController extends Controller
         ]);
         $exchange->save();
 
+        // Notify the responder about the new offer
+        $exchange->load('requester', 'requestedProduct');
+        $exchange->responder->notify(new NewExchangeOffer($exchange));
+
         return redirect()->route('home');
     }
 
@@ -60,6 +66,10 @@ class ExchangeController extends Controller
 
         $exchange->status = $request->status;
         $exchange->save();
+
+        // Notify the requester about the status change
+        $exchange->load('requester', 'responder', 'requestedProduct');
+        $exchange->requester->notify(new ExchangeStatusChanged($exchange));
 
         return redirect()->route('exchanges.index')->with('success', 'Exchange status updated successfully.');
     }

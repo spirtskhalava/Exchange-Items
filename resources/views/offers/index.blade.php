@@ -118,6 +118,10 @@
                             </div>
                         </div>
                         @endif
+
+                        @if($offer->status === 'accepted')
+                            @include('insurance._panel', ['offer' => $offer, 'myRole' => 'responder'])
+                        @endif
                     </div>
                 </div>
             @empty
@@ -214,6 +218,10 @@
                                 Cancel Offer
                             </button>
                         </form>
+                        @endif
+
+                        @if($offer->status === 'accepted')
+                            @include('insurance._panel', ['offer' => $offer, 'myRole' => 'requester'])
                         @endif
                     </div>
                 </div>

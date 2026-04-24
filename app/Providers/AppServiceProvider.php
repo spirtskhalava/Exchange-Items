@@ -3,9 +3,10 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\View; // Import View
-use Illuminate\Support\Facades\Auth; // Import Auth
-use App\Models\Message;              // Import Message Model
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Message;
+use App\Models\Exchange;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -18,15 +19,27 @@ class AppServiceProvider extends ServiceProvider
     {
         // Add this logic
         View::composer('*', function ($view) {
-            $unreadCount = 0;
-            
+            $unreadCount          = 0;
+            $pendingOffersCount   = 0;
+            $unreadNotifications  = 0;
+
             if (Auth::check()) {
                 $unreadCount = Message::where('receiver_id', Auth::id())
-                                      ->where('is_read', false) // or 0
+                                      ->where('is_read', false)
                                       ->count();
+
+                $pendingOffersCount = Exchange::where('responder_id', Auth::id())
+                                              ->where('status', 'pending')
+                                              ->count();
+
+                $unreadNotifications = Auth::user()->unreadNotifications()->count();
             }
 
-            $view->with('unreadCount', $unreadCount);
+            $view->with([
+                'unreadCount'         => $unreadCount,
+                'pendingOffersCount'  => $pendingOffersCount,
+                'unreadNotifications' => $unreadNotifications,
+            ]);
         });
     }
 }

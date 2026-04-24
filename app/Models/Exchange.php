@@ -36,4 +36,9 @@ class Exchange extends Model
     {
         return $this->belongsTo(Product::class, 'offered_product_id');
     }
+
+    public function insurance()
+    {
+        return $this->hasOne(ExchangeInsurance::class);
+    }
 }
