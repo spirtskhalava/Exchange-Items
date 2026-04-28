@@ -1,235 +1,211 @@
 @extends('layouts.app')
 
 @section('content')
+<div class="container py-4">
 
-<!-- Bootstrap Icons -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-
-<!-- Minimalist Background -->
-<div style="background-color: #f9fafb; min-height: 100vh; position: fixed; top: 0; left: 0; width: 100%; z-index: -1;"></div>
-
-<div class="container py-5">
-    
-    <!-- Minimal Header -->
-    <div class="mb-5 border-bottom pb-3">
-        <h1 class="h3 fw-bold text-dark mb-0">Trade Offers</h1>
-        <p class="text-muted small mt-1">Manage exchanges and negotiations</p>
+    {{-- Page Header --}}
+    <div class="mb-4">
+        <h1 class="fw-bold mb-0" style="font-size:1.5rem;">Trade Offers</h1>
+        <p class="text-muted small mt-1 mb-0">Review incoming offers and track your sent offers</p>
     </div>
 
-    <div class="row g-5">
-        
-        <!-- ==========================
-             1. INCOMING (RECEIVED)
-        ========================== -->
+    @if(session('success'))
+        <div class="alert alert-success d-flex align-items-center gap-2 mb-4 py-2 px-3" role="alert">
+            <i class="bi bi-check-circle-fill text-success"></i>
+            <span>{{ session('success') }}</span>
+        </div>
+    @endif
+
+    <div class="row g-4">
+
+        {{-- ============================
+             INCOMING OFFERS
+        ============================ --}}
         <div class="col-lg-6">
-            <div class="d-flex align-items-center justify-content-between mb-4">
-                <h6 class="text-uppercase fw-bold text-secondary small ls-1 mb-0">Incoming</h6>
-                <span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill">{{ $receivedOffers->count() }}</span>
+            <div class="d-flex align-items-center gap-2 mb-3">
+                <span class="fw-bold" style="font-size:.95rem;">Incoming</span>
+                <span class="badge rounded-pill" style="background:rgba(67,97,238,.1);color:var(--primary);font-size:.75rem;">{{ $receivedOffers->count() }}</span>
             </div>
 
             @forelse($receivedOffers as $offer)
-                <div class="card border-0 rounded-3 mb-4 card-minimal">
-                    <div class="card-body p-4">
-                        
-                        <!-- Header: Who & When -->
-                        <div class="d-flex justify-content-between align-items-center mb-4">
-                            <div class="d-flex align-items-center gap-2">
-                                <img src="https://ui-avatars.com/api/?name={{ urlencode($offer->requester->username) }}&background=f3f4f6&color=6b7280&size=32" class="rounded-circle" width="32" height="32">
-                                <div>
-                                    <span class="fw-bold text-dark d-block lh-1">{{ $offer->requester->username }}</span>
-                                    <small class="text-muted" style="font-size: 0.75rem;">{{ $offer->created_at->diffForHumans(null, true) }} ago</small>
-                                </div>
-                            </div>
-                            
-                            <!-- Status Badge -->
-                            @php
-                                $statusClass = match($offer->status) {
-                                    'accepted' => 'text-success bg-success',
-                                    'declined' => 'text-danger bg-danger',
-                                    default => 'text-warning bg-warning',
-                                };
-                            @endphp
-                            <span class="badge {{ $statusClass }} bg-opacity-10 rounded-pill fw-medium px-3">
-                                {{ ucfirst($offer->status) }}
-                            </span>
-                        </div>
+            <div class="card mb-3 offer-card">
+                <div class="card-body p-4">
 
-                        <!-- Trade Logic: Visual Flow -->
-                        <div class="d-flex align-items-center justify-content-between mb-4 position-relative">
-                            
-                            <!-- They Get (Your Item) -->
-                            <div class="text-center" style="width: 40%;">
-                                <div class="mb-2">
-                                    <span class="badge bg-light text-muted border">You Give</span>
-                                </div>
-                                <a href="{{ route('products.show', $offer->requestedProduct->id) }}" class="d-block text-dark fw-bold text-decoration-none text-truncate">
-                                    {{ $offer->requestedProduct->name }}
-                                </a>
+                    {{-- Offer header --}}
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="d-flex align-items-center justify-content-center rounded-circle fw-bold text-white"
+                                 style="width:34px;height:34px;font-size:.85rem;background:linear-gradient(135deg,var(--primary),var(--primary-dark));flex-shrink:0;">
+                                {{ strtoupper(substr($offer->requester->name ?? '?', 0, 1)) }}
                             </div>
-
-                            <!-- Exchange Icon -->
-                            <div class="text-muted opacity-25">
-                                <i class="bi bi-arrow-left-right fs-4"></i>
-                            </div>
-
-                            <!-- You Get (Their Item) -->
-                            <div class="text-center" style="width: 40%;">
-                                <div class="mb-2">
-                                    <span class="badge bg-light text-muted border">You Receive</span>
-                                </div>
-                                @if(isset($offer->offeredProduct) && isset($offer->offeredProduct->id))
-                                    <a href="{{ route('products.show', $offer->offeredProduct->id) }}" class="d-block text-dark fw-bold text-decoration-none text-truncate">
-                                        {{ $offer->offeredProduct->name }}
-                                    </a>
-                                @else
-                                    <span class="d-block text-dark fw-bold">Cash Only</span>
-                                @endif
+                            <div>
+                                <div class="fw-semibold" style="font-size:.875rem;line-height:1.2;">{{ $offer->requester->name ?? 'Unknown' }}</div>
+                                <div class="text-muted" style="font-size:.72rem;">{{ $offer->created_at->diffForHumans() }}</div>
                             </div>
                         </div>
-
-                        <!-- Cash Top Up -->
-                        @if($offer->money_offer)
-                            <div class="bg-light rounded-2 p-2 text-center mb-4">
-                                <small class="text-muted">
-                                    <i class="bi bi-plus-circle me-1"></i> Includes 
-                                    <span class="fw-bold text-dark">${{ number_format($offer->money_offer, 2) }}</span> cash
-                                </small>
-                            </div>
-                        @endif
-
-                        <!-- Actions -->
-                        @if ($offer->status == 'pending')
-                        <div class="row g-2">
-                            <div class="col-6">
-                                <form method="POST" action="{{ route('exchanges.updateStatus', $offer) }}">
-                                    @csrf
-                                    @method('PATCH')
-                                    <input type="hidden" name="status" value="declined">
-                                    <button type="submit" class="btn btn-light w-100 btn-sm text-muted py-2">Decline</button>
-                                </form>
-                            </div>
-                            <div class="col-6">
-                                <form method="POST" action="{{ route('exchanges.updateStatus', $offer) }}">
-                                    @csrf
-                                    @method('PATCH')
-                                    <input type="hidden" name="status" value="accepted">
-                                    <button type="submit" class="btn btn-dark w-100 btn-sm py-2">Accept</button>
-                                </form>
-                            </div>
-                        </div>
-                        @endif
-
-                        @if($offer->status === 'accepted')
-                            @include('insurance._panel', ['offer' => $offer, 'myRole' => 'responder'])
-                        @endif
+                        @php
+                            $sc = match($offer->status) {
+                                'accepted' => 'success',
+                                'declined' => 'danger',
+                                default    => 'warning',
+                            };
+                        @endphp
+                        <span class="badge" style="background:rgba(var(--bs-{{ $sc }}-rgb),.1);color:var(--bs-{{ $sc }});border-radius:50rem;padding:.35rem .8rem;font-size:.72rem;">
+                            {{ ucfirst($offer->status) }}
+                        </span>
                     </div>
+
+                    {{-- Trade visual --}}
+                    <div class="d-flex align-items-stretch gap-2 mb-3">
+                        <div class="flex-1 p-2 rounded-2 text-center" style="background:var(--bg);flex:1;">
+                            <div class="text-muted" style="font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:.2rem;">You Give</div>
+                            <a href="{{ route('products.show', $offer->requestedProduct->id) }}" class="fw-semibold text-decoration-none text-dark d-block text-truncate" style="font-size:.83rem;">{{ $offer->requestedProduct->name }}</a>
+                        </div>
+                        <div class="d-flex align-items-center px-1 text-muted" style="opacity:.35;font-size:1rem;">
+                            <i class="bi bi-arrow-left-right"></i>
+                        </div>
+                        <div class="flex-1 p-2 rounded-2 text-center" style="background:var(--bg);flex:1;">
+                            <div class="text-muted" style="font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:.2rem;">You Receive</div>
+                            @if(isset($offer->offeredProduct->id))
+                                <a href="{{ route('products.show', $offer->offeredProduct->id) }}" class="fw-semibold text-decoration-none text-dark d-block text-truncate" style="font-size:.83rem;">{{ $offer->offeredProduct->name }}</a>
+                            @else
+                                <span class="fw-semibold text-dark" style="font-size:.83rem;">Cash Only</span>
+                            @endif
+                        </div>
+                    </div>
+
+                    {{-- Cash top-up --}}
+                    @if($offer->money_offer)
+                    <div class="d-flex align-items-center gap-2 mb-3 p-2 rounded-2" style="background:rgba(6,214,160,.07);border:1px solid rgba(6,214,160,.2);">
+                        <i class="bi bi-cash-coin text-success" style="font-size:.9rem;"></i>
+                        <span style="font-size:.82rem;color:#374151;">Includes <strong>${{ number_format($offer->money_offer, 2) }}</strong> cash top-up</span>
+                    </div>
+                    @endif
+
+                    {{-- Actions --}}
+                    @if($offer->status === 'pending')
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <form method="POST" action="{{ route('exchanges.updateStatus', $offer) }}">
+                                @csrf @method('PATCH')
+                                <input type="hidden" name="status" value="declined">
+                                <button type="submit" class="btn btn-light w-100 btn-sm text-muted py-2" style="border-radius:.55rem;">Decline</button>
+                            </form>
+                        </div>
+                        <div class="col-6">
+                            <form method="POST" action="{{ route('exchanges.updateStatus', $offer) }}">
+                                @csrf @method('PATCH')
+                                <input type="hidden" name="status" value="accepted">
+                                <button type="submit" class="btn btn-dark w-100 btn-sm py-2" style="border-radius:.55rem;">Accept</button>
+                            </form>
+                        </div>
+                    </div>
+                    @endif
+
+                    @if($offer->status === 'accepted')
+                        <div class="mt-3 pt-3 border-top">
+                            @include('insurance._panel', ['offer' => $offer, 'myRole' => 'responder'])
+                        </div>
+                    @endif
                 </div>
+            </div>
             @empty
-                <div class="text-center py-5">
-                    <div class="text-muted opacity-25 mb-2"><i class="bi bi-inbox fs-1"></i></div>
-                    <p class="text-muted small">No incoming offers</p>
+            <div class="card">
+                <div class="card-body text-center py-5">
+                    <i class="bi bi-inbox text-muted" style="font-size:2.5rem;opacity:.3;"></i>
+                    <p class="text-muted small mt-2 mb-0">No incoming offers yet</p>
                 </div>
+            </div>
             @endforelse
         </div>
 
-        <!-- ==========================
-             2. OUTGOING (SENT)
-        ========================== -->
+        {{-- ============================
+             SENT OFFERS
+        ============================ --}}
         <div class="col-lg-6">
-            <div class="d-flex align-items-center justify-content-between mb-4">
-                <h6 class="text-uppercase fw-bold text-secondary small ls-1 mb-0">Outgoing</h6>
-                <span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill">{{ $sentOffers->count() }}</span>
+            <div class="d-flex align-items-center gap-2 mb-3">
+                <span class="fw-bold" style="font-size:.95rem;">Sent</span>
+                <span class="badge rounded-pill" style="background:rgba(67,97,238,.1);color:var(--primary);font-size:.75rem;">{{ $sentOffers->count() }}</span>
             </div>
 
             @forelse($sentOffers as $offer)
-                <div class="card border-0 rounded-3 mb-4 card-minimal">
-                    <div class="card-body p-4">
-                        
-                        <!-- Header -->
-                        <div class="d-flex justify-content-between align-items-center mb-4">
-                            <div class="d-flex align-items-center gap-2">
-                                <div class="bg-light rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
-                                    <i class="bi bi-arrow-up-right text-muted" style="font-size: 0.8rem;"></i>
-                                </div>
-                                <div>
-                                    <span class="text-muted small d-block lh-1">To: {{ $offer->responder->username }}</span>
-                                    <small class="text-muted opacity-50" style="font-size: 0.7rem;">{{ $offer->created_at->format('M d') }}</small>
-                                </div>
-                            </div>
-                            
-                            <!-- Status -->
-                            @php
-                                $statusClass = match($offer->status) {
-                                    'accepted' => 'text-success bg-success',
-                                    'declined' => 'text-danger bg-danger',
-                                    default => 'text-warning bg-warning',
-                                };
-                            @endphp
-                            <span class="badge {{ $statusClass }} bg-opacity-10 rounded-pill fw-medium px-3">
-                                {{ ucfirst($offer->status) }}
-                            </span>
-                        </div>
+            <div class="card mb-3 offer-card">
+                <div class="card-body p-4">
 
-                        <!-- Trade Logic -->
-                        <div class="d-flex align-items-center justify-content-between mb-4">
-                             <!-- You Offer -->
-                             <div class="text-center" style="width: 40%;">
-                                <div class="mb-2">
-                                    <span class="badge bg-light text-muted border">You Offer</span>
-                                </div>
-                                @if(isset($offer->offeredProduct) && isset($offer->offeredProduct->id))
-                                    <a href="{{ route('products.show', $offer->offeredProduct->id) }}" class="d-block text-dark fw-bold text-decoration-none text-truncate">
-                                        {{ $offer->offeredProduct->name }}
-                                    </a>
-                                @else
-                                    <span class="d-block text-dark fw-bold">Cash Only</span>
-                                @endif
+                    {{-- Offer header --}}
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="d-flex align-items-center justify-content-center rounded-circle" style="width:34px;height:34px;background:var(--bg);flex-shrink:0;">
+                                <i class="bi bi-arrow-up-right text-muted" style="font-size:.8rem;"></i>
                             </div>
-
-                            <div class="text-muted opacity-25">
-                                <i class="bi bi-arrow-right fs-5"></i>
-                            </div>
-
-                            <!-- You Want -->
-                            <div class="text-center" style="width: 40%;">
-                                <div class="mb-2">
-                                    <span class="badge bg-light text-muted border">For</span>
-                                </div>
-                                <a href="{{ route('products.show', $offer->requestedProduct->id) }}" class="d-block text-dark fw-bold text-decoration-none text-truncate">
-                                    {{ $offer->requestedProduct->name }}
-                                </a>
+                            <div>
+                                <div class="fw-semibold" style="font-size:.875rem;line-height:1.2;">To: {{ $offer->responder->name ?? 'Unknown' }}</div>
+                                <div class="text-muted" style="font-size:.72rem;">{{ $offer->created_at->diffForHumans() }}</div>
                             </div>
                         </div>
-                        
-                         <!-- Cash Top Up -->
-                         @if($offer->money_offer)
-                         <div class="bg-light rounded-2 p-2 text-center mb-4">
-                             <small class="text-muted">
-                                 You added <span class="fw-bold text-dark">${{ number_format($offer->money_offer, 2) }}</span> cash
-                             </small>
-                         </div>
-                        @endif
-
-                        @if ($offer->status == 'pending' && $offer->requester_id === Auth::id())
-                        <form method="POST" action="{{ route('exchanges.cancel', $offer) }}">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-outline-secondary w-100 btn-sm py-2" style="border-style: dashed;">
-                                Cancel Offer
-                            </button>
-                        </form>
-                        @endif
-
-                        @if($offer->status === 'accepted')
-                            @include('insurance._panel', ['offer' => $offer, 'myRole' => 'requester'])
-                        @endif
+                        @php
+                            $sc = match($offer->status) {
+                                'accepted' => 'success',
+                                'declined' => 'danger',
+                                default    => 'warning',
+                            };
+                        @endphp
+                        <span class="badge" style="background:rgba(var(--bs-{{ $sc }}-rgb),.1);color:var(--bs-{{ $sc }});border-radius:50rem;padding:.35rem .8rem;font-size:.72rem;">
+                            {{ ucfirst($offer->status) }}
+                        </span>
                     </div>
+
+                    {{-- Trade visual --}}
+                    <div class="d-flex align-items-stretch gap-2 mb-3">
+                        <div class="flex-1 p-2 rounded-2 text-center" style="background:var(--bg);flex:1;">
+                            <div class="text-muted" style="font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:.2rem;">You Offer</div>
+                            @if(isset($offer->offeredProduct->id))
+                                <a href="{{ route('products.show', $offer->offeredProduct->id) }}" class="fw-semibold text-decoration-none text-dark d-block text-truncate" style="font-size:.83rem;">{{ $offer->offeredProduct->name }}</a>
+                            @else
+                                <span class="fw-semibold text-dark" style="font-size:.83rem;">Cash Only</span>
+                            @endif
+                        </div>
+                        <div class="d-flex align-items-center px-1 text-muted" style="opacity:.35;font-size:1rem;">
+                            <i class="bi bi-arrow-right"></i>
+                        </div>
+                        <div class="flex-1 p-2 rounded-2 text-center" style="background:var(--bg);flex:1;">
+                            <div class="text-muted" style="font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:.2rem;">For</div>
+                            <a href="{{ route('products.show', $offer->requestedProduct->id) }}" class="fw-semibold text-decoration-none text-dark d-block text-truncate" style="font-size:.83rem;">{{ $offer->requestedProduct->name }}</a>
+                        </div>
+                    </div>
+
+                    {{-- Cash --}}
+                    @if($offer->money_offer)
+                    <div class="d-flex align-items-center gap-2 mb-3 p-2 rounded-2" style="background:rgba(6,214,160,.07);border:1px solid rgba(6,214,160,.2);">
+                        <i class="bi bi-cash-coin text-success" style="font-size:.9rem;"></i>
+                        <span style="font-size:.82rem;color:#374151;">You added <strong>${{ number_format($offer->money_offer, 2) }}</strong> cash</span>
+                    </div>
+                    @endif
+
+                    @if($offer->status === 'pending' && $offer->requester_id === Auth::id())
+                    <form method="POST" action="{{ route('exchanges.cancel', $offer) }}"
+                          onsubmit="return confirm('Withdraw this offer?')">
+                        @csrf @method('DELETE')
+                        <button type="submit" class="btn btn-sm btn-outline-secondary w-100 py-2" style="border-radius:.55rem;border-style:dashed;">
+                            <i class="bi bi-x me-1"></i>Withdraw Offer
+                        </button>
+                    </form>
+                    @endif
+
+                    @if($offer->status === 'accepted')
+                        <div class="mt-3 pt-3 border-top">
+                            @include('insurance._panel', ['offer' => $offer, 'myRole' => 'requester'])
+                        </div>
+                    @endif
                 </div>
+            </div>
             @empty
-                <div class="text-center py-5">
-                    <div class="text-muted opacity-25 mb-2"><i class="bi bi-send fs-1"></i></div>
-                    <p class="text-muted small">No sent offers</p>
+            <div class="card">
+                <div class="card-body text-center py-5">
+                    <i class="bi bi-send text-muted" style="font-size:2.5rem;opacity:.3;"></i>
+                    <p class="text-muted small mt-2 mb-0">No sent offers yet</p>
                 </div>
+            </div>
             @endforelse
         </div>
     </div>
@@ -238,73 +214,7 @@
 
 @push('styles')
 <style>
-    /* Minimalist Typography */
-    body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    }
-    
-    .ls-1 { letter-spacing: 0.05em; }
-
-    /* Minimal Card Logic */
-    .card-minimal {
-        background: #ffffff;
-        border: 1px solid rgba(0,0,0,0.04) !important;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .card-minimal:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 16px rgba(0,0,0,0.04);
-        border-color: rgba(0,0,0,0.08) !important;
-    }
-
-    /* Soft Badges */
-    .badge {
-        font-weight: 500;
-        font-size: 0.7rem;
-        letter-spacing: 0.3px;
-    }
-
-    /* Buttons */
-    .btn-dark {
-        background-color: #1a1a1a;
-        border-color: #1a1a1a;
-    }
-    .btn-dark:hover {
-        background-color: #000;
-        border-color: #000;
-    }
-    
-    .btn-light {
-        background-color: #f3f4f6;
-        border-color: transparent;
-        color: #4b5563;
-    }
-    .btn-light:hover {
-        background-color: #e5e7eb;
-        color: #111827;
-    }
-
-    /* Text Utilities */
-    .text-truncate {
-        max-width: 120px;
-        margin: 0 auto;
-    }
+    .offer-card { transition: box-shadow .2s, transform .2s; }
+    .offer-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,.06) !important; }
 </style>
-@endpush
-
-@push('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const cancelButtons = document.querySelectorAll('form[action*="cancel"] button');
-        cancelButtons.forEach(button => {
-            button.addEventListener('click', function(e) {
-                if (!confirm('Withdraw this offer?')) {
-                    e.preventDefault();
-                }
-            });
-        });
-    });
-</script>
 @endpush

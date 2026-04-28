@@ -1,268 +1,147 @@
 @extends('layouts.app')
 
 @section('content')
-<!-- Bootstrap Icons -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+<div class="container py-4" style="max-width:720px;">
 
-<div class="container py-5">
-    <!-- Page Header -->
-    <div class="text-center mb-5">
-        <h1 class="display-5 fw-bold text-primary mb-3">
-            <i class="bi bi-pencil-square me-2"></i>Edit Your Listing
-        </h1>
+    {{-- Header --}}
+    <div class="mb-4">
+        <a href="{{ route('listings.index') }}" class="text-muted text-decoration-none small d-inline-flex align-items-center gap-1 mb-2">
+            <i class="bi bi-arrow-left"></i> My Listings
+        </a>
+        <h1 class="fw-bold mb-0" style="font-size:1.5rem;">Edit Listing</h1>
+        <p class="text-muted small mt-1 mb-0">Update your item details</p>
     </div>
 
-    <!-- Edit Form -->
-    <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
-        <div class="card-body p-4 p-md-5">
-            <!-- Ensure your route is correct here -->
+    @if($errors->any())
+        <div class="alert alert-danger py-2 px-3 small mb-4">
+            <ul class="mb-0 ps-3">
+                @foreach($errors->all() as $e)<li>{{ $e }}</li>@endforeach
+            </ul>
+        </div>
+    @endif
+
+    <div class="card">
+        <div class="card-body p-4">
             <form action="{{ route('products.update', $product->id) }}" method="POST" enctype="multipart/form-data" id="editProductForm">
-                @csrf
-                @method('PUT')
+                @csrf @method('PUT')
 
-                <!-- Product Name -->
-                <div class="mb-4">
-                    <label for="name" class="form-label fw-bold">Name</label>
-                    <div class="input-group">
-                        <span class="input-group-text bg-light">
-                            <i class="bi bi-card-heading text-muted"></i>
-                        </span>
-                        <input type="text" class="form-control form-control-lg @error('name') is-invalid @enderror" 
-                               id="name" name="name" value="{{ old('name', $product->name) }}" 
-                               placeholder="Enter product name" required>
-                        @error('name')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+                <div class="mb-3">
+                    <label class="form-label">Item Name</label>
+                    <input type="text" name="name" value="{{ old('name', $product->name) }}"
+                           class="form-control @error('name') is-invalid @enderror"
+                           placeholder="e.g. Sony PlayStation 5" required>
+                    @error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    <textarea name="description" rows="4"
+                              class="form-control @error('description') is-invalid @enderror"
+                              placeholder="Describe your item..." required>{{ old('description', $product->description) }}</textarea>
+                    @error('description')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Location</label>
+                    <div class="position-relative">
+                        <i class="bi bi-geo-alt position-absolute" style="top:50%;transform:translateY(-50%);left:.75rem;color:var(--muted);"></i>
+                        <input type="text" name="location" value="{{ old('location', $product->location) }}"
+                               class="form-control @error('location') is-invalid @enderror"
+                               style="padding-left:2.2rem!important;"
+                               placeholder="City, Country" required>
+                    </div>
+                    @error('location')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-sm-6">
+                        <label class="form-label">Category</label>
+                        <select name="category" class="form-select @error('category') is-invalid @enderror" required>
+                            <option value="" disabled>Select category</option>
+                            @foreach(['electronics'=>'Electronics','furniture'=>'Furniture','clothing'=>'Clothing & Fashion','books'=>'Books','sports'=>'Sports & Outdoors','gaming'=>'Gaming','mobiles'=>'Mobile Phones','home-garden'=>'Home & Garden','toys'=>'Toys & Hobbies','vehicles'=>'Vehicles','music'=>'Music & Instruments','art'=>'Art & Collectibles','beauty'=>'Health & Beauty','pets'=>'Pets','office'=>'Office & School','baby'=>'Baby & Kids','tools'=>'Tools & DIY','fashion'=>'Fashion','other'=>'Other'] as $val => $label)
+                                <option value="{{ $val }}" {{ old('category', $product->category) == $val ? 'selected' : '' }}>{{ $label }}</option>
+                            @endforeach
+                        </select>
+                        @error('category')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="form-label">Condition</label>
+                        <select name="condition" class="form-select @error('condition') is-invalid @enderror" required>
+                            <option value="" disabled>Select condition</option>
+                            <option value="New"         {{ old('condition', $product->condition) == 'New'         ? 'selected' : '' }}>New</option>
+                            <option value="Used"        {{ old('condition', $product->condition) == 'Used'        ? 'selected' : '' }}>Used</option>
+                            <option value="Refurbished" {{ old('condition', $product->condition) == 'Refurbished' ? 'selected' : '' }}>Refurbished</option>
+                        </select>
+                        @error('condition')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
                 </div>
 
-                <!-- Product Description -->
-                <div class="mb-4">
-                    <label for="description" class="form-label fw-bold">Description</label>
-                    <div class="input-group">
-                        <span class="input-group-text bg-light align-items-start">
-                            <i class="bi bi-text-paragraph text-muted mt-1"></i>
-                        </span>
-                        <textarea class="form-control @error('description') is-invalid @enderror" 
-                                  id="description" name="description" rows="4"
-                                  placeholder="Describe your product in detail" required>{{ old('description', $product->description) }}</textarea>
-                        @error('description')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                </div>
-
-                <!-- Product Location -->
-                <div class="mb-4">
-                    <label for="location" class="form-label fw-bold">Location</label>
-                    <div class="input-group">
-                        <span class="input-group-text bg-light">
-                            <i class="bi bi-geo-alt text-muted"></i>
-                        </span>
-                        <input type="text" class="form-control @error('location') is-invalid @enderror" 
-                               id="location" name="location" value="{{ old('location', $product->location) }}"
-                               placeholder="Where is the item located?" required>
-                        @error('location')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                </div>
-
-                <!-- Category & Condition Row -->
-                <div class="row g-3 mb-4">
-                    <div class="col-md-6">
-                        <label for="category" class="form-label fw-bold">Category</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light">
-                                <i class="bi bi-tags text-muted"></i>
-                            </span>
-                            <select name="category" id="category" class="form-select @error('category') is-invalid @enderror" required>
-                                <option value="" disabled>Select Category</option>
-                                <option value="electronics" {{ old('category', $product->category) == 'electronics' ? 'selected' : '' }}>Electronics</option>
-                                <option value="furniture" {{ old('category', $product->category) == 'furniture' ? 'selected' : '' }}>Furniture</option>
-                                <option value="clothing" {{ old('category', $product->category) == 'clothing' ? 'selected' : '' }}>Clothing</option>
-                                <option value="home-garden" {{ old('category', $product->category) == 'home-garden' ? 'selected' : '' }}>Home & Garden</option>
-                                <option value="sports" {{ old('category', $product->category) == 'sports' ? 'selected' : '' }}>Sports</option>
-                                <option value="gaming" {{ old('category', $product->category) == 'gaming' ? 'selected' : '' }}>Gaming</option>
-                                <option value="mobiles" {{ old('category', $product->category) == 'mobiles' ? 'selected' : '' }}>Mobiles</option>
-                                <option value="toys" {{ old('category', $product->category) == 'toys' ? 'selected' : '' }}>Toys</option>
-                                <option value="vehicles" {{ old('category', $product->category) == 'vehicles' ? 'selected' : '' }}>Vehicles</option>
-                                <option value="music" {{ old('category', $product->category) == 'music' ? 'selected' : '' }}>Music</option>
-                                <option value="art" {{ old('category', $product->category) == 'art' ? 'selected' : '' }}>Art</option>
-                                <option value="beauty" {{ old('category', $product->category) == 'beauty' ? 'selected' : '' }}>Beauty</option>
-                                <option value="pets" {{ old('category', $product->category) == 'pets' ? 'selected' : '' }}>Pets</option>
-                                <option value="office" {{ old('category', $product->category) == 'office' ? 'selected' : '' }}>Office</option>
-                                <option value="baby" {{ old('category', $product->category) == 'baby' ? 'selected' : '' }}>Baby</option>
-                                <option value="tools" {{ old('category', $product->category) == 'tools' ? 'selected' : '' }}>Tools</option>
-                                <option value="other" {{ old('category', $product->category) == 'other' ? 'selected' : '' }}>Other</option>
-                            </select>
-                            @error('category')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="condition" class="form-label fw-bold">Condition</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-light">
-                                <i class="bi bi-clipboard-check text-muted"></i>
-                            </span>
-                            <select name="condition" id="condition" class="form-select @error('condition') is-invalid @enderror" required>
-                                <option value="" disabled>Select Condition</option>
-                                <option value="New" {{ old('condition', $product->condition) == 'New' ? 'selected' : '' }}>New</option>
-                                <option value="Used" {{ old('condition', $product->condition) == 'Used' ? 'selected' : '' }}>Used</option>
-                                <option value="Refurbished" {{ old('condition', $product->condition) == 'Refurbished' ? 'selected' : '' }}>Refurbished</option>
-                            </select>
-                            @error('condition')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Product Images -->
-                <div class="mb-4">
-                    <label class="form-label fw-bold">Images</label>
-                    <p class="text-muted small mb-3">Upload high-quality images to showcase your product (max 5 images)</p>
-                    
-                    <!-- Image Preview Grid -->
-                    <div class="row g-3 mb-3" id="image-preview-container">
-                        @if($product->image_paths)
-                            @php
-                                $imagePaths = is_string($product->image_paths) ? json_decode($product->image_paths, true) : $product->image_paths;
-                            @endphp
-                            @if($imagePaths)
-                                @foreach($imagePaths as $index => $imagePath)
-                                    <div class="col-6 col-md-4 col-lg-3">
-                                        <div class="image-preview-card position-relative rounded-3 overflow-hidden">
-                                            <!-- Assuming storage link is set up correctly -->
-                                            <img src="{{ asset('storage/' . $imagePath) }}" alt="Product Image" class="img-fluid w-100" style="height: 180px; object-fit: cover;">
-                                            <div class="image-actions position-absolute top-0 end-0 p-2">
-                                                <!-- NOTE: Real removal requires AJAX or a hidden input to track deletions -->
-                                                                 <button type="button" class="btn btn-danger" onclick="removeImage(this)">
-                                                                    <i class="bi bi-x"></i>
-                                                                </button>
-                                            </div>
-                                            <!-- Hidden input to keep track of existing images if your controller supports it -->
-                                             <input type="hidden" name="existing_images[]" value="{{ $imagePath }}">
-                                        </div>
-                                    </div>
-                                @endforeach
-                            @endif
-                        @endif
-                    </div>
-
-                    <!-- File Upload with Preview -->
-                    <div class="file-upload-wrapper">
-                        <input type="file" name="images[]" id="images" class="form-control d-none" accept="image/*" multiple>
-                        <label for="images" class="file-upload-label w-100">
-                            <div class="border-2 border-dashed rounded-3 p-4 text-center cursor-pointer">
-                                <i class="bi bi-cloud-arrow-up fs-1 text-muted mb-2"></i>
-                                <h5 class="mb-1">Drag & drop images or click to browse</h5>
-                                <p class="small text-muted mb-0">Supports JPG, PNG (Max 5MB each)</p>
+                {{-- Existing images --}}
+                @if($product->image_paths)
+                    @php $imagePaths = is_string($product->image_paths) ? json_decode($product->image_paths, true) : $product->image_paths; @endphp
+                    @if(!empty($imagePaths))
+                    <div class="mb-3">
+                        <label class="form-label">Current Photos</label>
+                        <div class="row g-2" id="image-preview-container">
+                            @foreach($imagePaths as $imagePath)
+                            <div class="col-4 col-md-3">
+                                <div class="position-relative rounded-2 overflow-hidden" style="height:90px;">
+                                    <img src="{{ asset('storage/' . $imagePath) }}" class="w-100 h-100" style="object-fit:cover;" alt="Photo">
+                                    <button type="button" onclick="this.closest('.col-4, .col-md-3').remove()"
+                                            class="btn btn-sm btn-danger position-absolute" style="top:4px;right:4px;width:22px;height:22px;padding:0;line-height:1;font-size:.7rem;border-radius:50%;">
+                                        <i class="bi bi-x"></i>
+                                    </button>
+                                    <input type="hidden" name="existing_images[]" value="{{ $imagePath }}">
+                                </div>
                             </div>
-                        </label>
-                        @error('images.*')
-                            <div class="invalid-feedback d-block">{{ $message }}</div>
-                        @enderror
+                            @endforeach
+                        </div>
                     </div>
+                    @endif
+                @endif
+
+                {{-- Upload new images --}}
+                <div class="mb-4">
+                    <label class="form-label">Add New Photos <span class="text-muted fw-normal">(optional)</span></label>
+                    <label for="images" class="d-block border rounded-2 text-center p-4"
+                           style="border-style:dashed!important;background:var(--bg);cursor:pointer;transition:background .15s;"
+                           onmouseover="this.style.background='#edf0fb'" onmouseout="this.style.background='var(--bg)'">
+                        <i class="bi bi-cloud-arrow-up text-muted" style="font-size:1.8rem;opacity:.5;"></i>
+                        <div class="fw-semibold mt-2" style="font-size:.875rem;">Click to add more photos</div>
+                        <div class="text-muted small mt-1">JPG, PNG · Max 5 MB each</div>
+                        <input type="file" name="images[]" id="images" accept="image/*" multiple class="d-none">
+                    </label>
+                    <div class="row g-2 mt-2" id="new-image-preview"></div>
                 </div>
 
-                <!-- Form Actions -->
-                <div class="d-flex justify-content-between align-items-center mt-5 pt-3 border-top">
-                    <a href="{{ route('products.show', $product->id) }}" class="btn btn-outline-secondary px-4">
-                        <i class="bi bi-arrow-left me-2"></i>Cancel
-                    </a>
-                    <button type="submit" class="btn btn-primary px-4">
-                        <i class="bi bi-check-circle me-2"></i>Update Listing
+                <div class="d-flex gap-3 pt-2 border-top">
+                    <a href="{{ route('products.show', $product->id) }}" class="btn btn-light px-4" style="border-radius:.65rem;">Cancel</a>
+                    <button type="submit" class="btn btn-primary flex-1 px-4" style="border-radius:.65rem;flex:1;">
+                        <i class="bi bi-check2 me-1"></i> Save Changes
                     </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
-
-@push('styles')
-<style>
-    /* Modern form styling */
-    .card { border: none; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
-    .form-control, .form-select { padding: 0.75rem 1rem; border: 1px solid #e0e0e0; }
-    .form-control:focus, .form-select:focus { border-color: #4361ee; box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.15); }
-    .input-group-text { background-color: #f8f9fa; border-right: none; }
-    .input-group .form-control, .input-group .form-select { border-left: none; }
-    .image-preview-card { border: 1px solid #e0e0e0; transition: all 0.3s ease; }
-    .image-preview-card:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.08); }
-    .image-actions { opacity: 0; transition: opacity 0.2s ease; }
-    .image-preview-card:hover .image-actions { opacity: 1; }
-    .file-upload-label { cursor: pointer; }
-    .file-upload-label:hover { background-color: #f8f9fa; }
-    .border-dashed { border-style: dashed !important; }
-    .cursor-pointer { cursor: pointer; }
-    @media (max-width: 768px) {
-        .display-5 { font-size: 2rem; }
-        .lead { font-size: 1.1rem; }
-    }
-</style>
-@endpush
+@endsection
 
 @push('scripts')
 <script>
-    function removeImage(button) {
-        const previewCard = button.closest('.image-preview-card');
-        const colDiv = previewCard.closest('[class*="col-"]'); 
-        if (colDiv) colDiv.remove();
-        // Note: For real deletion of existing images, you likely need an AJAX call 
-        // to your removeImage route here.
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl)
-        })
-
-        const fileInput = document.getElementById('images');
-        const previewContainer = document.getElementById('image-preview-container');
-
-        if(fileInput) {
-            fileInput.addEventListener('change', function(e) {
-                const files = e.target.files;
-                const existingImages = previewContainer.querySelectorAll('.image-preview-card').length;
-
-                if (files.length + existingImages > 5) {
-                    alert('You can upload a maximum of 5 images');
-                    this.value = '';
-                    return;
-                }
-
-                for (let i = 0; i < files.length; i++) {
-                    const file = files[i];
-                    if (!file.type.match('image.*')) continue;
-
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const colDiv = document.createElement('div');
-                        colDiv.className = 'col-6 col-md-4 col-lg-3';
-                        
-                        // Simplified preview structure
-                        colDiv.innerHTML = `
-                            <div class="image-preview-card position-relative rounded-3 overflow-hidden">
-                                <img src="${e.target.result}" class="img-fluid w-100" style="height: 180px; object-fit: cover;">
-                                <div class="image-actions position-absolute top-0 end-0 p-2">
-                                    <button type="button" class="btn btn-danger btn-sm rounded-circle shadow" onclick="removeImage(this)">
-                                        <i class="bi bi-x"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        `;
-                        previewContainer.appendChild(colDiv);
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-        }
+document.getElementById('images').addEventListener('change', function() {
+    const preview = document.getElementById('new-image-preview');
+    preview.innerHTML = '';
+    [...this.files].slice(0, 5).forEach(file => {
+        if (!file.type.startsWith('image/')) return;
+        const reader = new FileReader();
+        reader.onload = e => {
+            const col = document.createElement('div');
+            col.className = 'col-4 col-md-3';
+            col.innerHTML = `<img src="${e.target.result}" class="w-100 rounded-2" style="height:90px;object-fit:cover;">`;
+            preview.appendChild(col);
+        };
+        reader.readAsDataURL(file);
     });
+});
 </script>
 @endpush
-
-@endsection  <!-- THIS WAS MISSING -->

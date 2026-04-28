@@ -5,6 +5,7 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Pagination\Paginator;
 use App\Models\Message;
 use App\Models\Exchange;
 
@@ -17,6 +18,7 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot()
     {
+        Paginator::useBootstrapFive();
         // Add this logic
         View::composer('*', function ($view) {
             $unreadCount          = 0;

@@ -24,94 +24,72 @@
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8f9fa;
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a0ca3;
+            --bg: #f5f6fa;
+            --border: #e9ecef;
+            --text: #1a1a2e;
+            --muted: #6b7280;
         }
+        * { font-family: 'Inter', sans-serif; }
+        body { background: var(--bg); color: var(--text); }
 
-        /* Navbar Container */
-        .navbar {
-            background-color: #ffffff !important;
-            backdrop-filter: blur(10px);
-            padding-top: 0.8rem;
-            padding-bottom: 0.8rem;
-        }
+        /* Navbar */
+        .navbar { background: rgba(255,255,255,.97) !important; backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: .7rem 0; }
+        .navbar-brand { font-weight: 800; color: var(--primary) !important; letter-spacing: -.5px; font-size: 1.3rem; gap: .4rem; }
+        .nav-link { font-weight: 500; color: var(--muted) !important; font-size: .88rem; padding: .45rem .8rem !important; border-radius: .55rem; transition: all .15s; display: flex; align-items: center; gap: .4rem; }
+        .nav-link:hover { color: var(--primary) !important; background: rgba(67,97,238,.07); }
+        .nav-icon { font-size: 1rem; line-height: 1; }
 
-        .navbar-brand {
-            font-weight: 800;
-            color: #4361ee !important;
-            letter-spacing: -0.5px;
-            font-size: 1.35rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
+        /* Dropdown */
+        .dropdown-menu { border: 1px solid var(--border) !important; box-shadow: 0 12px 32px rgba(0,0,0,.08) !important; border-radius: .85rem !important; padding: .4rem !important; margin-top: .4rem !important; }
+        .dropdown-item { border-radius: .5rem; padding: .55rem .9rem; font-size: .875rem; font-weight: 500; color: #374151; display: flex; align-items: center; gap: .5rem; transition: background .15s; }
+        .dropdown-item:hover { background: #f1f5f9 !important; color: var(--primary); }
 
-        /* Navigation Links */
-        .nav-link {
-            font-weight: 500;
-            color: #64748b !important;
-            font-size: 0.95rem;
-            padding: 0.6rem 1rem !important;
-            border-radius: 0.5rem;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
+        /* Cards */
+        .card { border: 1px solid var(--border) !important; border-radius: .9rem !important; box-shadow: 0 1px 6px rgba(0,0,0,.04) !important; transition: box-shadow .2s, transform .2s; }
 
-        .nav-link:hover {
-            color: #4361ee !important;
-            background-color: rgba(67, 97, 238, 0.05);
-        }
+        /* Buttons */
+        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); border: none; border-radius: .65rem; font-weight: 600; transition: all .18s; }
+        .btn-primary:hover { background: linear-gradient(135deg, var(--primary-dark), var(--primary)); transform: translateY(-1px); box-shadow: 0 6px 18px rgba(67,97,238,.3); }
+        .btn-outline-primary { border-radius: .65rem; font-weight: 600; border-width: 1.5px; }
+        .btn-dark { border-radius: .65rem; font-weight: 600; background: #1a1a2e; border-color: #1a1a2e; }
+        .btn-dark:hover { background: #111; border-color: #111; }
+        .btn-success { border-radius: .65rem; font-weight: 600; }
+        .btn-danger { border-radius: .65rem; font-weight: 600; }
 
-        .nav-link.active {
-            color: #4361ee !important;
-            font-weight: 600;
-        }
+        /* Forms */
+        .form-control, .form-select { border: 1.5px solid var(--border); border-radius: .65rem; background: #f9fafb; font-size: .9rem; transition: border-color .18s, box-shadow .18s; }
+        .form-control:focus, .form-select:focus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 3px rgba(67,97,238,.1); }
 
-        .nav-icon {
-            font-size: 1.1rem;
-            line-height: 1;
-            display: flex;
-        }
+        /* Pagination */
+        .pagination .page-link { border-radius: .55rem !important; margin: 0 2px; border-color: var(--border); color: var(--muted); font-weight: 500; font-size: .875rem; }
+        .pagination .page-item.active .page-link { background: var(--primary); border-color: var(--primary); }
 
-        /* Dropdown Styling */
-        .dropdown-menu {
-            border: none;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            border-radius: 1rem;
-            padding: 0.5rem;
-            margin-top: 0.5rem;
-        }
+        /* Auth nav button */
+        .btn-auth { padding: .45rem 1.2rem; border-radius: 50rem; font-weight: 600; font-size: .875rem; }
 
-        .dropdown-item {
-            border-radius: 0.5rem;
-            padding: 0.6rem 1rem;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
+        /* Alerts */
+        .alert { border-radius: .75rem; border: none; }
 
-        .dropdown-item:hover {
-            background-color: #f1f5f9;
-            color: #4361ee;
-        }
-        
-        .btn-auth {
-            padding: 0.5rem 1.5rem;
-            border-radius: 50rem;
-            font-weight: 600;
-        }
+        /* Badges */
+        .badge { font-weight: 500; }
 
-        #notifDropdown::after { display: none !important; }
+        /* Footer */
+        .footer_section { background: #fff; border-top: 1px solid var(--border); }
 
-        /* Footer Specific Styling */
-        .footer_section {
-            background-color: #ffffff;
-            border-top: 1px solid #e9ecef;
-        }
+        #notifDropdown::after, .notif-toggle::after { display: none !important; }
+
+        /* Product cards */
+        .product-card-item:hover { box-shadow: 0 8px 24px rgba(67,97,238,.12) !important; transform: translateY(-3px); }
+        .product-card-item:hover .product-card-img { transform: scale(1.04); }
+
+        /* Section titles */
+        .section-title { font-size: 1.25rem; font-weight: 700; color: var(--text); }
+
+        /* Nav active link */
+        .nav-link.active-page { color: var(--primary) !important; background: rgba(67,97,238,.07); }
     </style>
 </head>
 <body>
@@ -293,11 +271,9 @@
         -->
         <footer class="footer_section mt-auto py-4">
             <div class="container text-center">
-                <p class="mb-2 text-muted small">
-                    &copy; <span id="displayYear"></span> All Rights Reserved 
+                <p class="mb-0 text-muted small">
+                    &copy; <span id="displayYear"></span> Bartaro &mdash; All Rights Reserved
                 </p>
-                <!-- Include Vite Assets here as requested -->
-                @vite('resources/js/app.js')
             </div>
         </footer>
     </div>
@@ -336,6 +312,41 @@
                 }
             });
         });
+    </script>
+
+    {{-- Global wishlist toggle --}}
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.toggle-wishlist').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                var id   = this.getAttribute('data-id');
+                var icon = this.querySelector('.wishlist-icon');
+                if (!icon) return;
+                var filled = icon.classList.contains('fas');
+                icon.classList.toggle('fas', !filled);
+                icon.classList.toggle('far', filled);
+                icon.classList.toggle('text-danger', !filled);
+                icon.classList.toggle('text-secondary', filled);
+                fetch('/wishlist/' + id, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
+                    body: JSON.stringify({})
+                }).then(r => { if (r.status === 401) window.location.href = '/login'; return r.json(); })
+                  .then(d => {
+                      icon.classList.toggle('fas', d.status === 'added');
+                      icon.classList.toggle('far', d.status !== 'added');
+                      icon.classList.toggle('text-danger', d.status === 'added');
+                      icon.classList.toggle('text-secondary', d.status !== 'added');
+                  }).catch(() => {
+                      icon.classList.toggle('fas', filled);
+                      icon.classList.toggle('far', !filled);
+                      icon.classList.toggle('text-danger', filled);
+                      icon.classList.toggle('text-secondary', !filled);
+                  });
+            });
+        });
+    });
     </script>
 
     @stack('scripts')

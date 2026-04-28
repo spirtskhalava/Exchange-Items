@@ -2,68 +2,57 @@
 
 @section('content')
 <div class="container py-4">
-    <div class="card border-0 shadow-lg rounded-4 overflow-hidden" style="height: 80vh; min-height: 500px;">
+
+    <div class="card overflow-hidden" style="height:80vh;min-height:520px;">
         <div class="row g-0 h-100">
-            
-            <!-- LEFT SIDEBAR: User List -->
+
+            {{-- Contacts sidebar --}}
             <div class="col-md-4 col-lg-3 border-end h-100 d-flex flex-column bg-white">
-                
-                <!-- Sidebar Header -->
                 <div class="p-3 border-bottom">
-                    <h5 class="fw-bold mb-3">Messages</h5>
-                    <!-- <div class="position-relative">
-                        <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
-                        <input type="text" class="form-control rounded-pill ps-5 bg-light border-0" placeholder="Search contacts...">
-                    </div> -->
+                    <h6 class="fw-bold mb-0">Messages</h6>
                 </div>
-
-                <!-- User Scrollable List -->
-                <div class="flex-grow-1 overflow-auto custom-scrollbar">
+                <div class="flex-grow-1 overflow-auto" style="scrollbar-width:thin;">
                     <div class="list-group list-group-flush" id="user-list">
-                        @foreach($users as $user)
-                            <a href="#" 
-                               class="list-group-item list-group-item-action user-list-item d-flex align-items-center gap-3 py-3 border-bottom-0" 
-                               data-user-id="{{ $user->id }}"
-                               data-user-name="{{ $user->name }}">
-                                
-                                <!-- Avatar -->
-                                <div class="position-relative">
-                                    <img src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=random&color=fff" 
-                                         alt="{{ $user->name }}" 
-                                         class="rounded-circle" 
-                                         width="45" height="45">
-                                    <!-- Online Indicator (Static for now, can be dynamic later) -->
-                                    <span class="position-absolute bottom-0 end-0 p-1 bg-success border border-light rounded-circle"></span>
+                        @forelse($users as $user)
+                        <a href="#"
+                           class="list-group-item list-group-item-action user-list-item d-flex align-items-center gap-3 py-3"
+                           data-user-id="{{ $user->id }}"
+                           data-user-name="{{ $user->name }}"
+                           style="border:none;border-bottom:1px solid var(--border);transition:background .12s;">
+                            <div class="position-relative flex-shrink-0">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold text-white"
+                                     style="width:40px;height:40px;font-size:.9rem;background:linear-gradient(135deg,var(--primary),var(--primary-dark));">
+                                    {{ strtoupper(substr($user->name, 0, 1)) }}
                                 </div>
-
-                                <!-- User Details -->
-                                <div class="flex-grow-1 overflow-hidden">
-                                    <div class="d-flex justify-content-between align-items-center mb-1">
-                                        <h6 class="mb-0 text-truncate fw-bold text-dark">{{ $user->name }}</h6>
-                                        <small class="text-muted" style="font-size: 0.7rem;">Now</small>
-                                    </div>
-                                    <p class="mb-0 text-muted small text-truncate">Click to start chatting</p>
-                                </div>
-                            </a>
-                        @endforeach
+                                <span class="position-absolute border border-white rounded-circle bg-success"
+                                      style="width:10px;height:10px;bottom:0;right:0;"></span>
+                            </div>
+                            <div class="flex-grow-1 overflow-hidden">
+                                <div class="fw-semibold text-truncate" style="font-size:.875rem;">{{ $user->name }}</div>
+                                <div class="text-muted text-truncate" style="font-size:.75rem;">Click to chat</div>
+                            </div>
+                        </a>
+                        @empty
+                        <div class="text-center py-5">
+                            <i class="bi bi-people text-muted" style="font-size:2rem;opacity:.3;"></i>
+                            <p class="text-muted small mt-2">No contacts yet</p>
+                        </div>
+                        @endforelse
                     </div>
                 </div>
             </div>
 
-            <!-- RIGHT SIDEBAR: Chat Window -->
-            <div class="col-md-8 col-lg-9 h-100 bg-light">
-                <!-- This container is targeted by your JavaScript -->
+            {{-- Chat area --}}
+            <div class="col-md-8 col-lg-9 h-100" style="background:var(--bg);">
                 <div id="chat-windows-container" class="h-100 d-flex flex-column">
-                    
-                    <!-- Default Empty State (Visible before clicking a user) -->
                     <div class="h-100 d-flex flex-column align-items-center justify-content-center text-center p-5">
-                        <div class="bg-white p-4 rounded-circle shadow-sm mb-4">
-                            <i class="bi bi-chat-square-text text-primary" style="font-size: 3rem;"></i>
+                        <div class="d-flex align-items-center justify-content-center rounded-circle mb-3 shadow-sm"
+                             style="width:64px;height:64px;background:#fff;">
+                            <i class="bi bi-chat-square-text text-primary" style="font-size:1.8rem;"></i>
                         </div>
-                        <h4 class="fw-bold text-dark">Your Messages</h4>
-                        <p class="text-muted mb-0">Select a contact from the list on the left to start a conversation.</p>
+                        <h5 class="fw-bold mb-1">Your Messages</h5>
+                        <p class="text-muted small mb-0">Select a contact to start chatting</p>
                     </div>
-
                 </div>
             </div>
 
@@ -71,30 +60,13 @@
     </div>
 </div>
 
+@push('styles')
 <style>
-    /* Custom Scrollbar for the sidebar */
-    .custom-scrollbar::-webkit-scrollbar {
-        width: 5px;
-    }
-    .custom-scrollbar::-webkit-scrollbar-track {
-        background: #f1f1f1;
-    }
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-        background: #ccc;
-        border-radius: 10px;
-    }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-        background: #bbb;
-    }
-
-    /* Active State for User List */
     .user-list-item.active-user {
-        background-color: #f0f2f5;
-        border-left: 4px solid #4361ee;
+        background: rgba(67,97,238,.06);
+        border-left: 3px solid var(--primary) !important;
     }
-    
-    .user-list-item:hover {
-        background-color: #f8f9fa;
-    }
+    .user-list-item:hover { background: rgba(67,97,238,.03); }
 </style>
+@endpush
 @endsection
