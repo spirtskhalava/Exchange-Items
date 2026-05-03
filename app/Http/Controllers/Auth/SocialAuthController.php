@@ -12,14 +12,16 @@ class SocialAuthController extends Controller
     /** Redirect to Google */
     public function redirectToGoogle()
     {
-        return Socialite::driver('google')->redirect();
+        $callback = route('auth.google.callback');
+        return Socialite::driver('google')->redirectUrl($callback)->redirect();
     }
 
     /** Handle Google callback */
     public function handleGoogleCallback()
     {
         try {
-            $googleUser = Socialite::driver('google')->user();
+            $callback   = route('auth.google.callback');
+            $googleUser = Socialite::driver('google')->redirectUrl($callback)->user();
         } catch (\Exception $e) {
             return redirect()->route('login')->with('error', 'Google login failed. Please try again.');
         }
@@ -53,7 +55,10 @@ class SocialAuthController extends Controller
 
         Auth::login($user, remember: true);
 
-        return redirect()->intended(route('products.index'))
-            ->with('success', 'Welcome, ' . $user->name . '!');
+        // Flush any stale "intended" URL (e.g. /login) set before OAuth redirect
+        session()->forget('url.intended');
+
+        return redirect(route('products.index'))
+            ->with('success', 'Welcome back, ' . $user->name . '!');
     }
 }
