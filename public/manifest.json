@@ -1,0 +1,25 @@
+{
+    "name": "Bartaro — Trade Smarter",
+    "short_name": "Bartaro",
+    "description": "The modern platform for item exchanges. Safe, simple, and smart.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#f8f9fc",
+    "theme_color": "#4f46e5",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "/favicon.svg",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/favicon.ico",
+            "sizes": "48x48",
+            "type": "image/x-icon"
+        }
+    ],
+    "categories": ["shopping", "lifestyle"],
+    "screenshots": []
+}

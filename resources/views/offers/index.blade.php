@@ -24,7 +24,7 @@
         <div class="col-lg-6">
             <div class="d-flex align-items-center gap-2 mb-3">
                 <span class="fw-bold" style="font-size:.95rem;">Incoming</span>
-                <span class="badge rounded-pill" style="background:rgba(67,97,238,.1);color:var(--primary);font-size:.75rem;">{{ $receivedOffers->count() }}</span>
+                <span class="badge rounded-pill" style="background:rgba(79,70,229,.1);color:var(--p);font-size:.75rem;">{{ $receivedOffers->total() }}</span>
             </div>
 
             @forelse($receivedOffers as $offer)
@@ -117,6 +117,10 @@
                 </div>
             </div>
             @endforelse
+
+            @if($receivedOffers->hasPages())
+            <div class="mt-2 d-flex justify-content-center">{{ $receivedOffers->withQueryString()->links() }}</div>
+            @endif
         </div>
 
         {{-- ============================
@@ -125,7 +129,7 @@
         <div class="col-lg-6">
             <div class="d-flex align-items-center gap-2 mb-3">
                 <span class="fw-bold" style="font-size:.95rem;">Sent</span>
-                <span class="badge rounded-pill" style="background:rgba(67,97,238,.1);color:var(--primary);font-size:.75rem;">{{ $sentOffers->count() }}</span>
+                <span class="badge rounded-pill" style="background:rgba(79,70,229,.1);color:var(--p);font-size:.75rem;">{{ $sentOffers->total() }}</span>
             </div>
 
             @forelse($sentOffers as $offer)
@@ -207,6 +211,10 @@
                 </div>
             </div>
             @endforelse
+
+            @if($sentOffers->hasPages())
+            <div class="mt-2 d-flex justify-content-center">{{ $sentOffers->withQueryString()->links() }}</div>
+            @endif
         </div>
     </div>
 </div>

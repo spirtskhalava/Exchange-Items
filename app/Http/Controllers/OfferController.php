@@ -12,8 +12,8 @@ class OfferController extends Controller
     {
         if (Auth::check()) {
             $with = ['requester', 'responder', 'requestedProduct', 'offeredProduct', 'insurance.dispute'];
-            $receivedOffers = Exchange::where('responder_id', Auth::id())->with($with)->get();
-            $sentOffers     = Exchange::where('requester_id', Auth::id())->with($with)->get();
+            $receivedOffers = Exchange::where('responder_id', Auth::id())->with($with)->latest()->paginate(5, ['*'], 'received_page');
+            $sentOffers     = Exchange::where('requester_id', Auth::id())->with($with)->latest()->paginate(5, ['*'], 'sent_page');
             
             return view('offers.index', compact('receivedOffers', 'sentOffers'));
         } else {

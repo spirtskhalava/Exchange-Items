@@ -4,29 +4,68 @@
 <div class="container py-4" style="max-width:760px;">
 
     {{-- Stats Row --}}
+    @php
+        $tradeCount = $user->completedTradesCount();
+        $avgRating  = round($user->reviewsReceived()->avg('rating') ?? 0, 1);
+        $isVerified = $user->isVerifiedTrader();
+    @endphp
     <div class="row g-3 mb-4">
         <div class="col-4">
             <div class="card text-center p-3">
-                <div class="fw-bold" style="font-size:1.6rem;color:var(--primary);">{{ $user->products()->count() }}</div>
+                <div class="fw-bold" style="font-size:1.6rem;color:var(--p);">{{ $user->products()->count() }}</div>
                 <div class="text-muted small mt-1">Listings</div>
             </div>
         </div>
         <div class="col-4">
             <div class="card text-center p-3">
-                <div class="fw-bold" style="font-size:1.6rem;color:#06d6a0;">{{ \App\Models\Exchange::where('requester_id', $user->id)->where('status','accepted')->count() }}</div>
-                <div class="text-muted small mt-1">Trades Done</div>
+                <a href="{{ route('trades.index') }}" class="text-decoration-none">
+                    <div class="fw-bold" style="font-size:1.6rem;color:#059669;">{{ $tradeCount }}</div>
+                    <div class="text-muted small mt-1">Trades Done</div>
+                </a>
             </div>
         </div>
         <div class="col-4">
             <div class="card text-center p-3">
-                <div class="fw-bold" style="font-size:1.6rem;color:#ff9f1c;">
-                    {{ number_format($user->reviewsReceived()->avg('rating') ?? 0, 1) }}
-                    <i class="bi bi-star-fill" style="font-size:.9rem;"></i>
+                <div class="fw-bold" style="font-size:1.6rem;color:#d97706;">
+                    {{ $avgRating }}<i class="bi bi-star-fill" style="font-size:.9rem;"></i>
                 </div>
                 <div class="text-muted small mt-1">Rating</div>
             </div>
         </div>
     </div>
+
+    {{-- Verified progress (only when not yet verified) --}}
+    @if(!$isVerified)
+    <div class="card mb-4 p-3" style="border-left:4px solid var(--p);">
+        <div class="d-flex align-items-center gap-3">
+            <i class="bi bi-patch-check" style="font-size:1.6rem;color:var(--p);flex-shrink:0;"></i>
+            <div class="flex-grow-1">
+                <div class="fw-semibold mb-1" style="font-size:.875rem;">Path to Verified Trader</div>
+                <div class="d-flex gap-4">
+                    <div>
+                        <div class="text-muted" style="font-size:.72rem;">Trades</div>
+                        <div style="font-size:.82rem;font-weight:600;color:{{ $tradeCount >= 10 ? '#059669' : 'var(--text)' }};">
+                            {{ $tradeCount }}/10 @if($tradeCount >= 10)<i class="bi bi-check-circle-fill text-success"></i>@endif
+                        </div>
+                    </div>
+                    <div>
+                        <div class="text-muted" style="font-size:.72rem;">Rating</div>
+                        <div style="font-size:.82rem;font-weight:600;color:{{ $avgRating >= 4.5 ? '#059669' : 'var(--text)' }};">
+                            {{ $avgRating }}★ / 4.5★ @if($avgRating >= 4.5)<i class="bi bi-check-circle-fill text-success"></i>@endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @else
+    <div class="card mb-4 p-3 text-center" style="background:linear-gradient(135deg,#eef2ff,#ede9fe);border:1px solid #c7d2fe;">
+        <div class="verified-badge-md mx-auto mb-1" style="width:fit-content;">
+            <i class="bi bi-patch-check-fill"></i> Verified Trader
+        </div>
+        <div class="text-muted" style="font-size:.78rem;">You've completed 10+ trades with a 4.5★+ rating.</div>
+    </div>
+    @endif
 
     {{-- Alerts --}}
     @if(session('success'))
@@ -47,20 +86,52 @@
         <div class="card-body p-4">
 
             {{-- Avatar Row --}}
-            <div class="d-flex align-items-center gap-3 mb-4 pb-4 border-bottom">
-                <div class="d-flex align-items-center justify-content-center rounded-circle fw-bold text-white flex-shrink-0"
-                     style="width:60px;height:60px;font-size:1.5rem;background:linear-gradient(135deg,var(--primary),var(--primary-dark));">
-                    {{ strtoupper(substr($user->name, 0, 1)) }}
+            <div class="d-flex align-items-center gap-4 mb-4 pb-4 border-bottom">
+
+                {{-- Avatar display + overlay --}}
+                <div class="avatar-edit-wrap flex-shrink-0" style="position:relative;width:72px;height:72px;">
+                    @if($user->avatar_url)
+                        <img src="{{ $user->avatar_url }}" id="avatarPreview"
+                             class="rounded-circle object-fit-cover"
+                             style="width:72px;height:72px;border:3px solid var(--border);">
+                    @else
+                        @php
+                            $colors = ['#4f46e5','#0ea5e9','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899'];
+                            $bg = $colors[crc32($user->name) % count($colors)];
+                        @endphp
+                        <div id="avatarPreview" class="rounded-circle d-flex align-items-center justify-content-center fw-bold text-white"
+                             style="width:72px;height:72px;font-size:1.7rem;background:{{ $bg }};border:3px solid var(--border);">
+                            {{ strtoupper(substr($user->name, 0, 1)) }}
+                        </div>
+                    @endif
+                    <label for="avatarInput" class="avatar-edit-btn" title="Change photo">
+                        <i class="bi bi-camera-fill"></i>
+                    </label>
                 </div>
-                <div>
-                    <div class="fw-bold" style="font-size:1.05rem;">{{ $user->name }}</div>
+
+                <div class="flex-grow-1">
+                    <div class="fw-bold d-flex align-items-center gap-2" style="font-size:1.05rem;">
+                        {{ $user->name }}
+                        @include('_partials.verified-badge', ['user' => $user])
+                    </div>
                     <div class="text-muted small">{{ $user->email }}</div>
                     <div class="text-muted" style="font-size:.75rem;">Member since {{ $user->created_at->format('M Y') }}</div>
+                    @if($user->avatar_url)
+                        <form method="POST" action="{{ route('profile.avatar.remove') }}" class="d-inline mt-1">
+                            @csrf @method('DELETE')
+                            <button type="submit" class="btn btn-link p-0 text-danger" style="font-size:.75rem;">
+                                <i class="bi bi-trash3 me-1"></i>Remove photo
+                            </button>
+                        </form>
+                    @endif
                 </div>
             </div>
 
-            <form method="POST" action="{{ route('profile.update') }}">
+            <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data">
                 @csrf @method('PUT')
+
+                {{-- Hidden avatar input --}}
+                <input type="file" id="avatarInput" name="avatar" accept="image/*" class="d-none">
 
                 <div class="row g-3 mb-3">
                     <div class="col-md-6">
@@ -113,3 +184,46 @@
 
 </div>
 @endsection
+
+@push('styles')
+<style>
+.avatar-edit-wrap { cursor: pointer; }
+.avatar-edit-btn {
+    position: absolute;
+    bottom: 0; right: 0;
+    width: 26px; height: 26px;
+    background: var(--p);
+    border: 2px solid #fff;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+    font-size: .65rem;
+    cursor: pointer;
+    transition: background var(--transition);
+}
+.avatar-edit-btn:hover { background: var(--p-dark); }
+</style>
+@endpush
+
+@push('scripts')
+<script>
+document.getElementById('avatarInput').addEventListener('change', function () {
+    var file = this.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function (e) {
+        var preview = document.getElementById('avatarPreview');
+        // Replace whatever element is there with an img
+        var img = document.createElement('img');
+        img.src = e.target.result;
+        img.id = 'avatarPreview';
+        img.className = 'rounded-circle object-fit-cover';
+        img.style.cssText = 'width:72px;height:72px;border:3px solid var(--border);';
+        preview.replaceWith(img);
+    };
+    reader.readAsDataURL(file);
+    // Auto-submit the form
+    this.closest('form').submit();
+});
+</script>
+@endpush

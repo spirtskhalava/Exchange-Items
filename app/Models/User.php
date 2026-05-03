@@ -20,6 +20,8 @@ class User extends Authenticatable
         'name',
         'email',
         'phone',
+        'avatar',
+        'google_id',
         'password',
         'status',
         'last_login_at',
@@ -36,10 +38,32 @@ class User extends Authenticatable
         'password' => 'string',
     ];
 
-    // 'name' column is used as username throughout views
     public function getUsernameAttribute()
     {
         return $this->name;
+    }
+
+    public function getAvatarUrlAttribute(): ?string
+    {
+        return $this->avatar ? asset('storage/' . $this->avatar) : null;
+    }
+
+    public function isVerifiedTrader(): bool
+    {
+        $trades = \App\Models\Exchange::where(function ($q) {
+            $q->where('requester_id', $this->id)->orWhere('responder_id', $this->id);
+        })->where('status', 'accepted')->count();
+
+        $rating = $this->reviewsReceived()->avg('rating') ?? 0;
+
+        return $trades >= 10 && $rating >= 4.5;
+    }
+
+    public function completedTradesCount(): int
+    {
+        return \App\Models\Exchange::where(function ($q) {
+            $q->where('requester_id', $this->id)->orWhere('responder_id', $this->id);
+        })->where('status', 'accepted')->count();
     }
 
     public function products()

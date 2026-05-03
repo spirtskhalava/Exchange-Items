@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="8" fill="#4f46e5"/>
+  <!-- left-to-right arrow (top) -->
+  <path d="M7 11h13l-3-3 1.4-1.4L23.8 11 18.4 16.4 17 15l3-3H7z" fill="white"/>
+  <!-- right-to-left arrow (bottom) -->
+  <path d="M25 21H12l3 3-1.4 1.4L8.2 21l5.4-5.4L15 17l-3 3h13z" fill="white"/>
+</svg>

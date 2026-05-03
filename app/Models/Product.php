@@ -14,8 +14,9 @@ class Product extends Model
         'name',
         'description',
         'category',
+        'looking_for',
         'condition',
-        'image_paths', 
+        'image_paths',
         'views',
         'hide',
         'location'

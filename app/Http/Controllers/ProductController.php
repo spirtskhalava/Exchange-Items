@@ -6,15 +6,20 @@ use App\Models\Product;
 use App\Models\User;
 use App\Models\ProductVerification;
 use App\Notifications\ProductVerificationRequest;
+use App\Notifications\TradeMatchFound;
 use Illuminate\Http\Request;
+use App\Models\SavedSearch;
+use App\Notifications\SavedSearchMatch;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $categories = collect([
+        // Category list is static — cache it forever (busted only on deploy)
+        $categories = Cache::rememberForever('product.categories', fn() => collect([
             (object)['name' => 'Electronics',  'slug' => 'electronics',  'icon' => 'fa-laptop'],
             (object)['name' => 'Fashion',       'slug' => 'fashion',      'icon' => 'fa-fashion'],
             (object)['name' => 'Furniture',     'slug' => 'furniture',    'icon' => 'fa-couch'],
@@ -33,7 +38,7 @@ class ProductController extends Controller
             (object)['name' => 'Office',        'slug' => 'office',       'icon' => 'fa-pen'],
             (object)['name' => 'Baby',          'slug' => 'baby',         'icon' => 'fa-baby-carriage'],
             (object)['name' => 'Tools',         'slug' => 'tools',        'icon' => 'fa-tools'],
-        ]);
+        ]));
 
         $query = Product::query();
 
@@ -92,9 +97,30 @@ class ProductController extends Controller
             'hide'        => 0,
             'image_paths' => json_encode($imagePaths),
             'category'    => $request->category,
+            'looking_for' => $request->looking_for ?: null,
             'condition'   => $request->condition,
             'location'    => $request->location,
         ]);
+
+        // Smart matching: find products whose owner wants what I have and has what I want
+        if ($product->looking_for) {
+            $matches = Product::where('category', $product->looking_for)
+                ->where('looking_for', $product->category)
+                ->where('user_id', '!=', Auth::id())
+                ->where('hide', 0)
+                ->with('user')
+                ->limit(5)
+                ->get();
+
+            foreach ($matches as $match) {
+                // Notify me about the match
+                Auth::user()->notify(new TradeMatchFound($product, $match));
+                // Notify the match owner about my product
+                if ($match->user) {
+                    $match->user->notify(new TradeMatchFound($match, $product));
+                }
+            }
+        }
 
         // Pick 5 random users (excluding the product owner) for verification
         $randomUsers = User::where('id', '!=', Auth::id())
@@ -111,6 +137,16 @@ class ProductController extends Controller
 
             $user->notify(new ProductVerificationRequest($product));
         }
+
+        // Saved-search matching: notify users whose saved search matches this new product
+        SavedSearch::whereNot('user_id', Auth::id())
+            ->get()
+            ->each(function (SavedSearch $search) use ($product) {
+                if ($search->matches($product)) {
+                    $search->user?->notify(new SavedSearchMatch($product, $search));
+                    $search->update(['last_notified_at' => now()]);
+                }
+            });
 
         return redirect()->route('products.index')->with('success', 'Product created successfully.');
     }

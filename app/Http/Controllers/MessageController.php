@@ -11,13 +11,41 @@ class MessageController extends Controller
 {
     public function index()
     {
-        $users = User::where('id', '!=', Auth::id())->get();
-        $messages = Message::where(function($query) {
-            $query->where('sender_id', Auth::id())
-                  ->orWhere('receiver_id', Auth::id());
-        })->orderBy('created_at', 'asc')->get();
+        $me = Auth::id();
 
-        return view('messages.index', compact('users', 'messages'));
+        // Only show users we've actually had a conversation with
+        $contactIds = Message::where('sender_id', $me)
+            ->orWhere('receiver_id', $me)
+            ->get()
+            ->map(fn($m) => $m->sender_id === $me ? $m->receiver_id : $m->sender_id)
+            ->unique()
+            ->values();
+
+        $contacts = User::whereIn('id', $contactIds)->get();
+
+        return view('messages.index', compact('contacts'));
+    }
+
+    public function searchUsers(Request $request)
+    {
+        $q = trim($request->query('q', ''));
+        if (strlen($q) < 1) {
+            return response()->json([]);
+        }
+
+        $users = User::where('id', '!=', Auth::id())
+            ->where('name', 'like', "%{$q}%")
+            ->select('id', 'name', 'avatar')
+            ->limit(10)
+            ->get()
+            ->map(fn($u) => [
+                'id'         => $u->id,
+                'name'       => $u->name,
+                'avatar_url' => $u->avatar_url,
+                'initials'   => strtoupper(substr($u->name, 0, 1)),
+            ]);
+
+        return response()->json($users);
     }
 
     public function store(Request $request)

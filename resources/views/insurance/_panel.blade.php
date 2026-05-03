@@ -244,7 +244,7 @@
 
         {{-- Pending PayPal payment --}}
         @if($escrow === 'pending_payment')
-            @php $iPaid = $isReq ? !is_null($ins->req_paypal_order_id) : !is_null($ins->resp_paypal_order_id); @endphp
+            @php $iPaid = $isReq ? ($ins->req_payment_captured ?? false) : ($ins->resp_payment_captured ?? false); @endphp
             @if(!$iPaid)
                 <div class="alert alert-info py-2 px-3 mb-2">
                     <i class="bi bi-credit-card me-1"></i>

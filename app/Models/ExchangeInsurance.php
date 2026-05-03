@@ -10,7 +10,8 @@ class ExchangeInsurance extends Model
     protected $fillable = [
         'exchange_id',
         'req_opted', 'resp_opted',
-        'req_paypal_order_id', 'resp_paypal_order_id',
+        'req_paypal_order_id', 'req_payment_captured',
+        'resp_paypal_order_id', 'resp_payment_captured',
         'req_item_value', 'req_item_proposed_by', 'req_item_agreed',
         'resp_item_value', 'resp_item_proposed_by', 'resp_item_agreed',
         'escrow_status',
@@ -18,12 +19,14 @@ class ExchangeInsurance extends Model
     ];
 
     protected $casts = [
-        'req_opted'        => 'boolean',
-        'resp_opted'       => 'boolean',
-        'req_item_agreed'  => 'boolean',
-        'resp_item_agreed' => 'boolean',
-        'req_received'     => 'boolean',
-        'resp_received'    => 'boolean',
+        'req_opted'              => 'boolean',
+        'resp_opted'             => 'boolean',
+        'req_payment_captured'   => 'boolean',
+        'resp_payment_captured'  => 'boolean',
+        'req_item_agreed'        => 'boolean',
+        'resp_item_agreed'       => 'boolean',
+        'req_received'           => 'boolean',
+        'resp_received'          => 'boolean',
     ];
 
     public function exchange()

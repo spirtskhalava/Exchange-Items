@@ -9,7 +9,7 @@
         <p class="text-muted small mt-1 mb-0">Items you've saved to trade for later</p>
     </div>
 
-    @if($wishlistItems->isEmpty())
+    @if($wishlistItems->total() === 0)
         <div class="card text-center py-5">
             <div class="card-body">
                 <div class="mx-auto mb-3 d-flex align-items-center justify-content-center" style="width:64px;height:64px;background:rgba(239,71,111,.07);border-radius:1rem;">
@@ -69,6 +69,15 @@
             </div>
             @endforeach
         </div>
+
+        @if($wishlistItems->hasPages())
+        <div class="pagination-wrap mt-4 pt-3 border-top">
+            <div class="pagination-info">
+                Showing {{ $wishlistItems->firstItem() }}–{{ $wishlistItems->lastItem() }} of {{ $wishlistItems->total() }}
+            </div>
+            {{ $wishlistItems->withQueryString()->links() }}
+        </div>
+        @endif
     @endif
 </div>
 @endsection

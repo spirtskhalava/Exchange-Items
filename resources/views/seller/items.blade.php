@@ -14,11 +14,20 @@
             <div class="card sticky-top" style="top:76px;">
                 <div class="card-body p-4 text-center">
                     {{-- Avatar --}}
+                    @if($seller->avatar_url)
+                        <img src="{{ $seller->avatar_url }}" class="rounded-circle object-fit-cover mx-auto d-block mb-3"
+                             style="width:72px;height:72px;border:3px solid var(--border);">
+                    @else
+                    @php $sc = ['#4f46e5','#0ea5e9','#10b981','#f59e0b','#ef4444'][ crc32($seller->name) % 5 ]; @endphp
                     <div class="d-flex align-items-center justify-content-center rounded-circle fw-bold text-white mx-auto mb-3"
-                         style="width:72px;height:72px;font-size:1.8rem;background:linear-gradient(135deg,var(--primary),var(--primary-dark));">
+                         style="width:72px;height:72px;font-size:1.8rem;background:{{ $sc }};">
                         {{ strtoupper(substr($seller->name, 0, 1)) }}
                     </div>
-                    <h5 class="fw-bold mb-1">{{ $seller->name }}</h5>
+                    @endif
+                    <h5 class="fw-bold mb-1">
+                        {{ $seller->name }}
+                        @include('_partials.verified-badge', ['user' => $seller])
+                    </h5>
                     <div class="text-muted small mb-2">Member since {{ $seller->created_at->format('M Y') }}</div>
 
                     {{-- Rating --}}

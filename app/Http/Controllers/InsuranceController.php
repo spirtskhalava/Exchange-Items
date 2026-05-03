@@ -152,22 +152,30 @@ class InsuranceController extends Controller
             return back()->with('error', 'Payments are not ready yet — both valuations must be agreed first.');
         }
 
-        $userId   = Auth::id();
-        $isReq    = ($userId === $exchange->requester_id);
-        $amount   = $isReq ? $insurance->requesterLockedAmount() : $insurance->responderLockedAmount();
-        $myItem   = $isReq
-            ? ($exchange->offeredProduct->name ?? 'Your item')
+        $userId = Auth::id();
+        $isReq  = ($userId === $exchange->requester_id);
+
+        // Block if this side already captured payment
+        if ($isReq && $insurance->req_payment_captured) {
+            return back()->with('error', 'Your payment is already confirmed.');
+        }
+        if (!$isReq && $insurance->resp_payment_captured) {
+            return back()->with('error', 'Your payment is already confirmed.');
+        }
+
+        $amount = $isReq ? $insurance->requesterLockedAmount() : $insurance->responderLockedAmount();
+        $myItem = $isReq
+            ? ($exchange->offeredProduct->name  ?? 'Your item')
             : ($exchange->requestedProduct->name ?? 'Your item');
 
         $provider = new PayPalClient;
         $provider->setApiCredentials(config('paypal'));
-        $token    = $provider->getAccessToken();
-        $provider->setAccessToken($token);
+        $provider->setAccessToken($provider->getAccessToken());
 
         $order = $provider->createOrder([
             'intent' => 'CAPTURE',
             'purchase_units' => [[
-                'description' => "Insurance escrow for: {$myItem}",
+                'description' => "Bartaro escrow for: {$myItem}",
                 'amount'      => [
                     'currency_code' => 'USD',
                     'value'         => number_format($amount, 2, '.', ''),
@@ -179,27 +187,31 @@ class InsuranceController extends Controller
             ],
         ]);
 
-        if (isset($order['id'])) {
-            // Save order ID
-            if ($isReq) {
-                $insurance->req_paypal_order_id = $order['id'];
-            } else {
-                $insurance->resp_paypal_order_id = $order['id'];
-            }
-            $insurance->save();
+        if (!isset($order['id'])) {
+            return back()->with('error', 'Could not create PayPal order. Please try again.');
+        }
 
-            // Redirect to PayPal approval URL
-            foreach ($order['links'] as $link) {
-                if ($link['rel'] === 'approve') {
-                    return redirect($link['href']);
-                }
+        // Store the new order ID but do NOT mark as captured yet —
+        // capture happens only after PayPal redirects back and we confirm it.
+        if ($isReq) {
+            $insurance->req_paypal_order_id  = $order['id'];
+            $insurance->req_payment_captured = false; // reset in case of retry
+        } else {
+            $insurance->resp_paypal_order_id  = $order['id'];
+            $insurance->resp_payment_captured = false;
+        }
+        $insurance->save();
+
+        foreach ($order['links'] as $link) {
+            if ($link['rel'] === 'approve') {
+                return redirect($link['href']);
             }
         }
 
-        return back()->with('error', 'Could not create PayPal order. Please try again.');
+        return back()->with('error', 'Could not redirect to PayPal. Please try again.');
     }
 
-    // PayPal redirects back here after approval
+    // PayPal redirects back here after the user approves payment
     public function paymentSuccess(Request $request, Exchange $exchange)
     {
         $this->authorizeParty($exchange);
@@ -210,32 +222,41 @@ class InsuranceController extends Controller
 
         $orderId = $isReq ? $insurance->req_paypal_order_id : $insurance->resp_paypal_order_id;
 
+        if (!$orderId) {
+            return redirect()->route('offers.index')->with('error', 'No PayPal order found. Please try again.');
+        }
+
         $provider = new PayPalClient;
         $provider->setApiCredentials(config('paypal'));
-        $token    = $provider->getAccessToken();
-        $provider->setAccessToken($token);
+        $provider->setAccessToken($provider->getAccessToken());
 
         $result = $provider->capturePaymentOrder($orderId);
 
-        if (isset($result['status']) && $result['status'] === 'COMPLETED') {
-            // Check if both sides have paid
-            $reqPaid  = $insurance->req_paypal_order_id && ($isReq || $this->isOrderCaptured($insurance->req_paypal_order_id, $provider));
-            $respPaid = $insurance->resp_paypal_order_id && (!$isReq || $this->isOrderCaptured($insurance->resp_paypal_order_id, $provider));
-
-            if ($reqPaid && $respPaid) {
-                $insurance->escrow_status = 'locked';
-            }
-
-            $insurance->save();
-
+        // Only mark as captured when PayPal explicitly confirms COMPLETED
+        if (!isset($result['status']) || $result['status'] !== 'COMPLETED') {
             return redirect()->route('offers.index')
-                ->with('success', 'Payment received! '
-                    . ($insurance->escrow_status === 'locked'
-                        ? 'Escrow is now locked. Both parties can confirm receipt.'
-                        : 'Waiting for the other party to complete payment.'));
+                ->with('error', 'PayPal payment could not be confirmed. Please try again.');
         }
 
-        return redirect()->route('offers.index')->with('error', 'Payment could not be confirmed. Please try again.');
+        // Mark THIS party's payment as captured
+        if ($isReq) {
+            $insurance->req_payment_captured = true;
+        } else {
+            $insurance->resp_payment_captured = true;
+        }
+
+        // Lock escrow only when BOTH sides have confirmed payment
+        if ($insurance->req_payment_captured && $insurance->resp_payment_captured) {
+            $insurance->escrow_status = 'locked';
+        }
+
+        $insurance->save();
+
+        $message = $insurance->escrow_status === 'locked'
+            ? 'Both payments received — escrow is now locked! You can confirm receipt once items are exchanged.'
+            : 'Your payment is confirmed. Waiting for the other party to complete their payment.';
+
+        return redirect()->route('offers.index')->with('success', $message);
     }
 
     // Mark that you received your item and it's good

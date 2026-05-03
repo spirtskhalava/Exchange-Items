@@ -76,6 +76,21 @@
                     </div>
                 </div>
 
+                {{-- Looking For --}}
+                <div class="mb-3 p-3 rounded-2" style="background:var(--p-light);border:1px solid #c7d2fe;">
+                    <label class="form-label fw-semibold" style="color:var(--p);">
+                        <i class="bi bi-stars me-1"></i> What do you want in return?
+                        <span class="fw-normal text-muted">(enables smart matching)</span>
+                    </label>
+                    <select name="looking_for" class="form-select">
+                        <option value="">Any category</option>
+                        @foreach(['electronics'=>'Electronics','furniture'=>'Furniture','clothing'=>'Clothing & Fashion','books'=>'Books','sports'=>'Sports & Outdoors','gaming'=>'Gaming','mobiles'=>'Mobile Phones','home-garden'=>'Home & Garden','toys'=>'Toys & Hobbies','vehicles'=>'Vehicles','music'=>'Music & Instruments','art'=>'Art & Collectibles','beauty'=>'Health & Beauty','pets'=>'Pets','office'=>'Office & School','baby'=>'Baby & Kids','tools'=>'Tools & DIY','fashion'=>'Fashion','other'=>'Other'] as $val => $label)
+                            <option value="{{ $val }}" {{ old('looking_for') == $val ? 'selected' : '' }}>{{ $label }}</option>
+                        @endforeach
+                    </select>
+                    <div class="text-muted mt-1" style="font-size:.76rem;">We'll instantly notify you when someone lists exactly what you want and wants what you have.</div>
+                </div>
+
                 {{-- Image Upload --}}
                 <div class="mb-4">
                     <label class="form-label">Photos <span class="text-muted fw-normal">(up to 5)</span></label>
