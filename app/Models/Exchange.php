@@ -18,11 +18,22 @@ class Exchange extends Model
         'cash_paypal_order_id',
         'cash_payment_captured',
         'cash_payment_method',
+        'cancel_reason',
+        'cancel_requested_at',
+        'cancel_approved',
     ];
 
     protected $casts = [
         'cash_payment_captured' => 'boolean',
+        'cancel_approved'       => 'boolean',
+        'cancel_requested_at'   => 'datetime',
     ];
+
+    /** Cancellation has been requested but not yet decided */
+    public function hasPendingCancelRequest(): bool
+    {
+        return $this->cancel_reason !== null && $this->cancel_approved === null;
+    }
 
     public function requester()
     {

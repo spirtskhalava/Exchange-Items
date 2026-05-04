@@ -21,6 +21,7 @@ class Product extends Model
         'hide',
         'location',
         'sub_category',
+        'preferred_offer_category',
     ];
 
     public function user()

@@ -94,9 +94,12 @@ Route::middleware(['auth'])->group(function () {
     /* ── Exchanges ─────────────────────────────────────────── */
     Route::get('products/{product}/offer',  [ExchangeController::class, 'create'])->name('exchanges.create');
     Route::post('products/{product}/offer', [ExchangeController::class, 'store'])->name('exchanges.store');
-    Route::get('exchanges',                 [ExchangeController::class, 'index'])->name('exchanges.index');
-    Route::patch('exchanges/{exchange}',    [ExchangeController::class, 'updateStatus'])->name('exchanges.updateStatus');
-    Route::delete('exchanges/{exchange}/cancel', [ExchangeController::class, 'cancel'])->name('exchanges.cancel');
+    Route::get('exchanges',                               [ExchangeController::class, 'index'])->name('exchanges.index');
+    Route::patch('exchanges/{exchange}',                  [ExchangeController::class, 'updateStatus'])->name('exchanges.updateStatus');
+    // Cancellation flow (replaces instant delete)
+    Route::post('exchanges/{exchange}/request-cancel',    [ExchangeController::class, 'requestCancel'])->name('exchanges.requestCancel');
+    Route::post('exchanges/{exchange}/approve-cancel',    [ExchangeController::class, 'approveCancel'])->name('exchanges.approveCancel');
+    Route::post('exchanges/{exchange}/reject-cancel',     [ExchangeController::class, 'rejectCancel'])->name('exchanges.rejectCancel');
 
     /* ── Offers ────────────────────────────────────────────── */
     Route::get('/offers', [OfferController::class, 'index'])->name('offers.index');

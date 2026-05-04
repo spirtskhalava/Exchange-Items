@@ -120,8 +120,38 @@
                         @endif
                     @endif
 
-                    {{-- Actions --}}
-                    @if($offer->status === 'pending')
+                    {{-- ── Cancellation request from requester ── --}}
+                    @if($offer->hasPendingCancelRequest())
+                    <div class="mb-3 p-3 rounded-2" style="background:#fff7ed;border:1px solid #fed7aa;">
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                            <i class="bi bi-exclamation-triangle-fill" style="color:#ea580c;font-size:.9rem;"></i>
+                            <span style="font-size:.82rem;font-weight:600;color:#9a3412;">Cancellation Requested</span>
+                        </div>
+                        <p style="font-size:.8rem;color:#7c2d12;margin-bottom:.75rem;">
+                            <strong>Reason:</strong> {{ $offer->cancel_reason }}
+                        </p>
+                        <div class="d-flex gap-2">
+                            <form method="POST" action="{{ route('exchanges.approveCancel', $offer) }}" class="flex-fill">
+                                @csrf
+                                <button type="submit" class="btn btn-sm w-100 fw-semibold"
+                                        style="background:#16a34a;color:#fff;border-radius:.55rem;font-size:.8rem;"
+                                        onclick="return confirm('Approve cancellation? The offer will be permanently removed.')">
+                                    <i class="bi bi-check-lg me-1"></i> Approve
+                                </button>
+                            </form>
+                            <form method="POST" action="{{ route('exchanges.rejectCancel', $offer) }}" class="flex-fill">
+                                @csrf
+                                <button type="submit" class="btn btn-sm w-100 fw-semibold"
+                                        style="background:#dc2626;color:#fff;border-radius:.55rem;font-size:.8rem;">
+                                    <i class="bi bi-x-lg me-1"></i> Reject
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    @endif
+
+                    {{-- Actions (accept/decline) --}}
+                    @if($offer->status === 'pending' && !$offer->hasPendingCancelRequest())
                     <div class="row g-2">
                         <div class="col-6">
                             <form method="POST" action="{{ route('exchanges.updateStatus', $offer) }}">
@@ -283,14 +313,40 @@
                         @endif
                     @endif
 
+                    {{-- ── Cancellation flow (sent offers) ── --}}
                     @if($offer->status === 'pending' && $offer->requester_id === Auth::id())
-                    <form method="POST" action="{{ route('exchanges.cancel', $offer) }}"
-                          onsubmit="return confirm('Withdraw this offer?')">
-                        @csrf @method('DELETE')
-                        <button type="submit" class="btn btn-sm btn-outline-secondary w-100 py-2" style="border-radius:.55rem;border-style:dashed;">
-                            <i class="bi bi-x me-1"></i>Withdraw Offer
-                        </button>
-                    </form>
+                        @if($offer->hasPendingCancelRequest())
+                        {{-- Already requested — waiting for responder --}}
+                        <div class="d-flex align-items-center gap-2 p-2 rounded-2" style="background:#fff7ed;border:1px solid #fed7aa;">
+                            <i class="bi bi-hourglass-split" style="color:#ea580c;font-size:.9rem;"></i>
+                            <span style="font-size:.8rem;color:#9a3412;">
+                                Cancellation request sent — waiting for the other party to approve.
+                            </span>
+                        </div>
+                        @else
+                        {{-- Show reason form --}}
+                        <div x-data="{ open: false }">
+                            <button @click="open = !open"
+                                    class="btn btn-sm btn-outline-secondary w-100 py-2"
+                                    style="border-radius:.55rem;border-style:dashed;font-size:.8rem;">
+                                <i class="bi bi-x me-1"></i> Withdraw Offer
+                            </button>
+                            <div x-show="open" x-transition class="mt-2 p-3 rounded-2" style="background:#fef2f2;border:1px solid #fecaca;">
+                                <p style="font-size:.8rem;color:#991b1b;margin-bottom:.6rem;">
+                                    <strong>Reason required.</strong> The other party must approve before the offer is removed.
+                                </p>
+                                <form method="POST" action="{{ route('exchanges.requestCancel', $offer) }}">
+                                    @csrf
+                                    <textarea name="cancel_reason" rows="2" required minlength="5" maxlength="500"
+                                              class="form-control mb-2" style="font-size:.82rem;border-radius:.55rem;"
+                                              placeholder="Why do you want to cancel? (e.g. found another deal, item no longer available)"></textarea>
+                                    <button type="submit" class="btn btn-danger btn-sm w-100" style="border-radius:.55rem;font-size:.8rem;">
+                                        <i class="bi bi-send me-1"></i> Send Cancellation Request
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        @endif
                     @endif
 
                     @if($offer->status === 'accepted')

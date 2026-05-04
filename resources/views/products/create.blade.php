@@ -88,19 +88,36 @@
                     </div>
                 </div>
 
-                {{-- Looking For --}}
+                {{-- Looking For + Preferred Offer Category --}}
                 <div class="mb-3 p-3 rounded-2" style="background:var(--p-light);border:1px solid #c7d2fe;">
                     <label class="form-label fw-semibold" style="color:var(--p);">
                         <i class="bi bi-stars me-1"></i> What do you want in return?
                         <span class="fw-normal text-muted">(enables smart matching)</span>
                     </label>
-                    <select name="looking_for" class="form-select">
+                    <select name="looking_for" class="form-select mb-2">
                         <option value="">Any category</option>
-                        @foreach(['electronics'=>'Electronics','furniture'=>'Furniture','clothing'=>'Clothing & Fashion','books'=>'Books','sports'=>'Sports & Outdoors','gaming'=>'Gaming','mobiles'=>'Mobile Phones','home-garden'=>'Home & Garden','toys'=>'Toys & Hobbies','vehicles'=>'Vehicles','music'=>'Music & Instruments','art'=>'Art & Collectibles','beauty'=>'Health & Beauty','pets'=>'Pets','office'=>'Office & School','baby'=>'Baby & Kids','tools'=>'Tools & DIY','fashion'=>'Fashion','other'=>'Other'] as $val => $label)
-                            <option value="{{ $val }}" {{ old('looking_for') == $val ? 'selected' : '' }}>{{ $label }}</option>
+                        @foreach($allCats as $slug => $cat)
+                            <option value="{{ $slug }}" {{ old('looking_for') == $slug ? 'selected' : '' }}>{{ $cat['label'] }}</option>
                         @endforeach
                     </select>
-                    <div class="text-muted mt-1" style="font-size:.76rem;">We'll instantly notify you when someone lists exactly what you want and wants what you have.</div>
+                    <div class="text-muted mb-3" style="font-size:.76rem;">We'll instantly notify you when someone lists exactly what you want and wants what you have.</div>
+
+                    <label class="form-label fw-semibold" style="color:var(--p);">
+                        <i class="bi bi-shield-check me-1"></i> Only accept offers from category
+                        <span class="fw-normal text-muted">(optional — others auto-rejected)</span>
+                    </label>
+                    <select name="preferred_offer_category" class="form-select">
+                        <option value="">Accept offers from any category</option>
+                        @foreach($allCats as $slug => $cat)
+                            <option value="{{ $slug }}" {{ old('preferred_offer_category') == $slug ? 'selected' : '' }}>
+                                {{ $cat['label'] }} only
+                            </option>
+                        @endforeach
+                    </select>
+                    <div class="text-muted mt-1" style="font-size:.76rem;">
+                        <i class="bi bi-exclamation-circle me-1"></i>
+                        If set, offers from other categories will be automatically blocked with an explanation.
+                    </div>
                 </div>
 
                 {{-- Image Upload --}}

@@ -91,11 +91,12 @@ class ProductController extends Controller
             'user_id'     => Auth::id(),
             'hide'        => 0,
             'image_paths' => json_encode($imagePaths),
-            'category'     => $request->category,
-            'sub_category' => $request->sub_category ?: null,
-            'looking_for'  => $request->looking_for ?: null,
-            'condition'    => $request->condition,
-            'location'     => $request->location,
+            'category'                  => $request->category,
+            'sub_category'             => $request->sub_category ?: null,
+            'looking_for'              => $request->looking_for ?: null,
+            'preferred_offer_category' => $request->preferred_offer_category ?: null,
+            'condition'                => $request->condition,
+            'location'                 => $request->location,
         ]);
 
         // Smart matching: find products whose owner wants what I have and has what I want
