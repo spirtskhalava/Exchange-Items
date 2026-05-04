@@ -57,17 +57,17 @@
                 {{-- Stats --}}
                 <div class="hero-stats">
                     <div class="hero-stat">
-                        <strong>2,400+</strong>
+                        <strong>{{ number_format($stats['items']) }}+</strong>
                         <span>Items listed</span>
                     </div>
                     <div class="hero-stat-divider"></div>
                     <div class="hero-stat">
-                        <strong>1,800+</strong>
+                        <strong>{{ number_format($stats['trades']) }}+</strong>
                         <span>Trades done</span>
                     </div>
                     <div class="hero-stat-divider"></div>
                     <div class="hero-stat">
-                        <strong>900+</strong>
+                        <strong>{{ number_format($stats['members']) }}+</strong>
                         <span>Members</span>
                     </div>
                 </div>
