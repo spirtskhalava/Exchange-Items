@@ -76,10 +76,48 @@
 
                     {{-- Cash top-up --}}
                     @if($offer->money_offer)
-                    <div class="d-flex align-items-center gap-2 mb-3 p-2 rounded-2" style="background:rgba(6,214,160,.07);border:1px solid rgba(6,214,160,.2);">
-                        <i class="bi bi-cash-coin text-success" style="font-size:.9rem;"></i>
-                        <span style="font-size:.82rem;color:#374151;">Includes <strong>${{ number_format($offer->money_offer, 2) }}</strong> cash top-up</span>
-                    </div>
+                        @if($offer->cash_payment_captured)
+                        {{-- ✅ Payment confirmed --}}
+                        <div class="d-flex align-items-center gap-2 mb-3 p-2 rounded-2" style="background:rgba(6,214,160,.07);border:1px solid rgba(6,214,160,.2);">
+                            <i class="bi bi-check-circle-fill text-success" style="font-size:.9rem;"></i>
+                            <span style="font-size:.82rem;color:#374151;">
+                                Cash top-up <strong>${{ number_format($offer->money_offer, 2) }}</strong>
+                                {{ $offer->cash_payment_method === 'cash' ? 'received in cash' : 'received via PayPal' }} ✓
+                            </span>
+                        </div>
+                        @elseif($offer->status === 'accepted' && $offer->cash_payment_method === 'cash')
+                        {{-- 💵 Cash chosen — responder must confirm receipt --}}
+                        <div class="mb-3 p-3 rounded-3" style="background:#fffbeb;border:1px solid #fcd34d;">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <i class="bi bi-cash-coin" style="color:#d97706;font-size:.95rem;"></i>
+                                <span style="font-size:.82rem;font-weight:600;color:#92400e;">
+                                    Expecting <strong>${{ number_format($offer->money_offer, 2) }}</strong> cash in person
+                                </span>
+                            </div>
+                            <form method="POST" action="{{ route('cash-payment.confirm-cash', $offer) }}">
+                                @csrf
+                                <button type="submit" class="btn btn-sm w-100 fw-semibold"
+                                        style="background:#198754;color:#fff;border-radius:.55rem;font-size:.82rem;"
+                                        onclick="return confirm('Confirm you received ${{ number_format($offer->money_offer, 2) }} in cash?')">
+                                    <i class="bi bi-check-lg me-1"></i> Confirm Cash Received
+                                </button>
+                            </form>
+                        </div>
+                        @elseif($offer->status === 'accepted')
+                        {{-- ⏳ Accepted — waiting for requester to choose / pay --}}
+                        <div class="d-flex align-items-center gap-2 mb-3 p-2 rounded-2" style="background:#fffbeb;border:1px solid #fcd34d;">
+                            <i class="bi bi-clock-fill" style="color:#d97706;font-size:.9rem;"></i>
+                            <span style="font-size:.82rem;color:#92400e;">
+                                Waiting for <strong>${{ number_format($offer->money_offer, 2) }}</strong> cash top-up payment
+                            </span>
+                        </div>
+                        @else
+                        {{-- Pending offer, not accepted yet --}}
+                        <div class="d-flex align-items-center gap-2 mb-3 p-2 rounded-2" style="background:rgba(6,214,160,.07);border:1px solid rgba(6,214,160,.2);">
+                            <i class="bi bi-cash-coin text-success" style="font-size:.9rem;"></i>
+                            <span style="font-size:.82rem;color:#374151;">Includes <strong>${{ number_format($offer->money_offer, 2) }}</strong> cash top-up</span>
+                        </div>
+                        @endif
                     @endif
 
                     {{-- Actions --}}
@@ -178,12 +216,71 @@
                         </div>
                     </div>
 
-                    {{-- Cash --}}
+                    {{-- Cash top-up --}}
                     @if($offer->money_offer)
-                    <div class="d-flex align-items-center gap-2 mb-3 p-2 rounded-2" style="background:rgba(6,214,160,.07);border:1px solid rgba(6,214,160,.2);">
-                        <i class="bi bi-cash-coin text-success" style="font-size:.9rem;"></i>
-                        <span style="font-size:.82rem;color:#374151;">You added <strong>${{ number_format($offer->money_offer, 2) }}</strong> cash</span>
-                    </div>
+                        @if($offer->cash_payment_captured)
+                        {{-- ✅ Paid (any method) --}}
+                        <div class="d-flex align-items-center gap-2 mb-3 p-2 rounded-2" style="background:rgba(6,214,160,.07);border:1px solid rgba(6,214,160,.2);">
+                            <i class="bi bi-check-circle-fill text-success" style="font-size:.9rem;"></i>
+                            <span style="font-size:.82rem;color:#374151;">
+                                Cash top-up <strong>${{ number_format($offer->money_offer, 2) }}</strong>
+                                {{ $offer->cash_payment_method === 'cash' ? 'paid in cash' : 'paid via PayPal' }} ✓
+                            </span>
+                        </div>
+                        @elseif($offer->status === 'accepted' && $offer->cash_payment_method === 'cash')
+                        {{-- 💵 Cash chosen — waiting for responder to confirm --}}
+                        <div class="d-flex align-items-center gap-2 mb-3 p-2 rounded-2" style="background:#fffbeb;border:1px solid #fcd34d;">
+                            <i class="bi bi-clock-fill" style="color:#d97706;font-size:.9rem;"></i>
+                            <span style="font-size:.82rem;color:#92400e;">
+                                Cash payment of <strong>${{ number_format($offer->money_offer, 2) }}</strong> marked — waiting for the other party to confirm receipt.
+                            </span>
+                        </div>
+                        @elseif($offer->status === 'accepted' && $offer->cash_payment_method === 'paypal')
+                        {{-- 💳 PayPal chosen — redirect to PayPal --}}
+                        <div class="mb-3 p-3 rounded-3" style="background:#fffbeb;border:1px solid #fcd34d;">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <i class="bi bi-exclamation-circle-fill" style="color:#d97706;font-size:.95rem;"></i>
+                                <span style="font-size:.82rem;font-weight:600;color:#92400e;">
+                                    Cash top-up of <strong>${{ number_format($offer->money_offer, 2) }}</strong> pending payment
+                                </span>
+                            </div>
+                            <a href="{{ route('cash-payment.create', $offer) }}"
+                               class="btn btn-sm w-100 fw-semibold"
+                               style="background:#0070ba;color:#fff;border-radius:.55rem;font-size:.82rem;">
+                                <i class="bi bi-paypal me-1"></i> Pay ${{ number_format($offer->money_offer, 2) }} via PayPal
+                            </a>
+                        </div>
+                        @elseif($offer->status === 'accepted')
+                        {{-- 🔀 Accepted, no method chosen yet — show both options --}}
+                        <div class="mb-3 p-3 rounded-3" style="background:#fffbeb;border:1px solid #fcd34d;">
+                            <div class="d-flex align-items-center gap-2 mb-3">
+                                <i class="bi bi-exclamation-circle-fill" style="color:#d97706;font-size:.95rem;"></i>
+                                <span style="font-size:.82rem;font-weight:600;color:#92400e;">
+                                    Cash top-up of <strong>${{ number_format($offer->money_offer, 2) }}</strong> — choose how to pay:
+                                </span>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <a href="{{ route('cash-payment.create', $offer) }}"
+                                   class="btn btn-sm flex-fill fw-semibold"
+                                   style="background:#0070ba;color:#fff;border-radius:.55rem;font-size:.8rem;">
+                                    <i class="bi bi-paypal me-1"></i> PayPal
+                                </a>
+                                <form method="POST" action="{{ route('cash-payment.choose-cash', $offer) }}" class="flex-fill">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm w-100 fw-semibold"
+                                            style="background:#198754;color:#fff;border-radius:.55rem;font-size:.8rem;">
+                                        <i class="bi bi-cash-coin me-1"></i> Cash in Person
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        @else
+                        {{-- Pending offer, not accepted yet --}}
+                        <div class="d-flex align-items-center gap-2 mb-3 p-2 rounded-2" style="background:rgba(6,214,160,.07);border:1px solid rgba(6,214,160,.2);">
+                            <i class="bi bi-cash-coin text-success" style="font-size:.9rem;"></i>
+                            <span style="font-size:.82rem;color:#374151;">You added <strong>${{ number_format($offer->money_offer, 2) }}</strong> cash top-up</span>
+                        </div>
+                        @endif
                     @endif
 
                     @if($offer->status === 'pending' && $offer->requester_id === Auth::id())

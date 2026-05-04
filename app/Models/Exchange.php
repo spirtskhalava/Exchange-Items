@@ -14,7 +14,14 @@ class Exchange extends Model
         'requested_product_id',
         'offered_product_id',
         'status',
-        'money_offer'
+        'money_offer',
+        'cash_paypal_order_id',
+        'cash_payment_captured',
+        'cash_payment_method',
+    ];
+
+    protected $casts = [
+        'cash_payment_captured' => 'boolean',
     ];
 
     public function requester()

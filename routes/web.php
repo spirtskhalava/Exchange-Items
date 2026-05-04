@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\ProductVerificationController;
 use App\Http\Controllers\SavedSearchController;
 use App\Http\Controllers\Auth\SocialAuthController;
+use App\Http\Controllers\CashPaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -64,6 +65,12 @@ Route::post('/products/{product}/verify', [ProductVerificationController::class,
 
 
 Route::middleware(['auth'])->group(function () {
+    // Cash top-up payment
+    Route::get( '/exchanges/{exchange}/pay-cash',              [CashPaymentController::class, 'create'])->name('cash-payment.create');
+    Route::get( '/exchanges/{exchange}/pay-cash/success',      [CashPaymentController::class, 'success'])->name('cash-payment.success');
+    Route::post('/exchanges/{exchange}/pay-cash/choose-cash',  [CashPaymentController::class, 'chooseCash'])->name('cash-payment.choose-cash');
+    Route::post('/exchanges/{exchange}/pay-cash/confirm-cash', [CashPaymentController::class, 'confirmCash'])->name('cash-payment.confirm-cash');
+
     Route::get('/trades', [TradeController::class, 'index'])->name('trades.index');
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
