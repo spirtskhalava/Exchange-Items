@@ -32,16 +32,34 @@ class ExchangeController extends Controller
             return redirect()->back()->withErrors(['offer' => 'You must offer either a product or money.']);
         }
 
-        // ── Feature: preferred offer category auto-reject ──────
+        // ── Feature: preferred offer category / subcategory auto-reject ──
         if ($product->preferred_offer_category && $request->offered_product_id) {
             $offeredProduct = Product::find($request->offered_product_id);
-            if ($offeredProduct && $offeredProduct->category !== $product->preferred_offer_category) {
-                return redirect()->back()->with(
-                    'error',
-                    'The owner of this item only accepts offers from the "'
-                    . (config('categories.' . $product->preferred_offer_category . '.label') ?? $product->preferred_offer_category)
-                    . '" category. Your offer was not sent.'
-                );
+
+            if ($offeredProduct) {
+                $wantedCat    = $product->preferred_offer_category;
+                $wantedSub    = $product->preferred_offer_sub_category;
+                $catLabel     = config("categories.{$wantedCat}.label") ?? $wantedCat;
+                $subLabel     = $wantedSub
+                    ? (config("categories.{$wantedCat}.subs.{$wantedSub}") ?? $wantedSub)
+                    : null;
+
+                // Category mismatch
+                if ($offeredProduct->category !== $wantedCat) {
+                    $required = $subLabel ? "\"{$subLabel}\" (under {$catLabel})" : "\"{$catLabel}\"";
+                    return redirect()->back()->with(
+                        'error',
+                        "The owner only accepts offers from the {$required} category. Your offer was not sent."
+                    );
+                }
+
+                // Subcategory mismatch (only if owner specified one)
+                if ($wantedSub && $offeredProduct->sub_category !== $wantedSub) {
+                    return redirect()->back()->with(
+                        'error',
+                        "The owner only accepts offers specifically from \"{$subLabel}\" (under {$catLabel}). Your offer was not sent."
+                    );
+                }
             }
         }
 

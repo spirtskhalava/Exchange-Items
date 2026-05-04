@@ -94,7 +94,8 @@ class ProductController extends Controller
             'category'                  => $request->category,
             'sub_category'             => $request->sub_category ?: null,
             'looking_for'              => $request->looking_for ?: null,
-            'preferred_offer_category' => $request->preferred_offer_category ?: null,
+            'preferred_offer_category'     => $request->preferred_offer_category ?: null,
+            'preferred_offer_sub_category' => $request->preferred_offer_sub_category ?: null,
             'condition'                => $request->condition,
             'location'                 => $request->location,
         ]);

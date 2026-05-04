@@ -103,20 +103,29 @@
                     <div class="text-muted mb-3" style="font-size:.76rem;">We'll instantly notify you when someone lists exactly what you want and wants what you have.</div>
 
                     <label class="form-label fw-semibold" style="color:var(--p);">
-                        <i class="bi bi-shield-check me-1"></i> Only accept offers from category
+                        <i class="bi bi-shield-check me-1"></i> Only accept offers from
                         <span class="fw-normal text-muted">(optional — others auto-rejected)</span>
                     </label>
-                    <select name="preferred_offer_category" class="form-select">
-                        <option value="">Accept offers from any category</option>
-                        @foreach($allCats as $slug => $cat)
-                            <option value="{{ $slug }}" {{ old('preferred_offer_category') == $slug ? 'selected' : '' }}>
-                                {{ $cat['label'] }} only
-                            </option>
-                        @endforeach
-                    </select>
+                    <div class="row g-2">
+                        <div class="col-sm-6">
+                            <select name="preferred_offer_category" id="prefCatSelect" class="form-select">
+                                <option value="">Any category</option>
+                                @foreach($allCats as $slug => $cat)
+                                    <option value="{{ $slug }}" {{ old('preferred_offer_category') == $slug ? 'selected' : '' }}>
+                                        {{ $cat['label'] }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-sm-6">
+                            <select name="preferred_offer_sub_category" id="prefSubSelect" class="form-select">
+                                <option value="">Any subcategory</option>
+                            </select>
+                        </div>
+                    </div>
                     <div class="text-muted mt-1" style="font-size:.76rem;">
                         <i class="bi bi-exclamation-circle me-1"></i>
-                        If set, offers from other categories will be automatically blocked with an explanation.
+                        Offers with items outside your chosen category/subcategory will be automatically blocked.
                     </div>
                 </div>
 
@@ -149,9 +158,11 @@
 
 @push('scripts')
 <script>
-// ── Subcategory dynamic dropdown ──────────────────────────
+// ── Shared category data ──────────────────────────────────
 const categories = @json(collect(config('categories'))->map(fn($c) => $c['subs']));
-const oldSub     = "{{ old('sub_category') }}";
+
+// ── Item subcategory dropdown ─────────────────────────────
+const oldSub = "{{ old('sub_category') }}";
 
 function updateSubs(catSlug) {
     const sel  = document.getElementById('subCategorySelect');
@@ -159,16 +170,32 @@ function updateSubs(catSlug) {
     sel.innerHTML = '<option value="">— Select subcategory —</option>';
     Object.entries(subs).forEach(([slug, label]) => {
         const opt = document.createElement('option');
-        opt.value = slug;
-        opt.textContent = label;
+        opt.value = slug; opt.textContent = label;
         if (slug === oldSub) opt.selected = true;
         sel.appendChild(opt);
     });
 }
-
 const catSel = document.getElementById('categorySelect');
 if (catSel.value) updateSubs(catSel.value);
 catSel.addEventListener('change', () => updateSubs(catSel.value));
+
+// ── Preferred offer subcategory dropdown ──────────────────
+const oldPrefSub = "{{ old('preferred_offer_sub_category') }}";
+
+function updatePrefSubs(catSlug) {
+    const sel  = document.getElementById('prefSubSelect');
+    const subs = categories[catSlug] || {};
+    sel.innerHTML = '<option value="">Any subcategory</option>';
+    Object.entries(subs).forEach(([slug, label]) => {
+        const opt = document.createElement('option');
+        opt.value = slug; opt.textContent = label;
+        if (slug === oldPrefSub) opt.selected = true;
+        sel.appendChild(opt);
+    });
+}
+const prefCatSel = document.getElementById('prefCatSelect');
+if (prefCatSel.value) updatePrefSubs(prefCatSel.value);
+prefCatSel.addEventListener('change', () => updatePrefSubs(prefCatSel.value));
 
 // ── Image preview ─────────────────────────────────────────
 document.getElementById('images').addEventListener('change', function() {
