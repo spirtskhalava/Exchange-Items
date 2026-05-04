@@ -55,6 +55,17 @@ Route::get('products/{product}', [ProductController::class, 'show'])->name('prod
 // Seller profile — public browsing
 Route::get('/seller/{id}/items', [ProductController::class, 'showSellerItems'])->name('seller.items');
 
+// Dynamic XML sitemap — crawled by Google
+Route::get('/sitemap.xml', function () {
+    $products = App\Models\Product::where('hide', 0)
+        ->select('id', 'updated_at')
+        ->orderBy('updated_at', 'desc')
+        ->get();
+
+    $content = view('sitemap', compact('products'))->render();
+    return response($content, 200)->header('Content-Type', 'application/xml');
+})->name('sitemap');
+
 // Dev utility (protect in production behind admin middleware if desired)
 Route::get('/migrate-now', function () {
     Artisan::call('migrate', ['--force' => true]);
