@@ -18,47 +18,42 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        // Category list is static — cache it forever (busted only on deploy)
-        $categories = Cache::rememberForever('product.categories', fn() => collect([
-            (object)['name' => 'Electronics',  'slug' => 'electronics',  'icon' => 'fa-laptop'],
-            (object)['name' => 'Fashion',       'slug' => 'fashion',      'icon' => 'fa-fashion'],
-            (object)['name' => 'Furniture',     'slug' => 'furniture',    'icon' => 'fa-couch'],
-            (object)['name' => 'Clothing',      'slug' => 'clothing',     'icon' => 'fa-tshirt'],
-            (object)['name' => 'Books',         'slug' => 'books',        'icon' => 'fa-book'],
-            (object)['name' => 'Sports',        'slug' => 'sports',       'icon' => 'fa-basketball-ball'],
-            (object)['name' => 'Gaming',        'slug' => 'gaming',       'icon' => 'fa-gamepad'],
-            (object)['name' => 'Mobiles',       'slug' => 'mobiles',      'icon' => 'fa-mobile-alt'],
-            (object)['name' => 'Home & Garden', 'slug' => 'home-garden',  'icon' => 'fa-leaf'],
-            (object)['name' => 'Toys',          'slug' => 'toys',         'icon' => 'fa-puzzle-piece'],
-            (object)['name' => 'Vehicles',      'slug' => 'vehicles',     'icon' => 'fa-car'],
-            (object)['name' => 'Music',         'slug' => 'music',        'icon' => 'fa-guitar'],
-            (object)['name' => 'Art',           'slug' => 'art',          'icon' => 'fa-palette'],
-            (object)['name' => 'Beauty',        'slug' => 'beauty',       'icon' => 'fa-spa'],
-            (object)['name' => 'Pets',          'slug' => 'pets',         'icon' => 'fa-paw'],
-            (object)['name' => 'Office',        'slug' => 'office',       'icon' => 'fa-pen'],
-            (object)['name' => 'Baby',          'slug' => 'baby',         'icon' => 'fa-baby-carriage'],
-            (object)['name' => 'Tools',         'slug' => 'tools',        'icon' => 'fa-tools'],
-        ]));
+        $allCategories = config('categories');
 
-        $query = Product::query();
+        $query = Product::query()->where('hide', 0);
 
         if ($request->filled('search')) {
-            $query->where('name', 'like', '%' . $request->input('search') . '%')
-                  ->orWhere('description', 'like', '%' . $request->input('search') . '%');
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
+            });
         }
 
-        if ($request->filled('category')) {
-            $query->where('category', $request->input('category'));
+        $activeCat = $request->input('category');
+        $activeSub = $request->input('sub');
+
+        if ($activeCat) {
+            $query->where('category', $activeCat);
+        }
+
+        if ($activeSub) {
+            $query->where('sub_category', $activeSub);
         }
 
         if ($request->filled('condition')) {
             $query->where('condition', $request->input('condition'));
         }
 
-        $query->where('hide', '=', 0);
-        $products = $query->paginate(9);
+        if ($request->input('sort') === 'views') {
+            $query->orderBy('views', 'desc');
+        } else {
+            $query->latest();
+        }
 
-        return view('products.index', compact('products', 'categories'));
+        $products = $query->paginate(12)->withQueryString();
+
+        return view('products.index', compact('products', 'allCategories', 'activeCat', 'activeSub'));
     }
 
     public function create()
@@ -96,10 +91,11 @@ class ProductController extends Controller
             'user_id'     => Auth::id(),
             'hide'        => 0,
             'image_paths' => json_encode($imagePaths),
-            'category'    => $request->category,
-            'looking_for' => $request->looking_for ?: null,
-            'condition'   => $request->condition,
-            'location'    => $request->location,
+            'category'     => $request->category,
+            'sub_category' => $request->sub_category ?: null,
+            'looking_for'  => $request->looking_for ?: null,
+            'condition'    => $request->condition,
+            'location'     => $request->location,
         ]);
 
         // Smart matching: find products whose owner wants what I have and has what I want

@@ -53,24 +53,36 @@
                     @error('location')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
 
+                @php $allCats = config('categories'); @endphp
                 <div class="row g-3 mb-3">
                     <div class="col-sm-6">
                         <label class="form-label">Category</label>
-                        <select name="category" class="form-select @error('category') is-invalid @enderror" required>
+                        <select name="category" id="categorySelect" class="form-select @error('category') is-invalid @enderror" required>
                             <option value="" disabled selected>Select category</option>
-                            @foreach(['electronics'=>'Electronics','furniture'=>'Furniture','clothing'=>'Clothing & Fashion','books'=>'Books','sports'=>'Sports & Outdoors','gaming'=>'Gaming','mobiles'=>'Mobile Phones','home-garden'=>'Home & Garden','toys'=>'Toys & Hobbies','vehicles'=>'Vehicles','music'=>'Music & Instruments','art'=>'Art & Collectibles','beauty'=>'Health & Beauty','pets'=>'Pets','office'=>'Office & School','baby'=>'Baby & Kids','tools'=>'Tools & DIY','fashion'=>'Fashion','other'=>'Other'] as $val => $label)
-                                <option value="{{ $val }}" {{ old('category') == $val ? 'selected' : '' }}>{{ $label }}</option>
+                            @foreach($allCats as $slug => $cat)
+                                <option value="{{ $slug }}" {{ old('category') == $slug ? 'selected' : '' }}>{{ $cat['label'] }}</option>
                             @endforeach
                         </select>
                         @error('category')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
                     <div class="col-sm-6">
+                        <label class="form-label">Subcategory <span class="text-muted" style="font-weight:400;">(optional)</span></label>
+                        <select name="sub_category" id="subCategorySelect" class="form-select">
+                            <option value="">— Select subcategory —</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-sm-6">
                         <label class="form-label">Condition</label>
                         <select name="condition" class="form-select @error('condition') is-invalid @enderror" required>
                             <option value="" disabled selected>Select condition</option>
-                            <option value="New"         {{ old('condition') == 'New'         ? 'selected' : '' }}>New</option>
-                            <option value="Used"        {{ old('condition') == 'Used'        ? 'selected' : '' }}>Used</option>
-                            <option value="Refurbished" {{ old('condition') == 'Refurbished' ? 'selected' : '' }}>Refurbished</option>
+                            <option value="New"       {{ old('condition') == 'New'       ? 'selected' : '' }}>New</option>
+                            <option value="Like New"  {{ old('condition') == 'Like New'  ? 'selected' : '' }}>Like New</option>
+                            <option value="Good"      {{ old('condition') == 'Good'      ? 'selected' : '' }}>Good</option>
+                            <option value="Fair"      {{ old('condition') == 'Fair'      ? 'selected' : '' }}>Fair</option>
+                            <option value="Poor"      {{ old('condition') == 'Poor'      ? 'selected' : '' }}>Poor</option>
                         </select>
                         @error('condition')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
@@ -120,6 +132,28 @@
 
 @push('scripts')
 <script>
+// ── Subcategory dynamic dropdown ──────────────────────────
+const categories = @json(collect(config('categories'))->map(fn($c) => $c['subs']));
+const oldSub     = "{{ old('sub_category') }}";
+
+function updateSubs(catSlug) {
+    const sel  = document.getElementById('subCategorySelect');
+    const subs = categories[catSlug] || {};
+    sel.innerHTML = '<option value="">— Select subcategory —</option>';
+    Object.entries(subs).forEach(([slug, label]) => {
+        const opt = document.createElement('option');
+        opt.value = slug;
+        opt.textContent = label;
+        if (slug === oldSub) opt.selected = true;
+        sel.appendChild(opt);
+    });
+}
+
+const catSel = document.getElementById('categorySelect');
+if (catSel.value) updateSubs(catSel.value);
+catSel.addEventListener('change', () => updateSubs(catSel.value));
+
+// ── Image preview ─────────────────────────────────────────
 document.getElementById('images').addEventListener('change', function() {
     const preview = document.getElementById('image-preview');
     preview.innerHTML = '';
