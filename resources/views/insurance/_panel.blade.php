@@ -63,7 +63,7 @@
     @if(!$myOpted && !$theirOpted && $escrow === 'none')
         <div class="bg-light rounded-2 p-3 text-center">
             <p class="text-muted mb-2">Protect this trade. Funds held in escrow until both confirm receipt.<br>
-                <strong>$5 fee</strong> per participant.</p>
+                <strong>3% platform fee</strong> per participant (min $1.00).</p>
             <form method="POST" action="{{ route('insurance.optIn', $offer) }}">
                 @csrf
                 <button class="btn btn-dark btn-sm px-4">
@@ -248,8 +248,13 @@
             @if(!$iPaid)
                 <div class="alert alert-info py-2 px-3 mb-2">
                     <i class="bi bi-credit-card me-1"></i>
-                    Both valuations agreed! Pay <strong>${{ number_format($isReq ? $ins->requesterLockedAmount() : $ins->responderLockedAmount(), 2) }}</strong>
-                    (item value + $5 fee) via PayPal to lock escrow.
+                    @php
+                        $myValue     = $isReq ? ($ins->req_item_value ?? 0) : ($ins->resp_item_value ?? 0);
+                        $myFee       = \App\Models\ExchangeInsurance::platformFee($myValue);
+                        $myTotal     = $isReq ? $ins->requesterLockedAmount() : $ins->responderLockedAmount();
+                    @endphp
+                    Both valuations agreed! Pay <strong>${{ number_format($myTotal, 2) }}</strong>
+                    (item value ${{ number_format($myValue, 2) }} + 3% fee ${{ number_format($myFee, 2) }}) via PayPal to lock escrow.
                 </div>
                 <a href="{{ route('insurance.pay', $offer) }}" class="btn btn-primary btn-sm w-100 mb-2">
                     <i class="bi bi-paypal me-1"></i> Pay via PayPal
