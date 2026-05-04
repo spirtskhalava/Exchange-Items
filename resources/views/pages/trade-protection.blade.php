@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@section('meta_title', 'Trade Protection — Safe Item Exchanges | Bartaro')
+@section('meta_description', 'Learn how Bartaro keeps your trades safe. Optional trade insurance, dispute resolution, verified traders, and PayPal-secured payments protect every exchange.')
+@section('meta_canonical', route('trade.protection'))
+
 @section('content')
 
 {{-- Hero --}}

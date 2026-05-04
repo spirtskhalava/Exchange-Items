@@ -5,8 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="current-user" content="{{ Auth::id() }}">
-    <title>Bartaro — Trade Smarter</title>
 
+    {{-- ── SEO: Title & Description ───────────────────────── --}}
+    @php
+        $metaTitle       = trim($__env->yieldContent('meta_title'))       ?: 'Bartaro — Trade Smarter';
+        $metaDescription = trim($__env->yieldContent('meta_description')) ?: 'Bartaro is the modern platform for safe, free item exchanges. Trade what you have for what you want — no cash needed.';
+        $metaImage       = trim($__env->yieldContent('meta_image'))       ?: asset('favicon.svg');
+        $metaCanonical   = trim($__env->yieldContent('meta_canonical'))   ?: url()->current();
+        $metaType        = trim($__env->yieldContent('meta_type'))        ?: 'website';
+    @endphp
+    <title>{{ $metaTitle }}</title>
+    <meta name="description" content="{{ $metaDescription }}">
+    <link rel="canonical" href="{{ $metaCanonical }}">
+
+    {{-- ── Open Graph ──────────────────────────────────────── --}}
+    <meta property="og:type"        content="{{ $metaType }}">
+    <meta property="og:title"       content="{{ $metaTitle }}">
+    <meta property="og:description" content="{{ $metaDescription }}">
+    <meta property="og:url"         content="{{ $metaCanonical }}">
+    <meta property="og:image"       content="{{ $metaImage }}">
+    <meta property="og:site_name"   content="Bartaro">
+
+    {{-- ── Twitter Card ───────────────────────────────────── --}}
+    <meta name="twitter:card"        content="summary_large_image">
+    <meta name="twitter:title"       content="{{ $metaTitle }}">
+    <meta name="twitter:description" content="{{ $metaDescription }}">
+    <meta name="twitter:image"       content="{{ $metaImage }}">
+
+    {{-- ── Structured data (JSON-LD) injected per-page ─────── --}}
+    @stack('structured_data')
+
+    {{-- ── PWA / Icons ────────────────────────────────────── --}}
     <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
     <link rel="alternate icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
     <link rel="apple-touch-icon" href="{{ asset('favicon.svg') }}">

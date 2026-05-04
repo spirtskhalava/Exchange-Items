@@ -1,5 +1,21 @@
 @extends('layouts.app')
 
+@section('meta_title', 'Browse Items to Trade — Bartaro')
+@section('meta_description', 'Explore items available for trade on Bartaro. Search by category, condition, or keyword and make an offer today — no cash needed.')
+@section('meta_canonical', route('products.index'))
+
+@push('structured_data')
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "Browse Items — Bartaro",
+  "description": "Browse items available for trade on Bartaro.",
+  "url": "{{ route('products.index') }}"
+}
+</script>
+@endpush
+
 @section('content')
 
 {{-- Page hero bar --}}

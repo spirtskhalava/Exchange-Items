@@ -1,2 +1,21 @@
 User-agent: *
-Disallow:
+Allow: /
+Allow: /products
+Allow: /products/
+Allow: /trade-protection
+Allow: /terms
+
+# Keep private/user areas out of search index
+Disallow: /admin/
+Disallow: /offers
+Disallow: /exchanges
+Disallow: /listings
+Disallow: /wishlist
+Disallow: /messages
+Disallow: /profile
+Disallow: /trades
+Disallow: /saved-searches
+Disallow: /notifications/
+Disallow: /migrate-now
+
+Sitemap: https://bartaro.com/sitemap.xml

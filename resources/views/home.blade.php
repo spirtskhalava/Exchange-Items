@@ -1,5 +1,26 @@
 @extends('layouts.app')
 
+@section('meta_title', 'Bartaro — Trade What You Have for What You Want')
+@section('meta_description', 'Bartaro is a free peer-to-peer item exchange platform. List your unused items, browse what others offer, and trade safely with PayPal protection and optional trade insurance.')
+@section('meta_canonical', route('home'))
+
+@push('structured_data')
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Bartaro",
+  "url": "{{ config('app.url') }}",
+  "description": "Free peer-to-peer item exchange platform — trade what you have for what you want.",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "{{ route('products.index') }}?query={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+@endpush
+
 @section('content')
 
 {{-- ══ HERO ════════════════════════════════════════════════════ --}}

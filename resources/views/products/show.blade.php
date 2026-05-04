@@ -1,5 +1,44 @@
 @extends('layouts.app')
 
+@php
+    $seoImages   = !empty($product->image_paths) ? json_decode($product->image_paths, true) : [];
+    $seoImage    = !empty($seoImages) ? asset('storage/' . $seoImages[0]) : asset('favicon.svg');
+    $seoDesc     = $product->description
+        ? Str::limit(strip_tags($product->description), 155)
+        : "Trade {$product->name} on Bartaro — the free peer-to-peer item exchange platform.";
+@endphp
+
+@section('meta_title',       $product->name . ' — Trade on Bartaro')
+@section('meta_description', $seoDesc)
+@section('meta_canonical',   route('products.show', $product))
+@section('meta_image',       $seoImage)
+@section('meta_type',        'product')
+
+@push('structured_data')
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "{{ addslashes($product->name) }}",
+  "description": "{{ addslashes($seoDesc) }}",
+  "url": "{{ route('products.show', $product) }}",
+  "image": "{{ $seoImage }}",
+  "category": "{{ $product->category ?? '' }}",
+  "offers": {
+    "@type": "Offer",
+    "availability": "https://schema.org/InStock",
+    "price": "0",
+    "priceCurrency": "USD",
+    "description": "Available for trade — no money required"
+  },
+  "seller": {
+    "@type": "Person",
+    "name": "{{ addslashes($product->user->name ?? 'Bartaro User') }}"
+  }
+}
+</script>
+@endpush
+
 @section('content')
 <div class="container py-4">
 

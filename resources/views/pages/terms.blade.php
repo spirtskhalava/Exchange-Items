@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@section('meta_title', 'Terms & Conditions — Bartaro')
+@section('meta_description', 'Read the Bartaro Terms & Conditions. Understand your rights and responsibilities when listing items, making trades, and using our platform.')
+@section('meta_canonical', route('terms'))
+
 @push('styles')
 <style>
 .terms-hero {
