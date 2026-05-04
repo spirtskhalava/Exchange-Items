@@ -105,6 +105,9 @@
                 <div class="section-label mb-1">Shop by</div>
                 <h2 class="section-title">Categories</h2>
             </div>
+            <a href="{{ route('products.index') }}" class="btn btn-light">
+                See all categories <i class="bi bi-arrow-right ms-1"></i>
+            </a>
         </div>
 
         <div class="row g-3 mt-1">
