@@ -69,9 +69,12 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name'      => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'images.*'  => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+            'name'        => 'required|string|max:255',
+            'description' => 'required|string|max:5000',
+            'category'    => 'required|string',
+            'condition'   => 'required|in:New,Like New,Good,Fair,Poor',
+            'location'    => 'required|string|max:255',
+            'images.*'    => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
         ]);
 
         $imagePaths = [];
@@ -208,12 +211,11 @@ class ProductController extends Controller
         // Validation
         $request->validate([
             'name'            => 'required|string|max:255',
-            'description'     => 'nullable|string',
-            'price'           => 'nullable|numeric',
+            'description'     => 'required|string|max:5000',
             'category'        => 'required|string',
-            'condition'       => 'required|string',
-            'location'        => 'required|string',
-            'images.*'        => 'nullable|image|mimes:jpg,jpeg,png|max:10240',
+            'condition'       => 'required|in:New,Like New,Good,Fair,Poor',
+            'location'        => 'required|string|max:255',
+            'images.*'        => 'nullable|image|mimes:jpg,jpeg,png,webp|max:10240',
             'existing_images' => 'nullable|array',
         ]);
 
@@ -236,7 +238,6 @@ class ProductController extends Controller
         $product->update([
             'name'        => $request->name,
             'description' => $request->description,
-            'price'       => $request->price,
             'category'    => $request->category,
             'condition'   => $request->condition,
             'location'    => $request->location,
