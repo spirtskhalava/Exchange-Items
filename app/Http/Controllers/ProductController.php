@@ -58,11 +58,12 @@ class ProductController extends Controller
 
     public function create()
     {
-        if (Auth::check()) {
-            return view('products.create');
-        } else {
-            return redirect()->route('login')->with('error', 'Please log in to offer an exchange.');
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'Please log in to list an item.');
         }
+
+        $allCats = config('categories');
+        return view('products.create', compact('allCats'));
     }
 
     public function store(Request $request)
