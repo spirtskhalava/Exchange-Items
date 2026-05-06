@@ -77,14 +77,11 @@ class ProductController extends Controller
         ]);
 
         $imagePaths = [];
-        $allowedMimes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
-                if ($image && $image->isValid() && in_array($image->getMimeType(), $allowedMimes)) {
-                    if ($image->getSize() <= 5 * 1024 * 1024) { // 5 MB cap
-                        $imagePaths[] = $image->store('images', 'public');
-                    }
+                if ($image && $image->isValid()) {
+                    $imagePaths[] = $image->store('images', 'public');
                 }
             }
         }
