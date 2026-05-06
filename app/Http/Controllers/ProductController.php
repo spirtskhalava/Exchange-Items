@@ -74,15 +74,17 @@ class ProductController extends Controller
             'category'    => 'required|string',
             'condition'   => 'required|in:New,Like New,Good,Fair,Poor',
             'location'    => 'required|string|max:255',
-            'images.*'    => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
         ]);
 
         $imagePaths = [];
+        $allowedMimes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
-                if ($image->isValid()) {
-                    $imagePaths[] = $image->store('images', 'public');
+                if ($image && $image->isValid() && in_array($image->getMimeType(), $allowedMimes)) {
+                    if ($image->getSize() <= 5 * 1024 * 1024) { // 5 MB cap
+                        $imagePaths[] = $image->store('images', 'public');
+                    }
                 }
             }
         }
@@ -215,19 +217,21 @@ class ProductController extends Controller
             'category'        => 'required|string',
             'condition'       => 'required|in:New,Like New,Good,Fair,Poor',
             'location'        => 'required|string|max:255',
-            'images.*'        => 'nullable|image|mimes:jpg,jpeg,png,webp|max:10240',
             'existing_images' => 'nullable|array',
         ]);
 
         // Retained images sent from the form
         $retainedImages = $request->input('existing_images', []);
 
-        // Handle new uploads
+        // Handle new uploads — validate manually to avoid empty-input errors
         $newImages = [];
+        $allowedMimes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
-                if ($image->isValid()) {
-                    $newImages[] = $image->store('images', 'public');
+                if ($image && $image->isValid() && in_array($image->getMimeType(), $allowedMimes)) {
+                    if ($image->getSize() <= 10 * 1024 * 1024) { // 10 MB cap for edits
+                        $newImages[] = $image->store('images', 'public');
+                    }
                 }
             }
         }

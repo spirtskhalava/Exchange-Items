@@ -161,10 +161,15 @@ class ListingController extends Controller
                      ->with('success', 'Product updated successfully.');
     }
 
-    public function destroy(Product $product)
+    public function destroy($listing)
     {
-        //dd($product);
-         $product->delete();
+        $product = Product::findOrFail($listing);
+
+        if (Auth::id() !== $product->user_id) {
+            abort(403);
+        }
+
+        $product->delete();
 
         return redirect()->route('listings.index')->with('success', 'Product deleted successfully.');
     }
