@@ -1,8 +1,10 @@
 @php
     $imgUrl = 'https://placehold.co/480x340/f1f5f9/94a3b8?text=No+Photo';
     $paths  = !empty($product->image_paths) ? json_decode($product->image_paths, true) : null;
-    if (is_array($paths) && !empty($paths[0]) && !str_starts_with($paths[0], 'http')) {
-        $imgUrl = asset('storage/' . $paths[0]);
+    if (is_array($paths) && !empty($paths[0])) {
+        $imgUrl = str_starts_with($paths[0], 'http')
+            ? $paths[0]
+            : asset('storage/' . $paths[0]);
     }
 
     $condCfg = [

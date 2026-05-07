@@ -55,10 +55,10 @@ class FakeListingsSeeder extends Seeder
             ]);
         }
 
-        // ── 3. Picsum photo helper (stable per seed) ──────────────
-        // Each seed always returns the same image — no API key needed
-        $photo = fn(string $seed, int $w = 600, int $h = 500) =>
-            "https://picsum.photos/seed/{$seed}/{$w}/{$h}";
+        // ── 3. Photo helper — loremflickr gives keyword-relevant images ──
+        // lock= makes it stable (same keywords+lock = same photo every time)
+        $photo = fn(string $keywords, int $lock) =>
+            "https://loremflickr.com/640/480/{$keywords}?lock={$lock}";
 
         // ── 4. Listings ───────────────────────────────────────────
         $listings = [
@@ -70,7 +70,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'Good',
                 'location'    => 'Warsaw, Poland',
                 'looking_for' => 'electronics',
-                'photos'      => [$photo('redmi-note-phone'), $photo('redmi-phone2')],
+                'photos'      => [$photo('smartphone,xiaomi', 11), $photo('android,phone', 12)],
             ],
             [
                 'name'        => 'JBL Clip 4 Bluetooth Speaker',
@@ -80,7 +80,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'Good',
                 'location'    => 'Berlin, Germany',
                 'looking_for' => 'electronics',
-                'photos'      => [$photo('jbl-speaker-blue'), $photo('bluetooth-speaker2')],
+                'photos'      => [$photo('bluetooth,speaker', 21), $photo('portable,speaker', 22)],
             ],
             [
                 'name'        => 'Complete Skateboard Setup',
@@ -90,7 +90,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'Good',
                 'location'    => 'Barcelona, Spain',
                 'looking_for' => 'sports',
-                'photos'      => [$photo('skateboard-deck'), $photo('skateboard2')],
+                'photos'      => [$photo('skateboard,skate', 31), $photo('skateboard', 32)],
             ],
             [
                 'name'        => 'IKEA FORSÅ Desk Lamp',
@@ -100,7 +100,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'Good',
                 'location'    => 'Amsterdam, Netherlands',
                 'looking_for' => 'home-garden',
-                'photos'      => [$photo('desk-lamp-white')],
+                'photos'      => [$photo('desk,lamp', 41), $photo('lamp,interior', 42)],
             ],
             [
                 'name'        => 'Harry Potter Book Set (1–7)',
@@ -110,7 +110,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'Good',
                 'location'    => 'London, UK',
                 'looking_for' => 'books',
-                'photos'      => [$photo('harry-potter-books'), $photo('book-stack')],
+                'photos'      => [$photo('books,stack', 51), $photo('reading,books', 52)],
             ],
             [
                 'name'        => 'Soprano Ukulele (Mahogany)',
@@ -120,7 +120,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'Like New',
                 'location'    => 'Lisbon, Portugal',
                 'looking_for' => 'music',
-                'photos'      => [$photo('ukulele-mahogany'), $photo('ukulele2')],
+                'photos'      => [$photo('ukulele', 61), $photo('ukulele,music', 62)],
             ],
             [
                 'name'        => 'Levi\'s Denim Jacket Size M',
@@ -130,7 +130,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'Good',
                 'location'    => 'Rome, Italy',
                 'looking_for' => 'fashion',
-                'photos'      => [$photo('denim-jacket-levis'), $photo('jacket2')],
+                'photos'      => [$photo('denim,jacket', 71), $photo('jacket,fashion', 72)],
             ],
             [
                 'name'        => 'Yoga Mat + Resistance Bands Set',
@@ -140,7 +140,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'Good',
                 'location'    => 'Paris, France',
                 'looking_for' => 'sports',
-                'photos'      => [$photo('yoga-mat-purple'), $photo('resistance-bands')],
+                'photos'      => [$photo('yoga,mat', 81), $photo('fitness,exercise', 82)],
             ],
             [
                 'name'        => 'Logitech G102 Gaming Mouse',
@@ -150,7 +150,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'Good',
                 'location'    => 'Mumbai, India',
                 'looking_for' => 'gaming',
-                'photos'      => [$photo('gaming-mouse-logitech')],
+                'photos'      => [$photo('gaming,mouse,rgb', 91), $photo('computer,mouse', 92)],
             ],
             [
                 'name'        => 'Russell Hobbs Electric Kettle',
@@ -160,7 +160,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'Good',
                 'location'    => 'Manchester, UK',
                 'looking_for' => 'home-garden',
-                'photos'      => [$photo('electric-kettle-black'), $photo('kettle2')],
+                'photos'      => [$photo('kettle,kitchen', 101), $photo('electric,kettle', 102)],
             ],
             [
                 'name'        => 'Converse Chuck Taylor High Top EU 41',
@@ -170,7 +170,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'Like New',
                 'location'    => 'Istanbul, Turkey',
                 'looking_for' => 'fashion',
-                'photos'      => [$photo('converse-black-hightop'), $photo('converse2')],
+                'photos'      => [$photo('sneakers,converse', 111), $photo('shoes,fashion', 112)],
             ],
             [
                 'name'        => 'Osprey Daylite 13L Backpack',
@@ -180,7 +180,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'Good',
                 'location'    => 'Prague, Czech Republic',
                 'looking_for' => 'fashion',
-                'photos'      => [$photo('osprey-backpack-black')],
+                'photos'      => [$photo('backpack,bag', 121), $photo('daypack,travel', 122)],
             ],
             [
                 'name'        => 'PS4 DualShock 4 Controller (Black)',
@@ -190,7 +190,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'Fair',
                 'location'    => 'Kyiv, Ukraine',
                 'looking_for' => 'gaming',
-                'photos'      => [$photo('ps4-controller-black'), $photo('controller2')],
+                'photos'      => [$photo('gamepad,controller', 131), $photo('playstation,gaming', 132)],
             ],
             [
                 'name'        => 'Potted Snake Plant (Sansevieria)',
@@ -200,7 +200,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'Good',
                 'location'    => 'Vienna, Austria',
                 'looking_for' => 'home-garden',
-                'photos'      => [$photo('snake-plant-pot'), $photo('plant2')],
+                'photos'      => [$photo('plant,indoor', 141), $photo('succulent,pot', 142)],
             ],
             [
                 'name'        => 'Xiaomi Mi Band 6 Fitness Tracker',
@@ -210,7 +210,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'Good',
                 'location'    => 'Shanghai, China',
                 'looking_for' => 'electronics',
-                'photos'      => [$photo('mi-band-fitness'), $photo('fitness-tracker2')],
+                'photos'      => [$photo('smartwatch,wearable', 151), $photo('fitness,tracker', 152)],
             ],
             [
                 'name'        => 'Wacom Intuos S Drawing Tablet',
@@ -220,7 +220,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'Good',
                 'location'    => 'Seoul, South Korea',
                 'looking_for' => 'electronics',
-                'photos'      => [$photo('wacom-tablet-drawing'), $photo('drawing-tablet2')],
+                'photos'      => [$photo('drawing,tablet,wacom', 161), $photo('digital,art,pen', 162)],
             ],
             [
                 'name'        => 'Waterproof Winter Boots EU 39',
@@ -230,7 +230,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'Good',
                 'location'    => 'Stockholm, Sweden',
                 'looking_for' => 'fashion',
-                'photos'      => [$photo('winter-boots-black'), $photo('boots2')],
+                'photos'      => [$photo('boots,winter', 171), $photo('winter,shoes', 172)],
             ],
             [
                 'name'        => 'Catan Board Game (English)',
@@ -240,7 +240,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'Good',
                 'location'    => 'Toronto, Canada',
                 'looking_for' => 'toys',
-                'photos'      => [$photo('catan-board-game'), $photo('board-game2')],
+                'photos'      => [$photo('board,game', 181), $photo('tabletop,game', 182)],
             ],
             [
                 'name'        => 'Romoss 10000mAh Power Bank',
@@ -250,7 +250,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'Good',
                 'location'    => 'Dubai, UAE',
                 'looking_for' => 'electronics',
-                'photos'      => [$photo('power-bank-black')],
+                'photos'      => [$photo('powerbank,charger', 191), $photo('portable,charger', 192)],
             ],
             [
                 'name'        => 'Nike Downshifter 11 Running Shoes EU 44',
@@ -260,7 +260,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'Good',
                 'location'    => 'São Paulo, Brazil',
                 'looking_for' => 'sports',
-                'photos'      => [$photo('nike-running-shoes'), $photo('shoes2')],
+                'photos'      => [$photo('running,shoes,nike', 201), $photo('sneakers,sport', 202)],
             ],
             [
                 'name'        => 'Wooden Desk Organiser + Stationery',
@@ -270,7 +270,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'Good',
                 'location'    => 'New York, USA',
                 'looking_for' => 'office',
-                'photos'      => [$photo('desk-organiser-wood'), $photo('stationery2')],
+                'photos'      => [$photo('desk,organizer,office', 211), $photo('stationery,pen', 212)],
             ],
             [
                 'name'        => 'Ergobaby Omni 360 Baby Carrier',
@@ -280,7 +280,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'Good',
                 'location'    => 'Sydney, Australia',
                 'looking_for' => 'baby',
-                'photos'      => [$photo('baby-carrier-grey')],
+                'photos'      => [$photo('baby,carrier', 221), $photo('baby,newborn', 222)],
             ],
             [
                 'name'        => 'Philips Series 3000 Electric Shaver',
@@ -290,7 +290,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'Good',
                 'location'    => 'Cairo, Egypt',
                 'looking_for' => 'electronics',
-                'photos'      => [$photo('electric-shaver-philips')],
+                'photos'      => [$photo('shaver,grooming', 231), $photo('electric,razor', 232)],
             ],
             [
                 'name'        => 'Cotton Hammock with Hanging Kit',
@@ -300,7 +300,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'Good',
                 'location'    => 'Mexico City, Mexico',
                 'looking_for' => 'home-garden',
-                'photos'      => [$photo('hammock-cotton-blue'), $photo('hammock2')],
+                'photos'      => [$photo('hammock,garden', 241), $photo('hammock,relax', 242)],
             ],
             [
                 'name'        => 'Cat Bed + Toy Bundle',
@@ -310,7 +310,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'Like New',
                 'location'    => 'Tokyo, Japan',
                 'looking_for' => 'pets',
-                'photos'      => [$photo('cat-bed-grey'), $photo('cat-toys')],
+                'photos'      => [$photo('cat,pet', 251), $photo('kitten,cute', 252)],
             ],
         ];
 
