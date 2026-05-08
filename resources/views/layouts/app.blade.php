@@ -68,7 +68,6 @@
     {{-- Preconnect --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://cdn.jsdelivr.net">
 
     {{-- Google Fonts: async (non-blocking) --}}
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" as="style"
@@ -87,7 +86,7 @@
 
     {{-- JS: self-hosted, defer --}}
     <script defer src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="{{ asset('js/alpine.min.js') }}"></script>
 
     <style>
     /* ─── Design Tokens ────────────────────────────────────── */
