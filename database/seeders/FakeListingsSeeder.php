@@ -56,9 +56,9 @@ class FakeListingsSeeder extends Seeder
         }
 
         // ── 3. Photo helper — loremflickr gives keyword-relevant images ──
-        // lock= makes it stable (same keywords+lock = same photo every time)
+        // 400x300 matches card display size (386x290) — no excess pixels
         $photo = fn(string $keywords, int $lock) =>
-            "https://loremflickr.com/640/480/{$keywords}?lock={$lock}";
+            "https://loremflickr.com/400/300/{$keywords}?lock={$lock}";
 
         // ── 4. Listings ───────────────────────────────────────────
         $listings = [
