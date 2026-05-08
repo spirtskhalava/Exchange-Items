@@ -68,6 +68,7 @@
     {{-- Preconnect --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fastly.picsum.photos" crossorigin>
 
     {{-- Google Fonts: async (non-blocking) --}}
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" as="style"
