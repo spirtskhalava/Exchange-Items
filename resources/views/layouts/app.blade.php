@@ -1,12 +1,24 @@
 <!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
-    <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-KGFDWT9L');</script>
+    <!-- Google Tag Manager — delayed until interaction or 3s -->
+    <script>
+    (function(){
+        var loaded = false;
+        function loadGTM(){
+            if(loaded) return; loaded = true;
+            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','GTM-KGFDWT9L');
+        }
+        ['click','scroll','keydown','touchstart'].forEach(function(e){
+            document.addEventListener(e, loadGTM, {once:true, passive:true});
+        });
+        setTimeout(loadGTM, 3000);
+    })();
+    </script>
     <!-- End Google Tag Manager -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -65,8 +77,28 @@
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     </noscript>
 
-    {{-- Bootstrap CSS — self-hosted, served by Nginx with 1y cache --}}
-    <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
+    {{-- Critical inline CSS — prevents FOUC while Bootstrap loads async --}}
+    <style>
+        *,::after,::before{box-sizing:border-box}
+        body{margin:0;font-family:'Inter',system-ui,sans-serif;background:#fff}
+        .container{width:100%;padding-right:1rem;padding-left:1rem;margin-right:auto;margin-left:auto}
+        @media(min-width:576px){.container{max-width:540px}}
+        @media(min-width:768px){.container{max-width:720px}}
+        @media(min-width:992px){.container{max-width:960px}}
+        @media(min-width:1200px){.container{max-width:1140px}}
+        @media(min-width:1400px){.container{max-width:1320px}}
+        .navbar{position:relative;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:.75rem 1rem}
+        .navbar-brand{display:inline-flex;align-items:center;text-decoration:none;white-space:nowrap;font-weight:800;font-size:1.25rem}
+        .d-flex{display:flex!important} .align-items-center{align-items:center!important}
+        .justify-content-between{justify-content:space-between!important}
+        .row{display:flex;flex-wrap:wrap;margin-right:-.75rem;margin-left:-.75rem}
+        .col-12{flex:0 0 100%;max-width:100%;padding-right:.75rem;padding-left:.75rem}
+    </style>
+
+    {{-- Bootstrap CSS — self-hosted, async (non-blocking) --}}
+    <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}"
+          media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}"></noscript>
 
     {{-- Bootstrap Icons — self-hosted, font-display:swap, async --}}
     <link rel="stylesheet" href="{{ asset('css/bootstrap-icons.css') }}"
