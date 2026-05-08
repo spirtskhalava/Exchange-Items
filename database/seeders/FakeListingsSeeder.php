@@ -58,7 +58,7 @@ class FakeListingsSeeder extends Seeder
         // ── 3. Photo helper — picsum.photos with seed for consistent images ──
         // 400x300 matches card display size, seed keeps same image on every seeder run
         $photo = fn(string $seed) =>
-            "https://picsum.photos/seed/{$seed}/400/300";
+            "https://picsum.photos/seed/{$seed}/400/300.webp";
 
         // ── 4. Listings ───────────────────────────────────────────
         $listings = [
