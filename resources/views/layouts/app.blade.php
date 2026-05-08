@@ -68,20 +68,10 @@
     {{-- Bootstrap CSS — self-hosted, served by Nginx with 1y cache --}}
     <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
 
-    {{-- Bootstrap Icons — load async (non-blocking) --}}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+    {{-- Bootstrap Icons — self-hosted, font-display:swap, async --}}
+    <link rel="stylesheet" href="{{ asset('css/bootstrap-icons.css') }}"
           media="print" onload="this.media='all'">
-    <noscript>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-    </noscript>
-
-    {{-- Override Bootstrap Icons font-display --}}
-    <style>
-        @font-face {
-            font-family: "bootstrap-icons";
-            font-display: swap;
-        }
-    </style>
+    <noscript><link rel="stylesheet" href="{{ asset('css/bootstrap-icons.css') }}"></noscript>
 
     {{-- JS: self-hosted, defer --}}
     <script defer src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>

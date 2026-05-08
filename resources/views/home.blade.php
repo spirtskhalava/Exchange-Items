@@ -209,7 +209,7 @@
                     <i class="bi {{ $step['icon'] }}" style="color:{{ $step['color'] }};font-size:1.5rem;"></i>
                 </div>
                 <div class="hiw-num" style="color:{{ $step['color'] }};">Step {{ $step['num'] }}</div>
-                <h5 class="fw-700 mb-2" style="font-size:1rem;">{{ $step['title'] }}</h5>
+                <p class="fw-700 mb-2" style="font-size:1rem;font-weight:700;color:var(--text);">{{ $step['title'] }}</p>
                 <p class="text-muted mb-0" style="font-size:.855rem;line-height:1.65;">{{ $step['desc'] }}</p>
             </div>
             @endforeach
