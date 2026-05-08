@@ -200,9 +200,9 @@
         </div>
         <div class="row g-4 g-lg-5 justify-content-center">
             @foreach([
-                ['num'=>'1','icon'=>'bi-camera','color'=>'#4f46e5','bg'=>'#eef2ff','title'=>'List your item','desc'=>'Take a few photos, write a short description, and publish. Done in under 2 minutes.'],
-                ['num'=>'2','icon'=>'bi-arrow-left-right','color'=>'#059669','bg'=>'#ecfdf5','title'=>'Make or receive an offer','desc'=>'Browse listings and send an offer with your item, cash, or both. Others can offer you too.'],
-                ['num'=>'3','icon'=>'bi-box-seam','color'=>'#d97706','bg'=>'#fffbeb','title'=>'Complete the trade','desc'=>'Agree on terms, use our optional escrow protection, and ship or meet up to swap.'],
+                ['num'=>'1','icon'=>'bi-camera','color'=>'#4338ca','bg'=>'#eef2ff','title'=>'List your item','desc'=>'Take a few photos, write a short description, and publish. Done in under 2 minutes.'],
+                ['num'=>'2','icon'=>'bi-arrow-left-right','color'=>'#047857','bg'=>'#ecfdf5','title'=>'Make or receive an offer','desc'=>'Browse listings and send an offer with your item, cash, or both. Others can offer you too.'],
+                ['num'=>'3','icon'=>'bi-box-seam','color'=>'#b45309','bg'=>'#fffbeb','title'=>'Complete the trade','desc'=>'Agree on terms, use our optional escrow protection, and ship or meet up to swap.'],
             ] as $step)
             <div class="col-md-4 text-center">
                 <div class="hiw-icon-wrap" style="background:{{ $step['bg'] }};">

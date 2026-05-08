@@ -58,8 +58,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
 
-    {{-- Google Fonts: 3 weights, display=swap --}}
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    {{-- Google Fonts: async (non-blocking) --}}
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" as="style"
+          onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    </noscript>
 
     {{-- Bootstrap CSS — self-hosted, served by Nginx with 1y cache --}}
     <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
@@ -385,7 +389,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </a>
 
             <button class="navbar-toggler border-0 shadow-none p-1" type="button"
-                    data-bs-toggle="collapse" data-bs-target="#navMain">
+                    data-bs-toggle="collapse" data-bs-target="#navMain"
+                    aria-controls="navMain" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 

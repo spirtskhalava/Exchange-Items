@@ -52,9 +52,9 @@
             </div>
 
             {{-- Name --}}
-            <h6 class="fw-700 mb-1 text-truncate" title="{{ $product->name }}" style="font-size:.9rem;font-weight:700;color:var(--text);line-height:1.3;">
+            <p class="fw-700 mb-1 text-truncate" title="{{ $product->name }}" style="font-size:.9rem;font-weight:700;color:var(--text);line-height:1.3;">
                 {{ $product->name }}
-            </h6>
+            </p>
 
             {{-- Description --}}
             <p class="mb-0" style="font-size:.78rem;color:var(--muted);line-height:1.5;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;flex:1;">
