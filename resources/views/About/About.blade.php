@@ -16,7 +16,7 @@
           <div class="top_nav_container">
             <div class="user_option_box">
               <a href="" class="account-link">
-                <i class="fa fa-user" aria-hidden="true"></i>
+                <i class="bi bi-person" aria-hidden="true"></i>
                 <span>
                   My Account
                 </span>

@@ -21,7 +21,8 @@
         {{-- Image area --}}
         <div class="position-relative overflow-hidden" style="height:200px;background:#f8fafc;">
             <img src="{{ $imgUrl }}" alt="{{ $product->name }}"
-                 class="pcard-img w-100 h-100" style="object-fit:cover;display:block;">
+                 class="pcard-img w-100 h-100" style="object-fit:cover;display:block;"
+                 loading="lazy" decoding="async">
 
             {{-- Condition badge --}}
             <span class="position-absolute" style="top:.6rem;left:.6rem;background:{{ $cond['bg'] }};color:{{ $cond['color'] }};font-size:.68rem;font-weight:700;padding:.25rem .55rem;border-radius:.4rem;letter-spacing:.03em;">
@@ -35,7 +36,7 @@
                         data-id="{{ $product->id }}"
                         style="bottom:.6rem;right:.6rem;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.9);backdrop-filter:blur(8px);border:none;cursor:pointer;transition:all .18s;box-shadow:0 2px 8px rgba(0,0,0,.12);"
                         onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform=''">
-                    <i class="fa-heart {{ $wishlisted ? 'fas text-danger' : 'far text-muted' }} wishlist-icon" style="font-size:.8rem;"></i>
+                    <i class="{{ $wishlisted ? 'bi bi-heart-fill text-danger' : 'bi bi-heart text-muted' }} wishlist-icon" style="font-size:.8rem;"></i>
                 </button>
             @endauth
         </div>

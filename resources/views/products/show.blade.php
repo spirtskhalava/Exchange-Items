@@ -79,7 +79,7 @@
                             <button class="btn btn-sm bg-white shadow rounded-circle toggle-wishlist d-flex align-items-center justify-content-center"
                                     style="width:38px;height:38px;border:none;"
                                     data-id="{{ $product->id }}" type="button">
-                                <i class="fa-heart {{ $isWishlisted ? 'fas text-danger' : 'far text-secondary' }} wishlist-icon"></i>
+                                <i class="{{ $isWishlisted ? 'bi bi-heart-fill text-danger' : 'bi bi-heart text-secondary' }} wishlist-icon"></i>
                             </button>
                         @endauth
                     </div>
@@ -155,7 +155,7 @@
                                                     <div class="rating-input">
                                                         @for($i=5;$i>=1;$i--)
                                                         <input type="radio" id="star{{ $i }}" name="rating" value="{{ $i }}" {{ $i==5 ? 'required' : '' }}>
-                                                        <label for="star{{ $i }}" title="{{ $i }} stars"><i class="fas fa-star"></i></label>
+                                                        <label for="star{{ $i }}" title="{{ $i }} stars"><i class="bi bi-star-fill"></i></label>
                                                         @endfor
                                                     </div>
                                                 </div>
