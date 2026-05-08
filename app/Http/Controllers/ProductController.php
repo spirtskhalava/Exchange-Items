@@ -81,7 +81,7 @@ class ProductController extends Controller
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
                 if ($image && $image->isValid()) {
-                    $imagePaths[] = $image->store('images', 'public');
+                    $imagePaths[] = $this->storeAsWebP($image);
                 }
             }
         }
@@ -227,7 +227,7 @@ class ProductController extends Controller
             foreach ($request->file('images') as $image) {
                 if ($image && $image->isValid() && in_array($image->getMimeType(), $allowedMimes)) {
                     if ($image->getSize() <= 10 * 1024 * 1024) { // 10 MB cap for edits
-                        $newImages[] = $image->store('images', 'public');
+                        $newImages[] = $this->storeAsWebP($image);
                     }
                 }
             }
@@ -280,5 +280,48 @@ class ProductController extends Controller
         ]);
 
         return redirect()->to(url()->previous() . '#reviews')->with('success', 'Review submitted successfully!');
+    }
+
+    /**
+     * Convert any uploaded image to WebP and store it.
+     * Falls back to original format if GD conversion fails.
+     */
+    private function storeAsWebP(\Illuminate\Http\UploadedFile $image): string
+    {
+        $filename  = 'images/' . \Illuminate\Support\Str::uuid() . '.webp';
+        $destPath  = Storage::disk('public')->path($filename);
+
+        // Ensure directory exists
+        Storage::disk('public')->makeDirectory('images');
+
+        $mime = $image->getMimeType();
+        $src  = null;
+
+        try {
+            $src = match (true) {
+                str_contains($mime, 'jpeg') || str_contains($mime, 'jpg') => imagecreatefromjpeg($image->getRealPath()),
+                str_contains($mime, 'png')                                => imagecreatefrompng($image->getRealPath()),
+                str_contains($mime, 'gif')                                => imagecreatefromgif($image->getRealPath()),
+                str_contains($mime, 'webp')                               => imagecreatefromwebp($image->getRealPath()),
+                default                                                    => null,
+            };
+
+            if ($src) {
+                // Preserve transparency for PNG/GIF
+                if (str_contains($mime, 'png') || str_contains($mime, 'gif')) {
+                    imagepalettetotruecolor($src);
+                    imagealphablending($src, true);
+                    imagesavealpha($src, true);
+                }
+                imagewebp($src, $destPath, 82);
+                imagedestroy($src);
+                return $filename;
+            }
+        } catch (\Throwable) {
+            if ($src) imagedestroy($src);
+        }
+
+        // Fallback: store original if conversion fails
+        return $image->store('images', 'public');
     }
 }
