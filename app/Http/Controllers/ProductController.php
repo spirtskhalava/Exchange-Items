@@ -283,45 +283,29 @@ class ProductController extends Controller
     }
 
     /**
-     * Convert any uploaded image to WebP and store it.
-     * Falls back to original format if GD conversion fails.
+     * Convert any uploaded image to WebP using cwebp and store it.
+     * Falls back to storing the original if conversion fails.
      */
     private function storeAsWebP(\Illuminate\Http\UploadedFile $image): string
     {
-        $filename  = 'images/' . \Illuminate\Support\Str::uuid() . '.webp';
-        $destPath  = Storage::disk('public')->path($filename);
+        $uuid     = \Illuminate\Support\Str::uuid();
+        $filename = 'images/' . $uuid . '.webp';
 
-        // Ensure directory exists
         Storage::disk('public')->makeDirectory('images');
+        $destPath = Storage::disk('public')->path($filename);
 
-        $mime = $image->getMimeType();
-        $src  = null;
+        $srcPath = $image->getRealPath();
 
-        try {
-            $src = match (true) {
-                str_contains($mime, 'jpeg') || str_contains($mime, 'jpg') => imagecreatefromjpeg($image->getRealPath()),
-                str_contains($mime, 'png')                                => imagecreatefrompng($image->getRealPath()),
-                str_contains($mime, 'gif')                                => imagecreatefromgif($image->getRealPath()),
-                str_contains($mime, 'webp')                               => imagecreatefromwebp($image->getRealPath()),
-                default                                                    => null,
-            };
+        // cwebp -q 82: good quality/size balance; -quiet suppresses stdout
+        $cmd    = sprintf('cwebp -q 82 -quiet %s -o %s 2>/dev/null', escapeshellarg($srcPath), escapeshellarg($destPath));
+        $retval = null;
+        exec($cmd, $out, $retval);
 
-            if ($src) {
-                // Preserve transparency for PNG/GIF
-                if (str_contains($mime, 'png') || str_contains($mime, 'gif')) {
-                    imagepalettetotruecolor($src);
-                    imagealphablending($src, true);
-                    imagesavealpha($src, true);
-                }
-                imagewebp($src, $destPath, 82);
-                imagedestroy($src);
-                return $filename;
-            }
-        } catch (\Throwable) {
-            if ($src) imagedestroy($src);
+        if ($retval === 0 && file_exists($destPath) && filesize($destPath) > 0) {
+            return $filename;
         }
 
-        // Fallback: store original if conversion fails
+        // Fallback: store original if cwebp fails
         return $image->store('images', 'public');
     }
 }
