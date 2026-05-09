@@ -5,12 +5,12 @@
     <script id="usercentrics-cmp" src="https://app.usercentrics.eu/browser-ui/latest/loader.js" data-settings-id="XYo31S767cIMz0" async></script>
 
     <!-- Google Analytics 4 -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-SS7JJ2PZMD"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DC7F4MFFMR"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'G-SS7JJ2PZMD');
+      gtag('config', 'G-DC7F4MFFMR');
     </script>
 
     <!-- Google Tag Manager — delayed until interaction or 3s -->
