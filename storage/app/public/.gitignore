@@ -1,2 +1,7 @@
 *
 !.gitignore
+!images/
+images/*
+!images/seed/
+images/seed/*
+!images/seed/*.webp
