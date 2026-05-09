@@ -426,6 +426,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                             <i class="bi bi-grid-3x3-gap"></i> Browse
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('map') ? 'active' : '' }}" href="{{ route('map') }}">
+                            <i class="bi bi-geo-alt"></i> Map
+                        </a>
+                    </li>
                 </ul>
 
                 {{-- Right --}}
