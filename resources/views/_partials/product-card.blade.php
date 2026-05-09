@@ -18,11 +18,13 @@
 <div class="col-xl-3 col-lg-4 col-sm-6">
     <div class="card pcard h-100 p-0 overflow-hidden">
 
-        {{-- Image area --}}
-        <div class="position-relative overflow-hidden" style="height:200px;background:#f8fafc;">
+        {{-- Image area with skeleton shimmer --}}
+        <div class="pcard-img-wrap position-relative">
+            <div class="skeleton-img w-100 h-100 position-absolute top-0 start-0" aria-hidden="true"></div>
             <img src="{{ $imgUrl }}" alt="{{ $product->name }}"
-                 class="pcard-img w-100 h-100" style="object-fit:cover;display:block;"
-                 loading="lazy" decoding="async">
+                 class="pcard-img w-100 h-100 position-absolute top-0 start-0" style="object-fit:cover;"
+                 loading="lazy" decoding="async"
+                 onload="this.classList.add('loaded');this.previousElementSibling.style.display='none';">
 
             {{-- Condition badge --}}
             <span class="position-absolute" style="top:.6rem;left:.6rem;background:{{ $cond['bg'] }};color:{{ $cond['color'] }};font-size:.68rem;font-weight:700;padding:.25rem .55rem;border-radius:.4rem;letter-spacing:.03em;">
@@ -39,7 +41,7 @@
                     <i class="{{ $wishlisted ? 'bi bi-heart-fill text-danger' : 'bi bi-heart text-muted' }} wishlist-icon" style="font-size:.8rem;"></i>
                 </button>
             @endauth
-        </div>
+        </div>{{-- /pcard-img-wrap --}}
 
         {{-- Body --}}
         <div class="card-body p-3 d-flex flex-column">

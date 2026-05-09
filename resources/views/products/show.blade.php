@@ -15,25 +15,39 @@
 @section('meta_type',        'product')
 
 @push('structured_data')
+@php
+    $allImages  = !empty($product->image_paths) ? json_decode($product->image_paths, true) : [];
+    $imageUrls  = collect($allImages)->map(fn($p) => str_starts_with($p,'http') ? $p : asset('storage/'.$p))->values();
+    $condMap    = [
+        'New'       => 'https://schema.org/NewCondition',
+        'Like New'  => 'https://schema.org/LikeNewCondition',
+        'Good'      => 'https://schema.org/UsedCondition',
+        'Fair'      => 'https://schema.org/UsedCondition',
+        'Poor'      => 'https://schema.org/DamagedCondition',
+        'Refurbished' => 'https://schema.org/RefurbishedCondition',
+    ];
+    $schemaCondition = $condMap[$product->condition ?? ''] ?? 'https://schema.org/UsedCondition';
+@endphp
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "Product",
-  "name": "{{ addslashes($product->name) }}",
-  "description": "{{ addslashes($seoDesc) }}",
+  "name": "{{ e($product->name) }}",
+  "description": "{{ e($seoDesc) }}",
   "url": "{{ route('products.show', $product) }}",
-  "image": "{{ $seoImage }}",
+  "image": @json($imageUrls),
   "category": "{{ $product->category ?? '' }}",
+  "itemCondition": "{{ $schemaCondition }}",
   "offers": {
     "@type": "Offer",
     "availability": "https://schema.org/InStock",
     "price": "0",
     "priceCurrency": "USD",
-    "description": "Available for trade — no money required"
-  },
-  "seller": {
-    "@type": "Person",
-    "name": "{{ addslashes($product->user->name ?? 'Bartaro User') }}"
+    "url": "{{ route('products.show', $product) }}",
+    "seller": {
+      "@type": "Person",
+      "name": "{{ e($product->user->name ?? 'Bartaro User') }}"
+    }
   }
 }
 </script>

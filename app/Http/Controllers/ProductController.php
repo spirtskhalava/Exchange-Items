@@ -86,7 +86,9 @@ class ProductController extends Controller
             }
         }
 
-        // FIX: Capture the returned model so $product is defined below
+        // Geocode location (cached, non-blocking on failure)
+        $coords = \App\Http\Controllers\MapController::geocode($request->location ?? '');
+
         $product = Product::create([
             'name'        => $request->name,
             'description' => $request->description,
@@ -101,6 +103,8 @@ class ProductController extends Controller
             'preferred_offer_sub_category' => $request->preferred_offer_sub_category ?: null,
             'condition'                => $request->condition,
             'location'                 => $request->location,
+            'latitude'                 => $coords['lat'] ?? null,
+            'longitude'                => $coords['lng'] ?? null,
         ]);
 
         // Smart matching: find products whose owner wants what I have and has what I want
@@ -297,7 +301,7 @@ class ProductController extends Controller
         $srcPath = $image->getRealPath();
 
         // cwebp -q 82: good quality/size balance; -quiet suppresses stdout
-        $cmd    = sprintf('cwebp -q 82 -quiet %s -o %s 2>/dev/null', escapeshellarg($srcPath), escapeshellarg($destPath));
+        $cmd    = sprintf('cwebp -q 82 -metadata none -quiet %s -o %s 2>/dev/null', escapeshellarg($srcPath), escapeshellarg($destPath));
         $retval = null;
         exec($cmd, $out, $retval);
 

@@ -51,7 +51,10 @@
     <meta name="twitter:description" content="{{ $metaDescription }}">
     <meta name="twitter:image"       content="{{ $metaImage }}">
 
-    {{-- ── Structured data (JSON-LD) injected per-page ─────── --}}
+    {{-- ── Structured data (JSON-LD) ─────────────────────────── --}}
+    <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"WebSite","name":"Bartaro","url":"https://bartaro.com","description":"Free peer-to-peer item exchange platform — trade what you have for what you need.","potentialAction":{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://bartaro.com/products?search={search_term_string}"},"query-input":"required name=search_term_string"}}
+    </script>
     @stack('structured_data')
 
     {{-- ── PWA / Icons ────────────────────────────────────── --}}
@@ -344,6 +347,20 @@
     .pcard:hover { box-shadow: var(--shadow-lg) !important; transform: translateY(-4px); }
     .pcard:hover .pcard-img { transform: scale(1.06); }
     .pcard-img { transition: transform .35s cubic-bezier(.4,0,.2,1); }
+
+    /* ─── Skeleton shimmer ───────────────────────────────────── */
+    @keyframes skeleton-shimmer {
+        0%   { background-position: -400px 0; }
+        100% { background-position: 400px 0; }
+    }
+    .skeleton-img {
+        background: linear-gradient(90deg,#e2e8f0 25%,#f1f5f9 50%,#e2e8f0 75%);
+        background-size: 800px 100%;
+        animation: skeleton-shimmer 1.4s infinite linear;
+    }
+    .pcard-img-wrap { position:relative; overflow:hidden; height:200px; background:#f8fafc; }
+    .pcard-img { opacity:0; transition: opacity .3s ease, transform .35s cubic-bezier(.4,0,.2,1); }
+    .pcard-img.loaded { opacity:1; }
 
     /* ─── Misc utilities ─────────────────────────────────────── */
     .section-label { font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }

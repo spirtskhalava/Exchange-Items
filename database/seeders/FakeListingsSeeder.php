@@ -316,7 +316,8 @@ class FakeListingsSeeder extends Seeder
 
         // ── 5. Insert products ────────────────────────────────────
         foreach ($listings as $i => $data) {
-            $user = $users[$i % count($users)];
+            $user   = $users[$i % count($users)];
+            $coords = \App\Http\Controllers\MapController::geocode($data['location']);
 
             Product::create([
                 'user_id'      => $user->id,
@@ -329,7 +330,12 @@ class FakeListingsSeeder extends Seeder
                 'looking_for'  => $data['looking_for'],
                 'hide'         => 0,
                 'image_paths'  => json_encode($data['photos']),
+                'latitude'     => $coords['lat'] ?? null,
+                'longitude'    => $coords['lng'] ?? null,
             ]);
+
+            // Nominatim rate limit: 1 req/sec
+            usleep(1100000);
         }
 
         $this->command->info('✓ Created ' . count($users) . ' users and ' . count($listings) . ' listings.');

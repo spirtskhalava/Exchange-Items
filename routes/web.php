@@ -43,6 +43,7 @@ Route::get('/auth/google/callback', [SocialAuthController::class, 'handleGoogleC
 // Static info pages
 Route::get('/trade-protection', fn() => view('pages.trade-protection'))->name('trade.protection');
 Route::get('/terms',            fn() => view('pages.terms'))->name('terms');
+Route::get('/map',              [App\Http\Controllers\MapController::class, 'index'])->name('map');
 
 // Product browsing (read-only) — public
 // NOTE: products/create MUST be declared before products/{product} to avoid wildcard collision.
@@ -82,7 +83,7 @@ Route::middleware(['auth'])->group(function () {
 
     /* ── Products: create / edit / delete ─────────────────── */
     // products.create is declared above (before the {product} wildcard) with ->middleware('auth')
-    Route::post('products',            [ProductController::class, 'store'])->name('products.store');
+    Route::post('products',            [ProductController::class, 'store'])->name('products.store')->middleware('throttle:10,1');
     Route::put('products/{product}',   [ListingController::class, 'update'])->name('products.update');
     Route::post('products/{id}/remove-image', [ProductController::class, 'removeImage'])->name('products.removeImage');
     Route::post('/products/{product}/verify', [ProductVerificationController::class, 'verify'])->name('products.verify');
@@ -93,7 +94,7 @@ Route::middleware(['auth'])->group(function () {
 
     /* ── Exchanges ─────────────────────────────────────────── */
     Route::get('products/{product}/offer',  [ExchangeController::class, 'create'])->name('exchanges.create');
-    Route::post('products/{product}/offer', [ExchangeController::class, 'store'])->name('exchanges.store');
+    Route::post('products/{product}/offer', [ExchangeController::class, 'store'])->name('exchanges.store')->middleware('throttle:15,1');
     Route::get('exchanges',                               [ExchangeController::class, 'index'])->name('exchanges.index');
     Route::patch('exchanges/{exchange}',                  [ExchangeController::class, 'updateStatus'])->name('exchanges.updateStatus');
     // Cancellation flow (replaces instant delete)
@@ -106,7 +107,7 @@ Route::middleware(['auth'])->group(function () {
 
     /* ── Wishlist ──────────────────────────────────────────── */
     Route::get('/wishlist',              [WishlistController::class, 'index'])->name('wishlist.index');
-    Route::post('/wishlist/{product}',   [WishlistController::class, 'store'])->name('wishlist.store');
+    Route::post('/wishlist/{product}',   [WishlistController::class, 'store'])->name('wishlist.store')->middleware('throttle:30,1');
     Route::delete('/wishlist/{id}',      [WishlistController::class, 'destroy'])->name('wishlist.destroy');
 
     /* ── Cash top-up payment ───────────────────────────────── */
@@ -135,7 +136,7 @@ Route::middleware(['auth'])->group(function () {
 
     /* ── Messages ──────────────────────────────────────────── */
     Route::get('/messages',                     [MessageController::class, 'index'])->name('messages.index');
-    Route::post('/messages/store',              [MessageController::class, 'store'])->name('messages.store');
+    Route::post('/messages/store',              [MessageController::class, 'store'])->name('messages.store')->middleware('throttle:30,1');
     Route::get('/messages/fetch',               [MessageController::class, 'fetchMessages'])->name('messages.fetch');
     Route::get('/messages/open/{sellerId}',     [MessageController::class, 'openChatWithSeller'])->name('messages.openChatWithSeller');
     Route::post('/messages/mark-read',          [MessageController::class, 'markAsRead'])->name('messages.markRead');
