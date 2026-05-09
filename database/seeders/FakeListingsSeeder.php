@@ -55,10 +55,9 @@ class FakeListingsSeeder extends Seeder
             ]);
         }
 
-        // ── 3. Photo helper — picsum.photos with seed for consistent images ──
-        // 400x300 matches card display size, seed keeps same image on every seeder run
-        $photo = fn(string $seed) =>
-            "https://picsum.photos/seed/{$seed}/400/300.webp";
+        // ── 3. Photo helper — Unsplash direct CDN (casual, realistic photos) ──
+        $u = fn(string $id) =>
+            "https://images.unsplash.com/photo-{$id}?w=480&h=360&fit=crop&auto=format&q=75";
 
         // ── 4. Listings — everyday clutter people want to swap ───
         $listings = [
@@ -70,7 +69,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'Good',
                 'location'    => 'Berlin, Germany',
                 'looking_for' => 'books',
-                'photos'      => [$photo('cables01'), $photo('cables02')],
+                'photos'      => [$u('1558618666-fcd25c85cd64'), $u('1518770660268-4820a7b4caa9')],
             ],
             [
                 'name'        => 'Stack of 12 Paperback Novels',
@@ -80,7 +79,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'Good',
                 'location'    => 'London, UK',
                 'looking_for' => 'home-garden',
-                'photos'      => [$photo('novels01'), $photo('novels02')],
+                'photos'      => [$u('1512820790803-83ca734da794'), $u('1507842217343-583bb7270b66')],
             ],
             [
                 'name'        => '3 Country Flags (EU, Italy, Brazil)',
@@ -90,7 +89,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'Like New',
                 'location'    => 'Rome, Italy',
                 'looking_for' => 'sports',
-                'photos'      => [$photo('flags01'), $photo('flags02')],
+                'photos'      => [$u('1530571026735-5f7ed8ef9a62'), $u('1580752781994-f89416c4c5ba')],
             ],
             [
                 'name'        => 'Box of 8 Unused A5 Notebooks',
@@ -100,7 +99,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'New',
                 'location'    => 'Warsaw, Poland',
                 'looking_for' => 'books',
-                'photos'      => [$photo('notebooks01'), $photo('notebooks02')],
+                'photos'      => [$u('1544816155-12df9643f363'), $u('1501504905252-8679c1d7ac51')],
             ],
             [
                 'name'        => 'School Sports Medals (5 pcs)',
@@ -110,7 +109,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'Good',
                 'location'    => 'Budapest, Hungary',
                 'looking_for' => 'toys',
-                'photos'      => [$photo('medals01'), $photo('medals02')],
+                'photos'      => [$u('1567427017947-545c5f8d16ad'), $u('1552674605-db5fecf122b2')],
             ],
             [
                 'name'        => '4 Rolls of Unused Wrapping Paper',
@@ -120,7 +119,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'New',
                 'location'    => 'Prague, Czech Republic',
                 'looking_for' => 'office',
-                'photos'      => [$photo('wrapping01'), $photo('wrapping02')],
+                'photos'      => [$u('1513201099705-a9746bab22b3'), $u('1607344645867-66dfc5a40f7c')],
             ],
             [
                 'name'        => 'Folder of Old Postcards & Stamps',
@@ -130,7 +129,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'Good',
                 'location'    => 'Vienna, Austria',
                 'looking_for' => 'books',
-                'photos'      => [$photo('postcards01'), $photo('postcards02')],
+                'photos'      => [$u('1549317661-bd32c8ce0db2'), $u('1526824267-1590536918852')],
             ],
             [
                 'name'        => 'Acrylic Paint Set (18 tubes, unused)',
@@ -140,7 +139,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'New',
                 'location'    => 'Barcelona, Spain',
                 'looking_for' => 'office',
-                'photos'      => [$photo('paints01'), $photo('paints02')],
+                'photos'      => [$u('1513364776144-60967b0f800f'), $u('1580748141540-27fa0617f52c')],
             ],
             [
                 'name'        => 'Old Desktop Keyboard (German Layout)',
@@ -150,7 +149,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'Fair',
                 'location'    => 'Munich, Germany',
                 'looking_for' => 'electronics',
-                'photos'      => [$photo('keyboard01'), $photo('keyboard02')],
+                'photos'      => [$u('1587829741301-dc798b83add3'), $u('1541140532735-04cce4de0420')],
             ],
             [
                 'name'        => 'Bag of Lego Mixed Bricks (~500 pcs)',
@@ -160,7 +159,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'Good',
                 'location'    => 'Amsterdam, Netherlands',
                 'looking_for' => 'toys',
-                'photos'      => [$photo('lego01'), $photo('lego02')],
+                'photos'      => [$u('1587654780291-39c9404d746b'), $u('1585771724684-38269d6639fd')],
             ],
             [
                 'name'        => '2 Picture Frames (A4 + A3, Black)',
@@ -170,7 +169,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'Good',
                 'location'    => 'Lisbon, Portugal',
                 'looking_for' => 'home-garden',
-                'photos'      => [$photo('frames01'), $photo('frames02')],
+                'photos'      => [$u('1513519245088-8b0a4e0ef4be'), $u('1532332748851-c4e8ebb0855c')],
             ],
             [
                 'name'        => 'Travel Adapter Set (5 plugs)',
@@ -180,7 +179,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'Like New',
                 'location'    => 'Dubai, UAE',
                 'looking_for' => 'electronics',
-                'photos'      => [$photo('adapter01'), $photo('adapter02')],
+                'photos'      => [$u('1593642632559-0c6d3fc62b89'), $u('1605810230434-7631ac76ec81')],
             ],
             [
                 'name'        => 'Hardcover Atlas (World, 2015 Edition)',
@@ -190,7 +189,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'Good',
                 'location'    => 'Istanbul, Turkey',
                 'looking_for' => 'books',
-                'photos'      => [$photo('atlas01'), $photo('atlas02')],
+                'photos'      => [$u('1481627834876-b7833e8f5570'), $u('1456513080510-7bf3a84b82f8')],
             ],
             [
                 'name'        => '3 Scented Candles (Unopened)',
@@ -200,7 +199,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'New',
                 'location'    => 'Paris, France',
                 'looking_for' => 'home-garden',
-                'photos'      => [$photo('candles01'), $photo('candles02')],
+                'photos'      => [$u('1602028915047-37269d369887'), $u('1603006905003-be475563bc59')],
             ],
             [
                 'name'        => 'Plastic Storage Box Set (5 boxes)',
@@ -210,7 +209,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'Good',
                 'location'    => 'Stockholm, Sweden',
                 'looking_for' => 'home-garden',
-                'photos'      => [$photo('boxes01'), $photo('boxes02')],
+                'photos'      => [$u('1586528116311-ad8dd3c8310d'), $u('1553413077-ac5e55f84edc')],
             ],
             [
                 'name'        => 'Old School Textbooks (Maths + Physics)',
@@ -220,7 +219,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'Fair',
                 'location'    => 'Cairo, Egypt',
                 'looking_for' => 'books',
-                'photos'      => [$photo('textbooks01'), $photo('textbooks02')],
+                'photos'      => [$u('1588580999764-2d4b24d73a2e'), $u('1434030216411-0b5816e49bb2')],
             ],
             [
                 'name'        => 'Desk Globe (28cm diameter)',
@@ -230,7 +229,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'Good',
                 'location'    => 'Moscow, Russia',
                 'looking_for' => 'office',
-                'photos'      => [$photo('globe01'), $photo('globe02')],
+                'photos'      => [$u('1589881133595-a3c085cb731d'), $u('1524661135-875f9d825be5')],
             ],
             [
                 'name'        => 'Bundle of Extension Cords (3 pcs)',
@@ -240,7 +239,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'Good',
                 'location'    => 'Kyiv, Ukraine',
                 'looking_for' => 'electronics',
-                'photos'      => [$photo('cords01'), $photo('cords02')],
+                'photos'      => [$u('1518770660268-4820a7b4caa9'), $u('1558618666-fcd25c85cd64')],
             ],
             [
                 'name'        => 'Trophy Cup — 1st Place (Generic)',
@@ -250,7 +249,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'Good',
                 'location'    => 'Manchester, UK',
                 'looking_for' => 'toys',
-                'photos'      => [$photo('trophy01'), $photo('trophy02')],
+                'photos'      => [$u('1579952363873-27f3bade9f55'), $u('1567427017947-545c5f8d16ad')],
             ],
             [
                 'name'        => 'Jigsaw Puzzle 1000 pcs — Eiffel Tower',
@@ -260,7 +259,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'Good',
                 'location'    => 'Lyon, France',
                 'looking_for' => 'toys',
-                'photos'      => [$photo('puzzle01'), $photo('puzzle02')],
+                'photos'      => [$u('1611088887046-7f8c7a7a5b6a'), $u('1615361200141-f45040f367be')],
             ],
             [
                 'name'        => 'Bunch of Pens & Markers (30+ pcs)',
@@ -270,7 +269,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'Good',
                 'location'    => 'Seoul, South Korea',
                 'looking_for' => 'office',
-                'photos'      => [$photo('pens01'), $photo('pens02')],
+                'photos'      => [$u('1455390582262-044cdead277a'), $u('1583485088034-d0315adfb1ca')],
             ],
             [
                 'name'        => 'Vintage Wall Clock (Wooden)',
@@ -280,7 +279,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'Good',
                 'location'    => 'Tbilisi, Georgia',
                 'looking_for' => 'home-garden',
-                'photos'      => [$photo('clock01'), $photo('clock02')],
+                'photos'      => [$u('1563861826100-9cb868fdbe1c'), $u('1584208632-3441889fce3e')],
             ],
             [
                 'name'        => 'Box of Christmas Decorations',
@@ -290,7 +289,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'Good',
                 'location'    => 'Bratislava, Slovakia',
                 'looking_for' => 'home-garden',
-                'photos'      => [$photo('xmas01'), $photo('xmas02')],
+                'photos'      => [$u('1512389785529-80b4e24820a4'), $u('1513297847-d23559ad1b26')],
             ],
             [
                 'name'        => 'Magnetic Whiteboard (60x40cm)',
@@ -300,7 +299,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'Good',
                 'location'    => 'Toronto, Canada',
                 'looking_for' => 'office',
-                'photos'      => [$photo('whiteboard01'), $photo('whiteboard02')],
+                'photos'      => [$u('1611532736597-de2d4265fba3'), $u('1509062522246-51816873f2f8')],
             ],
             [
                 'name'        => 'Spare Bike Accessories Bundle',
@@ -310,7 +309,7 @@ class FakeListingsSeeder extends Seeder
                 'condition'   => 'Good',
                 'location'    => 'Copenhagen, Denmark',
                 'looking_for' => 'sports',
-                'photos'      => [$photo('bike01'), $photo('bike02')],
+                'photos'      => [$u('1558618047-3d7038b5b4d1'), $u('1571068316409-b3e951a65e8e')],
             ],
         ];
 
