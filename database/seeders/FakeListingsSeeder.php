@@ -9,8 +9,9 @@ use Illuminate\Support\Facades\Hash;
 
 class FakeListingsSeeder extends Seeder
 {
-    // Emails used by this seeder — safe to delete on re-run
+    // All seeder emails across all versions — ensures clean re-runs
     private array $seederEmails = [
+        // current
         'nino.tbilisi@example.com',
         'giorgi.swap@example.com',
         'mari.batumi@example.com',
@@ -20,6 +21,16 @@ class FakeListingsSeeder extends Seeder
         'tamta.zugdidi@example.com',
         'irakli.telavi@example.com',
         'salome.mtskheta@example.com',
+        // legacy (previous seeder versions)
+        'alex92.swap@example.com',
+        'miketrader@example.com',
+        'swap.king99@example.com',
+        'liu.wei.trades@example.com',
+        'pedro_mx@example.com',
+        'emma_london@example.com',
+        'techdealer2001@example.com',
+        'kasia.pl@example.com',
+        'raj_swaps@example.com',
     ];
 
     public function run(): void
