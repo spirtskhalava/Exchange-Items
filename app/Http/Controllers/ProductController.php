@@ -365,13 +365,14 @@ class ProductController extends Controller
         $cacheKey = 'loc_suggest_' . md5(strtolower($q));
         $results  = Cache::remember($cacheKey, now()->addDays(7), function () use ($q) {
             $response = \Illuminate\Support\Facades\Http::withHeaders([
-                'User-Agent' => 'Bartaro/1.0 (bartaro.com)',
+                'User-Agent'      => 'Bartaro/1.0 (bartaro.com)',
+                'Accept-Language' => 'en',
             ])->timeout(4)->get('https://nominatim.openstreetmap.org/search', [
-                'q'              => $q,
-                'format'         => 'json',
-                'limit'          => 6,
-                'addressdetails' => 1,
-                'featuretype'    => 'city,town,village,country',
+                'q'               => $q,
+                'format'          => 'json',
+                'limit'           => 6,
+                'addressdetails'  => 1,
+                'accept-language' => 'en',
             ]);
 
             if (!$response->ok()) return [];
