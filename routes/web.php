@@ -50,6 +50,7 @@ Route::get('/map',              [App\Http\Controllers\MapController::class, 'ind
 // The create & store routes themselves live inside the auth group below, but the URI
 // ordering is guaranteed because explicit segments always beat route-model-binding in Laravel.
 Route::get('products',           [ProductController::class, 'index'])->name('products.index');
+Route::get('api/location-suggest', [ProductController::class, 'locationSuggest'])->name('location.suggest');
 Route::get('products/create',    [ProductController::class, 'create'])->name('products.create')->middleware('auth');
 Route::get('products/{product}', [ProductController::class, 'show'])->name('products.show');
 

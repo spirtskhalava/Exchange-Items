@@ -44,11 +44,12 @@
                 <div class="mb-3">
                     <label class="form-label">Location</label>
                     <div class="position-relative">
-                        <i class="bi bi-geo-alt position-absolute" style="top:50%;transform:translateY(-50%);left:.75rem;color:var(--muted);"></i>
-                        <input type="text" name="location" value="{{ old('location') }}"
+                        <i class="bi bi-geo-alt position-absolute" style="top:50%;transform:translateY(-50%);left:.75rem;color:var(--muted);z-index:2;"></i>
+                        <input type="text" name="location" id="locationInput" value="{{ old('location') }}"
                                class="form-control ps-4 @error('location') is-invalid @enderror"
                                style="padding-left:2.2rem!important;"
-                               placeholder="City, Country" required>
+                               placeholder="City, Country" required autocomplete="off">
+                        <ul id="locationSuggestions" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:999;background:#fff;border:1px solid var(--border);border-radius:.5rem;margin-top:.2rem;padding:0;list-style:none;box-shadow:var(--shadow);max-height:220px;overflow-y:auto;"></ul>
                     </div>
                     @error('location')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
@@ -196,6 +197,45 @@ function updatePrefSubs(catSlug) {
 const prefCatSel = document.getElementById('prefCatSelect');
 if (prefCatSel.value) updatePrefSubs(prefCatSel.value);
 prefCatSel.addEventListener('change', () => updatePrefSubs(prefCatSel.value));
+
+// ── Location autocomplete ─────────────────────────────────
+(function() {
+    const input = document.getElementById('locationInput');
+    const list  = document.getElementById('locationSuggestions');
+    let timer;
+
+    input.addEventListener('input', function() {
+        clearTimeout(timer);
+        const q = this.value.trim();
+        if (q.length < 2) { list.style.display = 'none'; return; }
+
+        timer = setTimeout(() => {
+            fetch(`/api/location-suggest?q=${encodeURIComponent(q)}`)
+                .then(r => r.json())
+                .then(items => {
+                    list.innerHTML = '';
+                    if (!items.length) { list.style.display = 'none'; return; }
+                    items.forEach(item => {
+                        const li = document.createElement('li');
+                        li.textContent = item.label;
+                        li.style.cssText = 'padding:.5rem .9rem;cursor:pointer;font-size:.875rem;border-bottom:1px solid var(--border);';
+                        li.addEventListener('mouseenter', () => li.style.background = 'var(--p-light)');
+                        li.addEventListener('mouseleave', () => li.style.background = '');
+                        li.addEventListener('mousedown', () => {
+                            input.value = item.label;
+                            list.style.display = 'none';
+                        });
+                        list.appendChild(li);
+                    });
+                    list.style.display = 'block';
+                }).catch(() => {});
+        }, 300);
+    });
+
+    document.addEventListener('click', e => {
+        if (!input.contains(e.target)) list.style.display = 'none';
+    });
+})();
 
 // ── Image preview ─────────────────────────────────────────
 document.getElementById('images').addEventListener('change', function() {

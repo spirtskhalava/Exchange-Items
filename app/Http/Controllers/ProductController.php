@@ -45,7 +45,12 @@ class ProductController extends Controller
             $query->where('condition', $request->input('condition'));
         }
 
-        if ($request->input('sort') === 'views') {
+        // Geo-prioritization: show listings from user's country first
+        $userCountry = $this->detectUserCountry($request);
+        if ($userCountry && $request->input('sort') !== 'views') {
+            $query->orderByRaw('CASE WHEN location LIKE ? THEN 0 ELSE 1 END', ["%{$userCountry}%"])
+                  ->latest();
+        } elseif ($request->input('sort') === 'views') {
             $query->orderBy('views', 'desc');
         } else {
             $query->latest();
@@ -53,7 +58,7 @@ class ProductController extends Controller
 
         $products = $query->paginate(12)->withQueryString();
 
-        return view('products.index', compact('products', 'allCategories', 'activeCat', 'activeSub'));
+        return view('products.index', compact('products', 'allCategories', 'activeCat', 'activeSub', 'userCountry'));
     }
 
     public function create()
@@ -311,5 +316,75 @@ class ProductController extends Controller
 
         // Fallback: store original if cwebp fails
         return $image->store('images', 'public');
+    }
+
+    /**
+     * Detect user's country from Cloudflare header or IP-based lookup.
+     * Returns country name (e.g. "Georgia") or null.
+     */
+    private function detectUserCountry(\Illuminate\Http\Request $request): ?string
+    {
+        // Cloudflare provides ISO 2-letter country code in this header
+        $code = $request->header('CF-IPCountry');
+
+        if (!$code || $code === 'XX' || $code === 'T1') {
+            return null; // unknown or Tor exit node
+        }
+
+        $map = [
+            'GE' => 'Georgia',   'US' => 'United States', 'GB' => 'United Kingdom',
+            'DE' => 'Germany',   'FR' => 'France',         'IT' => 'Italy',
+            'ES' => 'Spain',     'PL' => 'Poland',         'NL' => 'Netherlands',
+            'TR' => 'Turkey',    'UA' => 'Ukraine',        'RU' => 'Russia',
+            'AM' => 'Armenia',   'AZ' => 'Azerbaijan',     'BY' => 'Belarus',
+            'KZ' => 'Kazakhstan','MD' => 'Moldova',        'UZ' => 'Uzbekistan',
+            'AE' => 'UAE',       'CA' => 'Canada',         'AU' => 'Australia',
+            'SE' => 'Sweden',    'NO' => 'Norway',         'DK' => 'Denmark',
+            'FI' => 'Finland',   'PT' => 'Portugal',       'CZ' => 'Czech Republic',
+            'HU' => 'Hungary',   'RO' => 'Romania',        'SK' => 'Slovakia',
+            'AT' => 'Austria',   'CH' => 'Switzerland',    'BE' => 'Belgium',
+            'GR' => 'Greece',    'IL' => 'Israel',         'JP' => 'Japan',
+            'KR' => 'South Korea','CN' => 'China',         'IN' => 'India',
+            'BR' => 'Brazil',    'MX' => 'Mexico',         'AR' => 'Argentina',
+            'ZA' => 'South Africa',
+        ];
+
+        return $map[strtoupper($code)] ?? null;
+    }
+
+    /**
+     * Location autocomplete — proxies Nominatim, cached 7 days.
+     */
+    public function locationSuggest(\Illuminate\Http\Request $request)
+    {
+        $q = trim($request->input('q', ''));
+        if (strlen($q) < 2) {
+            return response()->json([]);
+        }
+
+        $cacheKey = 'loc_suggest_' . md5(strtolower($q));
+        $results  = Cache::remember($cacheKey, now()->addDays(7), function () use ($q) {
+            $response = \Illuminate\Support\Facades\Http::withHeaders([
+                'User-Agent' => 'Bartaro/1.0 (bartaro.com)',
+            ])->timeout(4)->get('https://nominatim.openstreetmap.org/search', [
+                'q'              => $q,
+                'format'         => 'json',
+                'limit'          => 6,
+                'addressdetails' => 1,
+                'featuretype'    => 'city,town,village,country',
+            ]);
+
+            if (!$response->ok()) return [];
+
+            return collect($response->json())->map(function ($item) {
+                $addr    = $item['address'] ?? [];
+                $city    = $addr['city'] ?? $addr['town'] ?? $addr['village'] ?? $addr['county'] ?? '';
+                $country = $addr['country'] ?? '';
+                $display = $city ? "{$city}, {$country}" : $item['display_name'];
+                return ['label' => $display, 'lat' => $item['lat'], 'lng' => $item['lon']];
+            })->unique('label')->values()->toArray();
+        });
+
+        return response()->json($results);
     }
 }
